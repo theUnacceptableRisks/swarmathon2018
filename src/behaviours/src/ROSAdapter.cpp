@@ -24,7 +24,6 @@
 #include "swarmie_msgs/Waypoint.h"
 
 // Include Controllers
-#include "LogicController.h"
 #include <vector>
 
 #include "Point.h"
