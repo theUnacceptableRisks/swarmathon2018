@@ -99,7 +99,7 @@ Result DriveController::DoWork()
         tooClose = false;
       }
     }
-    
+
     //if we are out of waypoints then interupt and return to logic controller
     if (waypoints.empty())
     {
@@ -238,7 +238,6 @@ void DriveController::ProcessData()
 {
   //determine if the drive commands are waypoint or precision driving
   if (result.type == waypoint) {
-    
     //sets logic controller into stand by mode while drive controller works
     result.type = behavior;
     result.b = noChange;
