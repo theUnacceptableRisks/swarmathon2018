@@ -1,4 +1,4 @@
-ico#include <ros/ros.h>
+#include <ros/ros.h>
 
 // ROS libraries
 #include <angles/angles.h>
@@ -29,6 +29,13 @@ ico#include <ros/ros.h>
 #include "Point.h"
 #include "Tag.h"
 
+/****************
+ * New Includes *
+ ****************/
+#include "state_machine/StateMachine.h"
+#include "InputLocation.h"
+#include "InputSonarArray.h"
+
 // To handle shutdown signals so the node quits
 // properly in response to "rosnode kill"
 #include <ros/ros.h>
@@ -53,14 +60,18 @@ void sendDriveCommand(double linearVel, double angularVel);
 
 
 // Numeric Variables for rover positioning
-geometry_msgs::Pose2D currentLocation;
-geometry_msgs::Pose2D currentLocationMap;
-geometry_msgs::Pose2D currentLocationAverage;
+geometry_msgs::Pose2D current_location;
+geometry_msgs::Pose2D current_location_map;
+geometry_msgs::Pose2D current_location_average;
 
 geometry_msgs::Pose2D centerLocation;
-geometry_msgs::Pose2D centerLocationMap;
+geometry_msgs::Pose2D centerlocation_map;
 geometry_msgs::Pose2D centerLocationOdom;
-geometry_msgs::Pose2D centerLocationMapRef;
+geometry_msgs::Pose2D centerlocation_mapRef;
+
+double us_left = 3.0;
+double us_right = 3.0;
+double us_center = 3.0;
 
 int currentMode = 0;
 const float state_machines_loop = 0.1; // time between state machines function call
@@ -191,6 +202,38 @@ void setupTimerCallbacks( ros::NodeHandle &ros_handle )
  ******************/
 void sigintEventHandler(int signal);
 
+/***********************
+ * Logic State Machine *
+ ***********************/
+
+StateMachine logic_machine;
+
+void setupLogicMachine()
+{
+    InputLocation *io_odom = new InputLocation( *current_location );
+    InputLocation *io_ekf = new InputLocation( *current_location_map );
+
+    return;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*****************
+ * MAIN FUNCTION *
+ *****************/
+
 int main(int argc, char **argv)
 {
     gethostname(host, sizeof (host));
@@ -239,24 +282,36 @@ int main(int argc, char **argv)
 }
 
 
+
+
+
+
+
+
+/************************
+ * Subsequent Functions *
+ ************************/
+
 // This is the top-most logic control block organised as a state machine.
 // This function calls the dropOff, pickUp, and search controllers.
 // This block passes the goal location to the proportional-integral-derivative
 // controllers in the abridge package.
 void runStateMachines(const ros::TimerEvent&)
 {
-  std_msgs::String stateMachineMsg;
+    std_msgs::String stateMachineMsg;
 
-  // time since timerStartTime was set to current time
-  timerTimeElapsed = time(0) - timerStartTime;
+    // time since timerStartTime was set to current time
+    timerTimeElapsed = time(0) - timerStartTime;
 
-  // Robot is in automode
-  if (currentMode == 2 || currentMode == 3)
-  {
-  }
-  else
-  {
-  }
+    // Robot is in automode
+    if (currentMode == 2 || currentMode == 3)
+    {
+
+    }
+    else
+    {
+        /* some output about manual mode? */
+    }
 }
 
 void sendDriveCommand(double left, double right)
@@ -315,20 +370,23 @@ void modeHandler(const std_msgs::UInt8::ConstPtr& message)
 /* this is awkward... do nothing for now*/
 void sonarHandler(const sensor_msgs::Range::ConstPtr& sonar_left, const sensor_msgs::Range::ConstPtr& sonar_center, const sensor_msgs::Range::ConstPtr& sonar_right)
 {
+    us_left = sonar_left->range;
+    us_right = sonar_right->range;
+    us_center = sonar_cneter->range;
 }
 
 void odometryHandler(const nav_msgs::Odometry::ConstPtr& message)
 {
     //Get (x,y) location directly from pose
-    currentLocation.x = message->pose.pose.position.x;
-    currentLocation.y = message->pose.pose.position.y;
+    current_location.x = message->pose.pose.position.x;
+    current_location.y = message->pose.pose.position.y;
 
     //Get theta rotation by converting quaternion orientation to pitch/roll/yaw
     tf::Quaternion q(message->pose.pose.orientation.x, message->pose.pose.orientation.y, message->pose.pose.orientation.z, message->pose.pose.orientation.w);
     tf::Matrix3x3 m(q);
     double roll, pitch, yaw;
     m.getRPY(roll, pitch, yaw);
-    currentLocation.theta = yaw;
+    current_location.theta = yaw;
 
     linearVelocity = message->twist.twist.linear.x;
     angularVelocity = message->twist.twist.angular.z;
@@ -337,15 +395,15 @@ void odometryHandler(const nav_msgs::Odometry::ConstPtr& message)
 void mapHandler(const nav_msgs::Odometry::ConstPtr& message)
 {
   //Get (x,y) location directly from pose
-  currentLocationMap.x = message->pose.pose.position.x;
-  currentLocationMap.y = message->pose.pose.position.y;
+  current_location_map.x = message->pose.pose.position.x;
+  current_location_map.y = message->pose.pose.position.y;
 
   //Get theta rotation by converting quaternion orientation to pitch/roll/yaw
   tf::Quaternion q(message->pose.pose.orientation.x, message->pose.pose.orientation.y, message->pose.pose.orientation.z, message->pose.pose.orientation.w);
   tf::Matrix3x3 m(q);
   double roll, pitch, yaw;
   m.getRPY(roll, pitch, yaw);
-  currentLocationMap.theta = yaw;
+  current_location_map.theta = yaw;
 
   linearVelocity = message->twist.twist.linear.x;
   angularVelocity = message->twist.twist.angular.z;
