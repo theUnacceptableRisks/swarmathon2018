@@ -33,8 +33,9 @@
  * New Includes *
  ****************/
 #include "state_machine/StateMachine.h"
-#include "InputLocation.h"
-#include "InputSonarArray.h"
+#include "inputs/InputLocation.h"
+#include "inputs/InputSonarArray.h"
+#include "inputs/InputTags.h"
 
 // To handle shutdown signals so the node quits
 // properly in response to "rosnode kill"
@@ -72,6 +73,8 @@ geometry_msgs::Pose2D centerlocation_mapRef;
 double us_left = 3.0;
 double us_right = 3.0;
 double us_center = 3.0;
+
+vector<Tag> tags;
 
 int currentMode = 0;
 const float state_machines_loop = 0.1; // time between state machines function call
@@ -210,8 +213,15 @@ StateMachine logic_machine;
 
 void setupLogicMachine()
 {
-    InputLocation *io_odom = new InputLocation( *current_location );
-    InputLocation *io_ekf = new InputLocation( *current_location_map );
+    InputLocation *io_odom = new InputLocation( &current_location );
+    InputLocation *io_ekf = new InputLocation( &current_location_map );
+    InputSonarArray *io_sonar_array = new InputSonarArray( &us_left, &us_right, &us_center );
+    InputTags *io_tags = new InputTags( &tags );
+
+    logic_machine.addInput( "odom", io_odom );
+    logic_machine.addInput( "ekf", io_ekf );
+    logic_machine.addInput( "sonar", io_sonar_array );
+    logic_machine.addInput( "tags", io_tags );
 
     return;
 }
@@ -335,7 +345,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
 
     if (message->detections.size() > 0)
     {
-        vector<Tag> tags;
+        tags.clear();
 
         for (int i = 0; i < message->detections.size(); i++)
         {
@@ -356,8 +366,6 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
                                                                   tagPose.pose.orientation.w ) );
             tags.push_back(loc);
         }
-        //need to do something with the tags here
-
     }
 }
 
@@ -372,7 +380,7 @@ void sonarHandler(const sensor_msgs::Range::ConstPtr& sonar_left, const sensor_m
 {
     us_left = sonar_left->range;
     us_right = sonar_right->range;
-    us_center = sonar_cneter->range;
+    us_center = sonar_center->range;
 }
 
 void odometryHandler(const nav_msgs::Odometry::ConstPtr& message)

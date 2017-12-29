@@ -11,13 +11,13 @@ ostream& operator<<(ostream& output_stream, const Tag& tag) {
 
   tuple<float, float, float> position = tag.getPosition();
   tuple<float, float, float> orientation = tag.calcRollPitchYaw();
-  
+
   output_stream << "Tag ID:" << tag.getID()
 		<< ", Position (XYZ): <"
 		<< get<0>(position) << ", "
 		<< get<1>(position) << ", "
 		<< get<2>(position) << ", "
-		
+
 		<< ">, "
 		<< " Orientation (RPY): <"
 		<< get<0>(orientation) << ", "
@@ -25,7 +25,7 @@ ostream& operator<<(ostream& output_stream, const Tag& tag) {
 		<< get<2>(orientation) << ", "
 		<< ">"
 		<< endl;
-  
+
   return output_stream;
 }
 

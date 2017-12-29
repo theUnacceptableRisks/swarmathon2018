@@ -12,15 +12,15 @@ class Tag {
   // Contructors
   Tag();
   Tag( const Tag &that);
-  
+
   // Getters and setters
   int getID() const;
-  void setID( int ); 
+  void setID( int );
 
   // Get and set positions as <x,y,z> tuples
   std::tuple<float, float, float> getPosition() const;;
   void setPosition( std::tuple<float, float, float> );
-  
+
   // Get and set orientation as a <x,y,z,w> quaternion
   ::boost::math::quaternion<float> getOrientation() const;;
   void setOrientation( ::boost::math::quaternion<float> );
@@ -42,22 +42,20 @@ class Tag {
   void setOrientationY( float );
   void setOrientationZ( float );
   void setOrientationW( float );
-  
+
   std::tuple<float,float,float> calcRollPitchYaw() const;;
   float calcRoll() const;
   float calcPitch() const;
   float calcYaw() const;
-  
+
   // Allow writing of tag data to an output stream by  extending ostream.
   friend std::ostream& operator<<(std::ostream&, const Tag& );
-  
 
-  
   private:
 
   // Tag ID
   int id = 0;
-  
+
   // Position in 3D coords
   std::tuple<float,float,float> position;
 
