@@ -1,3 +1,6 @@
+#ifndef inputtags_h
+#define inputtags_h
+
 #include <vector>
 #include "../state_machine/IOType.h"
 #include "../Tag.h"
@@ -7,9 +10,11 @@
 class InputTags : public IOType
 {
     public:
-        InputTags( std::vector<Tag> *t ) : IOType( IO_TAGS, TAG_SUM, sizeof( InputTags ) ),
+        InputTags( std::vector<Tag> *t ) : IOType( ROVER_IO.TAGS, ROVER_SUM.TAG, sizeof( InputTags ) ),
             tags(t) {}
         std::vector<Tag> *tags;
 };
 
-VALIDATOR iotags_validator = { IO_TAGS, sizeof( InputTags ), TAG_SUM };
+VALIDATOR iotags_validator = { ROVER_IO.TAGS, sizeof( InputTags ), ROVER_SUM.TAG };
+
+#endif
