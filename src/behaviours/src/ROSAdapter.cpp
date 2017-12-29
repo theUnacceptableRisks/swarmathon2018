@@ -1,4 +1,4 @@
-#include <ros/ros.h>
+ico#include <ros/ros.h>
 
 // ROS libraries
 #include <angles/angles.h>
@@ -101,6 +101,11 @@ long int getROSTimeInMilliSecs();
  ****************************/
 
 
+
+
+
+
+
 /******************
  * ROS Publishers *
  ******************/
@@ -163,7 +168,7 @@ void setupSubscribers( ros::NodeHandle &ros_handle, string published_name )
 /**************
  * ROS Timers *
  **************/
-ros::Timer stateMachineTimer;
+ros::Timer state_machine_timer;
 ros::Timer publish_status_timer;
 ros::Timer publish_heartbeat_timer;
 
@@ -177,7 +182,7 @@ void publishHeartBeatTimerEventHandler(const ros::TimerEvent& event);
 void setupTimerCallbacks( ros::NodeHandle &ros_handle )
 {
     publish_status_timer = ros_handle.createTimer(ros::Duration(status_publish_interval), publishStatusTimerEventHandler);
-    stateMachineTimer = ros_handle.createTimer(ros::Duration(state_machines_loop), runStateMachines);
+    state_machine_timer = ros_handle.createTimer(ros::Duration(state_machines_loop), runStateMachines);
     publish_heartbeat_timer = ros_handle.createTimer(ros::Duration(heartbeat_publish_interval), publishHeartBeatTimerEventHandler);
 }
 
