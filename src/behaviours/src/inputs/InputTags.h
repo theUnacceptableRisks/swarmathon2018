@@ -10,11 +10,11 @@
 class InputTags : public IOType
 {
     public:
-        InputTags( std::vector<Tag> *t ) : IOType( ROVER_IO.TAGS, ROVER_SUM.TAG, sizeof( InputTags ) ),
+        InputTags( std::vector<Tag> *t ) : IOType( IOTYPE_TAGS, SUM_TAG, sizeof( InputTags ) ),
             tags(t) {}
         std::vector<Tag> *tags;
 };
 
-VALIDATOR iotags_validator = { ROVER_IO.TAGS, sizeof( InputTags ), ROVER_SUM.TAG };
+VALIDATOR iotags_validator = { IOTYPE_TAGS, sizeof( InputTags ), SUM_TAG };
 
 #endif

@@ -8,7 +8,7 @@
 class InputLocation : public IOType
 {
     public:
-        InputLocation( geometry_msgs::Pose2D *loc ) : IOType( ROVER_IO.LOCATION, ROVER_SUM.LOC, sizeof( InputLocation ) ),
+        InputLocation( geometry_msgs::Pose2D *loc ) : IOType( IOTYPE_LOC, SUM_LOC, sizeof( InputLocation ) ),
             location(loc) {}
         double getX()		{ return location->x; }
         double getY()		{ return location->y; }
@@ -18,6 +18,6 @@ class InputLocation : public IOType
         geometry_msgs::Pose2D *location;
 };
 
-VALIDATOR iolocation_validator = { ROVER_IO.LOCATION, sizeof( InputLocation ), ROVER_SUM.LOC };
+extern VALIDATOR iolocation_validator;
 
 #endif

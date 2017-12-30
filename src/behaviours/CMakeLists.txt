@@ -27,6 +27,11 @@ add_executable(
   src/Tag.cpp
   src/ROSAdapter.cpp
   src/PID.cpp
+  src/state_machine/Error.cpp
+  src/state_machine/IOType.cpp
+  src/inputs/InputLocation.cpp
+  src/waypoints/SimpleWaypoint.cpp
+  src/waypoints/SimpleWaypointStates.cpp
 )
 
 add_dependencies(behaviours ${catkin_EXPORTED_TARGETS})

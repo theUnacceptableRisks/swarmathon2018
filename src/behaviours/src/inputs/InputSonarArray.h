@@ -2,12 +2,13 @@
 #define inputsonararray
 
 #include "../state_machine/IOType.h"
+#include "../ExtendedGlobals.h"
 
 class InputSonarArray : public IOType
 {
     public:
         InputSonarArray( double *us_left, double *us_right, double *us_center ) :
-            IOType( ROVER_IO.SONAR, ROVER_SUM.SON, sizeof( InputSonarArray ) ), sonar_left(us_left),
+            IOType( IOTYPE_SONAR, SUM_SON, sizeof( InputSonarArray ) ), sonar_left(us_left),
             sonar_right(us_right), sonar_center(us_center) {}
         double getLeft()	{ return *sonar_left; }
         double getRight()	{ return *sonar_right; }
@@ -18,6 +19,6 @@ class InputSonarArray : public IOType
         double *sonar_center;
 };
 
-VALIDATOR iosonar_validator = { ROVER_IO.SONAR, sizeof( InputSonarArray ), ROVER_SUM.SON };
+VALIDATOR iosonar_validator = { IOTYPE_SONAR, sizeof( InputSonarArray ), SUM_SON };
 
 #endif

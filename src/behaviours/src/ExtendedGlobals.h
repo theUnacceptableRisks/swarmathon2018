@@ -1,22 +1,14 @@
 #ifndef extendedglobals_h
 #define extendedglobals_h
 
-#include "state_machine/Globals.h"
 
-class ROVER_IOTYPES : IOTYPES
+enum
 {
-    public:
-        const int LOCATION = 2;
-        const int SONAR = 3;
-        const int TAGS = 4;
-} ROVER_IO;
+    IOTYPE_LOC = 2, IOTYPE_SONAR, IOTYPE_TAGS
+};
 
-class ROVER_SUMS : SUMS
-{
-    public:
-        const char LOC = 'l';
-        const char SON = 's';
-        const char TAG = 't';
-} ROVER_SUM;
+#define SUM_LOC 'l'
+#define SUM_SON 's'
+#define SUM_TAG 't'
 
 #endif

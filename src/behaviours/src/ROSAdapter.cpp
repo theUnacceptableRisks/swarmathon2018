@@ -36,6 +36,8 @@
 #include "inputs/InputLocation.h"
 #include "inputs/InputSonarArray.h"
 #include "inputs/InputTags.h"
+#include "waypoints/SimpleWaypoint.h"
+
 
 // To handle shutdown signals so the node quits
 // properly in response to "rosnode kill"
@@ -220,6 +222,8 @@ void setupLogicMachine()
     logic_machine.addInput( "odom_accel_gps", io_odom_accel_gps );
     logic_machine.addInput( "sonar", io_sonar_array );
     logic_machine.addInput( "tags", io_tags );
+
+//    SimplyWaypoint test( { io_odom, 0.0, 0.0 } );
 
     return;
 }
