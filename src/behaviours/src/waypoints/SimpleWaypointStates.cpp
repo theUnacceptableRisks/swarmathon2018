@@ -1,6 +1,6 @@
 #include "SimpleWaypointStates.h"
 #include "WaypointUtilities.h"
-#include "Error.h"
+#include "../state_machine/Error.h"
 
 /***********************************************
  * The template for all states in this machine *
@@ -20,19 +20,19 @@ bool SimpleWaypointState::setOwner( StateMachine *sm )
 
 
 
-std::string SimpleWaypointInit::transition()
+std::string SimpleWaypointState::transition()
 {
     std::string transition_to = getIdentifier();
     WaypointUtilities::DrivingParams params;
-    InputLocation *current_location = sw_owner.inputs[ "current_location" ];
+    InputLocation *current_location = (InputLocation *)sw_owner->inputs.getIO( "current_location" );
 
     if( is_io_valid( current_location, iolocation_validator ) )
     {
-        params.goal_x = sw_owner.goal_x;
-        params.goal_y = sw_owner.goal_y;
-        params.current_x = InputLocation->getX();
-        params.current_y = InputLocation->getY();
-        params.current_theta = InputLocation->getTheta();
+        params.goal_x = sw_owner->goal_x;
+        params.goal_y = sw_owner->goal_y;
+        params.current_x = current_location->getX();
+        params.current_y = current_location->getY();
+        params.current_theta = current_location->getTheta();
 
         if( WaypointUtilities::getDistance( params ) < .1 ) //todo setup distance tolerance handling
         {
