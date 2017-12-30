@@ -15,6 +15,25 @@ class SimpleWaypointState : public State
 class SimpleWaypointInit : public SimpleWaypointState
 {
     public:
-        SimpleWaypointInit() : State( "simple_init" );
+        SimpleWaypointInit() : State( "simple_init" ) {}
 };
+
+class SimpleWaypointRotate : public SimpleWaypointState
+{
+    public:
+        SimpleWaypointRotate() : State( "simple_rotate" ) {}
+};
+
+class SimpleWaypointSkid : public SimpleWaypointState
+{
+    public:
+        SimpleWaypointSkid() : State( "simple_skid" ) {}
+};
+
+class SimpleWaypointArrived : public SimpleWaypointState
+{
+    public:
+        SimpleWaypointArrived() : State( "simple_arrived" ) {}
+};
+
 #endif

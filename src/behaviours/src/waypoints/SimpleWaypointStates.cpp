@@ -1,5 +1,5 @@
 #include "SimpleWaypointStates.h"
-#include "WaypointUtility.h"
+#include "WaypointUtilities.h"
 #include "Error.h"
 
 /***********************************************
@@ -23,7 +23,7 @@ bool SimpleWaypointState::setOwner( StateMachine *sm )
 std::string SimpleWaypointInit::transition()
 {
     std::string transition_to = getIdentifier();
-    DrivingParams params;
+    WaypointUtilities::DrivingParams params;
     InputLocation *current_location = sw_owner.inputs[ "current_location" ];
 
     if( is_io_valid( current_location, iolocation_validator ) )
@@ -33,6 +33,23 @@ std::string SimpleWaypointInit::transition()
         params.current_x = InputLocation->getX();
         params.current_y = InputLocation->getY();
         params.current_theta = InputLocation->getTheta();
+
+        if( WaypointUtilities::getDistance( params ) < .1 ) //todo setup distance tolerance handling
+        {
+            transition_to = "simple_arrived";
+        }
+        else
+        {
+            float angularCorrection = WaypointUtilities::getAngularCorrectionNeeded( params );
+            if( fabs( angularCorrection ) > .2 ) //todo setup angular tolerance handling
+            {
+                transition_to = "simple_rotate";
+            }
+            else
+            {
+                transition_to = "simple_skid";
+            }
+        }
     }
     else
     {
