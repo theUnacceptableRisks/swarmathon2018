@@ -15,6 +15,7 @@ class InputTags : public IOType
         std::vector<Tag> *tags;
 };
 
-VALIDATOR iotags_validator = { IOTYPE_TAGS, sizeof( InputTags ), SUM_TAG };
+extern VALIDATOR iotags_validator;
 
 #endif
+ 

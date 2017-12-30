@@ -19,6 +19,6 @@ class InputSonarArray : public IOType
         double *sonar_center;
 };
 
-VALIDATOR iosonar_validator = { IOTYPE_SONAR, sizeof( InputSonarArray ), SUM_SON };
+extern VALIDATOR iosonar_validator;
 
 #endif
