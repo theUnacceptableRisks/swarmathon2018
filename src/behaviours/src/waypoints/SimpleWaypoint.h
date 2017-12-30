@@ -15,12 +15,14 @@ struct SimpleWaypointParams
 
 class SimpleWaypoint : public StateMachine
 {
-    friend class SimpleWaypointInit;
+    friend class SimpleWaypointState;
     public:
         SimpleWaypoint( struct SimpleWaypointParams params );
     private:
         const float goal_x;
         const float goal_y;
+        float linear_velocity;
+        float angular_velocity;
 };
 
 //constructor builds adds states, initialized with inputs

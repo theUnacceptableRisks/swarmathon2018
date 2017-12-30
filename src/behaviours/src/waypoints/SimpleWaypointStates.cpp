@@ -1,6 +1,30 @@
 #include "SimpleWaypointStates.h"
 
-void SimpleWaypointInit::onEnter( std::string prev_state )
+/***********************************************
+ * The template for all states in this machine *
+ ***********************************************/
+
+bool SimpleWaypointState::setOwner( StateMachine *sm )
 {
-    return;
+    bool success = false;
+
+    if( !owner && !sw_owner )
+    {
+       owner = sm;
+       sw_owner = (SimpleWaypoint *)sm;
+    }
+    return success;
 }
+
+
+
+std::string SimpleWaypointInit::transition()
+{
+
+}
+
+
+
+/********************
+ * Blank Init State *
+ ********************/

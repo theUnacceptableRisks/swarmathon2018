@@ -3,12 +3,18 @@
 
 #include "../state_machine/State.h"
 
-class SimpleWaypointInit : public State
+class SimpleWaypointState : public State
 {
     public:
-        SimpleWaypointInit() : State( "simple_init" ) {}
-        virtual void onEnter( std::string prev_state );
-//        virtual void transition();
+        virtual bool setOwner( StateMachine *sm );
+        virtual std::string transition();
+    protected:
+        SimpleWaypoint *sm_owner;
 };
 
+class SimpleWaypointInit : public SimpleWaypointState
+{
+    public:
+        SimpleWaypointInit() : State( "simple_init" );
+};
 #endif

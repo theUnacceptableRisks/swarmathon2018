@@ -5,4 +5,5 @@ SimpleWaypoint::SimpleWaypoint( struct SimpleWaypointParams params ) : goal_x(pa
 {
     addInput( "current_location", params.current_position );
     addState( "simple_init", new SimpleWaypointInit() );
+    addOutput( "linear_velocity", Output
 }
