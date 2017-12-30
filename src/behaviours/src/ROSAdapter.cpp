@@ -61,14 +61,9 @@ void sendDriveCommand(double linearVel, double angularVel);
 
 
 // Numeric Variables for rover positioning
-geometry_msgs::Pose2D current_location;
-geometry_msgs::Pose2D current_location_map;
-geometry_msgs::Pose2D current_location_average;
-
-geometry_msgs::Pose2D centerLocation;
-geometry_msgs::Pose2D centerlocation_map;
-geometry_msgs::Pose2D centerLocationOdom;
-geometry_msgs::Pose2D centerlocation_mapRef;
+geometry_msgs::Pose2D current_location_odom;
+geometry_msgs::Pose2D current_location_odom_accel;
+geometry_msgs::Pose2D current_location_odom_accel_gps;
 
 double us_left = 3.0;
 double us_right = 3.0;
@@ -157,8 +152,9 @@ ros::Subscriber map_subscriber;
 void joyCmdHandler(const sensor_msgs::Joy::ConstPtr& message);
 void modeHandler(const std_msgs::UInt8::ConstPtr& message);
 void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& tagInfo);
-void odometryHandler(const nav_msgs::Odometry::ConstPtr& message);
-void mapHandler(const nav_msgs::Odometry::ConstPtr& message);
+void odomHandler(const nav_msgs::Odometry::ConstPtr& message);
+void odomAndAccelHandler(const nav_msgs::Odometry::ConstPtr& message);
+void odomAccelAndGPSHandler(const nav_msgs::Odometry::ConstPtr& message);
 void manualWaypointHandler(const swarmie_msgs::Waypoint& message);
 void sonarHandler(const sensor_msgs::Range::ConstPtr& sonarLeft, const sensor_msgs::Range::ConstPtr& sonarCenter, const sensor_msgs::Range::ConstPtr& sonarRight);
 
@@ -167,8 +163,8 @@ void setupSubscribers( ros::NodeHandle &ros_handle, string published_name )
     joy_subscriber = ros_handle.subscribe((published_name + "/joystick"), 10, joyCmdHandler);
     mode_subscriber = ros_handle.subscribe((published_name + "/mode"), 1, modeHandler);
     target_subscriber = ros_handle.subscribe((published_name + "/targets"), 10, targetHandler);
-    odometry_subscriber = ros_handle.subscribe((published_name + "/odom/filtered"), 10, odometryHandler);
-    map_subscriber = ros_handle.subscribe((published_name + "/odom/ekf"), 10, mapHandler);
+    odometry_subscriber = ros_handle.subscribe((published_name + "/odom/filtered"), 10, odomAndAccelHandler);
+    map_subscriber = ros_handle.subscribe((published_name + "/odom/ekf"), 10, odomAccelAndGPSHandler);
 
     //Sonar Stuff
     message_filters::Subscriber<sensor_msgs::Range> sonar_left_subscriber(ros_handle, (published_name + "/sonarLeft"), 10);
@@ -213,13 +209,15 @@ StateMachine logic_machine;
 
 void setupLogicMachine()
 {
-    InputLocation *io_odom = new InputLocation( &current_location );
-    InputLocation *io_ekf = new InputLocation( &current_location_map );
+    InputLocation *io_odom = new InputLocation( &current_location_odom );
+    InputLocation *io_odom_accel = new InputLocation( &current_location_odom_accel );
+    InputLocation *io_odom_accel_gps = new InputLocation( &current_location_odom_accel_gps );
     InputSonarArray *io_sonar_array = new InputSonarArray( &us_left, &us_right, &us_center );
     InputTags *io_tags = new InputTags( &tags );
 
     logic_machine.addInput( "odom", io_odom );
-    logic_machine.addInput( "ekf", io_ekf );
+    logic_machine.addInput( "odom_accel", io_odom_accel );
+    logic_machine.addInput( "odom_accel_gps", io_odom_accel_gps );
     logic_machine.addInput( "sonar", io_sonar_array );
     logic_machine.addInput( "tags", io_tags );
 
@@ -383,35 +381,40 @@ void sonarHandler(const sensor_msgs::Range::ConstPtr& sonar_left, const sensor_m
     us_center = sonar_center->range;
 }
 
-void odometryHandler(const nav_msgs::Odometry::ConstPtr& message)
+void odomHandler(const nav_msgs::Odometry::ConstPtr& message)
+{
+    current_location_odom.x = message->pose.pose.position.x;
+    current_location_odom.y = message->pose.pose.position.y;
+}
+void odomAndAccelHandler(const nav_msgs::Odometry::ConstPtr& message)
 {
     //Get (x,y) location directly from pose
-    current_location.x = message->pose.pose.position.x;
-    current_location.y = message->pose.pose.position.y;
+    current_location_odom_accel.x = message->pose.pose.position.x;
+    current_location_odom_accel.y = message->pose.pose.position.y;
 
     //Get theta rotation by converting quaternion orientation to pitch/roll/yaw
     tf::Quaternion q(message->pose.pose.orientation.x, message->pose.pose.orientation.y, message->pose.pose.orientation.z, message->pose.pose.orientation.w);
     tf::Matrix3x3 m(q);
     double roll, pitch, yaw;
     m.getRPY(roll, pitch, yaw);
-    current_location.theta = yaw;
+    current_location_odom_accel.theta = yaw;
 
     linearVelocity = message->twist.twist.linear.x;
     angularVelocity = message->twist.twist.angular.z;
 }
 
-void mapHandler(const nav_msgs::Odometry::ConstPtr& message)
+void odomAccelAndGPSHandler(const nav_msgs::Odometry::ConstPtr& message)
 {
   //Get (x,y) location directly from pose
-  current_location_map.x = message->pose.pose.position.x;
-  current_location_map.y = message->pose.pose.position.y;
+  current_location_odom_accel_gps.x = message->pose.pose.position.x;
+  current_location_odom_accel_gps.y = message->pose.pose.position.y;
 
   //Get theta rotation by converting quaternion orientation to pitch/roll/yaw
   tf::Quaternion q(message->pose.pose.orientation.x, message->pose.pose.orientation.y, message->pose.pose.orientation.z, message->pose.pose.orientation.w);
   tf::Matrix3x3 m(q);
   double roll, pitch, yaw;
   m.getRPY(roll, pitch, yaw);
-  current_location_map.theta = yaw;
+  current_location_odom_accel_gps.theta = yaw;
 
   linearVelocity = message->twist.twist.linear.x;
   angularVelocity = message->twist.twist.angular.z;
