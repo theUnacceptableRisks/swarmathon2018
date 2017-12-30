@@ -9,7 +9,7 @@ class SimpleWaypointState : public State
         virtual bool setOwner( StateMachine *sm );
         virtual std::string transition();
     protected:
-        SimpleWaypoint *sm_owner;
+        SimpleWaypoint *sw_owner;
 };
 
 class SimpleWaypointInit : public SimpleWaypointState
