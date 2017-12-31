@@ -8,7 +8,7 @@
 
 namespace WaypointUtilities
 {
-    typedef struct standard_driving_params
+    typedef struct driving_params
     {
         float goal_x;
         float goal_y;
@@ -45,14 +45,22 @@ namespace WaypointUtilities
         PID const_yaw_pid = PID( WaypointUtilities::constYawConfig() );
     } PidPackage;
 
-    void standardPackage( PidPackage &package );
+    typedef enum
+    {
+        FAST_PID, SLOW_PID, CONST_PID
+    } PidType;
 
-    /*
-     Need PID functions like in DriveController fastPID( errorVel, errorYaw, goalVel, goalYaw ) etc
-     However, make it a general function that takes two structures, the PidPackage and another parameters structure.
-     Params will take, fast, slow, const, errors, goals, and saturation point
-     Will return a tuple for left and right
-    */
+    typedef struct pid_params
+    {
+        WaypointUtilities::PidType type;
+        float velocity_error;	//the discrepency between current velocity and what you want to be at
+        float angular_error;	//the discrepency between the current angle and what angle you want to be facing
+        float velocity_goal;
+        float angular_goal;
+        float saturation_point;	//not quite sure what this is about... entirely...
+    } PidParams;
+
+    std::tuple<int,int> executePid( WaypointUtilities::PidParams params, WaypointUtilities::PidPackage &pids );
 
 };
 

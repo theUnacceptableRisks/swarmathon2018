@@ -153,3 +153,39 @@ PIDConfig WaypointUtilities::constYawConfig() {
   return config;
 }
 
+std::tuple<float,float> executePid( WaypointUtilities::PidParams params, WaypointUtilities::PidPackage &pids )
+{
+    PID *vel_PID;
+    PID *yaw_PID;
+    float vel, yaw;
+    int left, right;
+
+    switch( params.type )
+    {
+        case WaypointUtilities::FAST_PID:
+            vel_PID = &pids.fast_vel_pid;
+            yaw_PID = &pids.fast_yaw_pid;
+            break;
+        case WaypointUtilities::SLOW_PID:
+            vel_PID = &pids.slow_vel_pid;
+            yaw_PID = &pids.slow_yaw_pid;
+            break;
+        case WaypointUtilities::CONST_PID:
+            vel_PID = &pids.const_vel_pid;
+            yaw_PID = &pids.const_yaw_pid;
+            break;
+    }
+
+    vel = vel_PID->PIDOut( params.velocity_error, params.velocity_goal );
+    yaw = yaw_PID->PIDOut( params.angular_error, params.angular_goal );
+
+    left = vel - yaw;
+    right = vel + yaw;
+
+    if (left  >  params.saturation_point) {left  =  params.saturation_point;}
+    if (left  < -params.saturation_point) {left  = -params.saturation_point;}
+    if (right >  params.saturation_point) {right =  params.saturation_point;}
+    if (right < -params.saturation_point) {right = -params.saturation_point;}
+
+    return std::make_tuple( left, right );
+}

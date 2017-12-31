@@ -6,18 +6,17 @@
 class Waypoint : public StateMachine
 {
     public:
-        /* this needs to be changed into lefts and rights... */
         Waypoint()
         {
-            outputs.addElement( "linear_velocity", new IOFloat( &output_linear_velocity ) );
-            outputs.addElement( "angular_velocity", new IOFloat( &output_angular_velocity ) );
+            outputs.addElement( "left_velocity", new IOInt( &output_left_velocity ) );
+            outputs.addElement( "right_velocity", new IOInt( &output_right_velocity ) );
         }
     protected:
-        void setOutputLinearVelocity( float vel ) { output_linear_velocity = vel; }
-        void setOutputAngularVelocity( float vel ) { output_angular_velocity = vel; }
+        void setOutputLeftVelocity( int vel ) { output_left_velocity = vel; }
+        void setOutputRightVelocity( int vel ) { output_right_velocity = vel; }
     private:
-        float output_linear_velocity;
-        float output_angular_velocity;
+        int output_left_velocity;
+        int output_right_velocity;
 };
 
 #endif
