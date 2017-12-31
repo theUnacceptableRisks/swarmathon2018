@@ -211,6 +211,7 @@ void sigintEventHandler(int signal);
  ***********************/
 
 StateMachine logic_machine;
+SimpleWaypoint *test;
 
 void setupLogicMachine()
 {
@@ -220,7 +221,7 @@ void setupLogicMachine()
     InputSonarArray *io_sonar_array = new InputSonarArray( &us_left, &us_right, &us_center );
     InputTags *io_tags = new InputTags( &tags );
     IOFloat *io_linear_vel_oa = new IOFloat( &linear_vel_odom_accel );
-    IOFloat *io_angular_cel_oa = new IOFloat( &angular_vel_odom_accel );
+    IOFloat *io_angular_vel_oa = new IOFloat( &angular_vel_odom_accel );
     IOFloat *io_linear_vel_oag = new IOFloat( &linear_vel_odom_accel_gps );
     IOFloat *io_angular_vel_oag = new IOFloat( &angular_vel_odom_accel_gps );
 
@@ -232,6 +233,7 @@ void setupLogicMachine()
     logic_machine.addInput( "tags", io_tags );
 
 //    SimplyWaypoint test( { io_odom, 0.0, 0.0 } );
+    test = new SimpleWaypoint( { io_odom_accel, io_linear_vel_oa, io_angular_vel_oa, -2, 0 } );
 
     return;
 }
