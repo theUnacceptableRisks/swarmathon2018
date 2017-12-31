@@ -19,16 +19,17 @@ struct SimpleWaypointParams
 class SimpleWaypoint : public Waypoint
 {
     friend class SimpleWaypointState;
+    friend class SimpleWaypointRotate;
+    friend class SimpleWaypointSkid;
+    friend class SimpleWaypointArrival;
     public:
         SimpleWaypoint( struct SimpleWaypointParams params );
+        bool updateDrivingParams();
     private:
         WaypointUtilities::PidPackage pids;
         WaypointUtilities::DrivingParams driving_params;
         const float goal_x;
         const float goal_y;
 };
-
-//constructor builds adds states, initialized with inputs
-//getVelocities function?
 
 #endif

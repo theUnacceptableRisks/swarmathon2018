@@ -19,7 +19,8 @@ bool SimpleWaypointState::setOwner( StateMachine *sm )
 }
 
 
-/**********************************************
+
+ /********************************************\
  * General Transition Function For All States *
  **********************************************
  | This determines the state to transition to |
@@ -29,14 +30,9 @@ bool SimpleWaypointState::setOwner( StateMachine *sm )
 std::string SimpleWaypointState::transition()
 {
     std::string transition_to = getIdentifier();
-    InputLocation *current_location = (InputLocation *)sw_owner->inputs.getIO( "current_location" );
 
-    if( is_io_valid( current_location, iolocation_validator ) )
+    if( sw_owner->updateDrivingParams() )
     {
-        sw_owner->driving_params.current_x = current_location->getX();
-        sw_owner->driving_params.current_y = current_location->getY();
-        sw_owner->driving_params.current_theta = current_location->getTheta();
-
         if( WaypointUtilities::getDistance( sw_owner->driving_params ) < .1 ) //todo setup distance tolerance handling
         {
             transition_to = "simple_arrived";
@@ -56,7 +52,7 @@ std::string SimpleWaypointState::transition()
     }
     else
     {
-        messaging::errorMsg( __func__, "Invalid current location input" );
+        messaging::errorMsg( __func__, "updateDrivingParams failed to update." );
     }
 }
 
@@ -68,7 +64,16 @@ std::string SimpleWaypointState::transition()
 
 void SimpleWaypointRotate::action()
 {
-    
+    WaypointUtilities::PidParams params;
+    if( sw_owner->updateDrivingParams() )
+    {
+        params.type = WaypointUtilities::FAST_PID;
+        params.velocity_error = 0.0;
+        params.velocity_goal = 0.0;
+        params.angular_error = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->driving_params );
+//        params.angular
+        
+    }
 }
 
 /*******************************
