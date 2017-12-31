@@ -1,11 +1,17 @@
 #ifndef waypoint_h
 #define waypoint_h
 
-class Waypoint
+#include "../state_machine/StateMachine.h"
+
+class Waypoint : public StateMachine
 {
     public:
-        float getOutputLinearVelocity() { return output_linear_velocity; }
-        float getOutputAngularVelocity() { return output_angular_velocity; }
+        /* this needs to be changed into lefts and rights... */
+        Waypoint()
+        {
+            outputs.addElement( "linear_velocity", new IOFloat( &output_linear_velocity ) );
+            outputs.addElement( "angular_velocity", new IOFloat( &output_angular_velocity ) );
+        }
     protected:
         void setOutputLinearVelocity( float vel ) { output_linear_velocity = vel; }
         void setOutputAngularVelocity( float vel ) { output_angular_velocity = vel; }

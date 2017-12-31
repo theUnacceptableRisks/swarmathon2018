@@ -67,6 +67,12 @@ geometry_msgs::Pose2D current_location_odom;
 geometry_msgs::Pose2D current_location_odom_accel;
 geometry_msgs::Pose2D current_location_odom_accel_gps;
 
+float linear_vel_odom_accel = 0.0;
+float angular_vel_odom_accel = 0.0;
+
+float linear_vel_odom_accel_gps = 0.0;
+float angular_vel_odom_accel_gps = 0.0;
+
 double us_left = 3.0;
 double us_right = 3.0;
 double us_center = 3.0;
@@ -78,9 +84,6 @@ const float state_machines_loop = 0.1; // time between state machines function c
 const float status_publish_interval = 1;
 const float heartbeat_publish_interval = 2;
 const float waypoint_tolerance = 0.1; //10 cm tolerance.
-
-float linearVelocity = 0;
-float angularVelocity = 0;
 
 float prevWrist = 0;
 float prevFinger = 0;
@@ -216,6 +219,11 @@ void setupLogicMachine()
     InputLocation *io_odom_accel_gps = new InputLocation( &current_location_odom_accel_gps );
     InputSonarArray *io_sonar_array = new InputSonarArray( &us_left, &us_right, &us_center );
     InputTags *io_tags = new InputTags( &tags );
+    IOFloat *io_linear_vel_oa = new IOFloat( &linear_vel_odom_accel );
+    IOFloat *io_angular_cel_oa = new IOFloat( &angular_vel_odom_accel );
+    IOFloat *io_linear_vel_oag = new IOFloat( &linear_vel_odom_accel_gps );
+    IOFloat *io_angular_vel_oag = new IOFloat( &angular_vel_odom_accel_gps );
+
 
     logic_machine.addInput( "odom", io_odom );
     logic_machine.addInput( "odom_accel", io_odom_accel );
@@ -403,8 +411,8 @@ void odomAndAccelHandler(const nav_msgs::Odometry::ConstPtr& message)
     m.getRPY(roll, pitch, yaw);
     current_location_odom_accel.theta = yaw;
 
-    linearVelocity = message->twist.twist.linear.x;
-    angularVelocity = message->twist.twist.angular.z;
+    linear_vel_odom_accel = message->twist.twist.linear.x;
+    angular_vel_odom_accel = message->twist.twist.angular.z;
 }
 
 void odomAccelAndGPSHandler(const nav_msgs::Odometry::ConstPtr& message)
@@ -420,8 +428,8 @@ void odomAccelAndGPSHandler(const nav_msgs::Odometry::ConstPtr& message)
   m.getRPY(roll, pitch, yaw);
   current_location_odom_accel_gps.theta = yaw;
 
-  linearVelocity = message->twist.twist.linear.x;
-  angularVelocity = message->twist.twist.angular.z;
+  linear_vel_odom_accel_gps = message->twist.twist.linear.x;
+  angular_vel_odom_accel_gps = message->twist.twist.angular.z;
 }
 
 void joyCmdHandler(const sensor_msgs::Joy::ConstPtr& message)

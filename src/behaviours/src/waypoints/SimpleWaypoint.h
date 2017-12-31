@@ -1,28 +1,31 @@
 #ifndef simplewaypoint_h
 #define simplewaypoint_h
 
-#include "../state_machine/StateMachine.h"
+#include "Waypoint.h"
 #include "../inputs/InputLocation.h"
+#include "WaypointUtilities.h"
 
 //SimpleWaypointStates seperate .cpp/.h
 
 struct SimpleWaypointParams
 {
     InputLocation *current_position;
+    IOFloat *linear_vel;
+    IOFloat *angular_vel;
     float x;
     float y;
 };
 
-class SimpleWaypoint : public StateMachine
+class SimpleWaypoint : public Waypoint
 {
     friend class SimpleWaypointState;
     public:
         SimpleWaypoint( struct SimpleWaypointParams params );
     private:
+        WaypointUtilities::PidPackage pids;
+        WaypointUtilities::DrivingParams driving_params;
         const float goal_x;
         const float goal_y;
-        float linear_velocity;
-        float angular_velocity;
 };
 
 //constructor builds adds states, initialized with inputs

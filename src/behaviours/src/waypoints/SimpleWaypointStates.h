@@ -24,18 +24,21 @@ class SimpleWaypointRotate : public SimpleWaypointState
 {
     public:
         SimpleWaypointRotate() : SimpleWaypointState( "simple_rotate" ) {}
+        virtual void action();
 };
 
 class SimpleWaypointSkid : public SimpleWaypointState
 {
     public:
         SimpleWaypointSkid() : SimpleWaypointState( "simple_skid" ) {}
+        virtual void action();
 };
 
 class SimpleWaypointArrived : public SimpleWaypointState
 {
     public:
         SimpleWaypointArrived() : SimpleWaypointState( "simple_arrived" ) {}
+        virtual void action();
 };
 
 #endif
