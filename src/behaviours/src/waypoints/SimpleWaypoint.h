@@ -21,7 +21,7 @@ class SimpleWaypoint : public Waypoint
     friend class SimpleWaypointState;
     friend class SimpleWaypointRotate;
     friend class SimpleWaypointSkid;
-    friend class SimpleWaypointArrival;
+    friend class SimpleWaypointArrived;
     public:
         SimpleWaypoint( struct SimpleWaypointParams params );
         bool updateDrivingParams();
