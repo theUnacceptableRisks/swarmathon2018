@@ -15,12 +15,15 @@ namespace WaypointUtilities
         float current_x;
         float current_y;
         float current_theta;
+        float current_linear_vel;
+        float current_angular_vel;
     } DrivingParams;
 
     /******************
      * Trig Shortcuts *
      ******************/
     float getDistance( DrivingParams params );
+    float getGoalTheta( DrivingParams params );
     float getAngularCorrectionNeeded( DrivingParams params );
 
    /*************
@@ -35,14 +38,14 @@ namespace WaypointUtilities
 
     typedef struct pid_package
     {
-        PID fast_vel_pid = PID( WaypointUtilities::fastVelConfig() );
-        PID fast_yaw_pid = PID( WaypointUtilities::fastYawConfig() );
+        PID fast_vel_pid = PID( fastVelConfig() );
+        PID fast_yaw_pid = PID( fastYawConfig() );
 
-        PID slow_vel_pid = PID( WaypointUtilities::slowVelConfig() );
-        PID slow_yaw_pid = PID( WaypointUtilities::slowYawConfig() );
+        PID slow_vel_pid = PID( slowVelConfig() );
+        PID slow_yaw_pid = PID( slowYawConfig() );
 
-        PID const_vel_pid = PID( WaypointUtilities::constVelConfig() );
-        PID const_yaw_pid = PID( WaypointUtilities::constYawConfig() );
+        PID const_vel_pid = PID( constVelConfig() );
+        PID const_yaw_pid = PID( constYawConfig() );
     } PidPackage;
 
     typedef enum
@@ -52,7 +55,7 @@ namespace WaypointUtilities
 
     typedef struct pid_params
     {
-        WaypointUtilities::PidType type;
+        PidType type;
         float velocity_error;	//the discrepency between current velocity and what you want to be at
         float angular_error;	//the discrepency between the current angle and what angle you want to be facing
         float velocity_goal;
@@ -60,7 +63,7 @@ namespace WaypointUtilities
         float saturation_point;	//not quite sure what this is about... entirely...
     } PidParams;
 
-    std::tuple<int,int> executePid( WaypointUtilities::PidParams params, WaypointUtilities::PidPackage &pids );
+    std::tuple<int,int> executePid( PidParams params, PidPackage &pids );
 
 };
 

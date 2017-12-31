@@ -12,14 +12,16 @@ float WaypointUtilities::getDistance( DrivingParams params )
                   fabs( params.goal_y - params.current_y ) );
 }
 
-float WaypointUtilities::getAngularCorrectionNeeded( DrivingParams params )
+float WaypointUtilities::getGoalTheta( DrivingParams params )
 {
     //goal_theta -> tan = opposite/adjacent, ie this gives us an angular heading we need to be on to reach out destination
+    return atan2( ( params.goal_y - params.current_y ), ( params.goal_x - params.current_x ) );
+}
+
+float WaypointUtilities::getAngularCorrectionNeeded( DrivingParams params )
+{
     //shortest_angular_distance finds the smaller of the two amounts we could rotate in either direction to arrive there
-
-    float goal_theta = atan2( ( params.goal_y - params.current_y ), ( params.goal_x - params.current_x ) );
-
-    return angles::shortest_angular_distance( params.current_theta, goal_theta );
+    return angles::shortest_angular_distance( params.current_theta, getGoalTheta( params ) );
 }
 
 /*************
@@ -153,7 +155,7 @@ PIDConfig WaypointUtilities::constYawConfig() {
   return config;
 }
 
-std::tuple<float,float> executePid( WaypointUtilities::PidParams params, WaypointUtilities::PidPackage &pids )
+std::tuple<int,int> WaypointUtilities::executePid( PidParams params, PidPackage &pids )
 {
     PID *vel_PID;
     PID *yaw_PID;
@@ -162,15 +164,15 @@ std::tuple<float,float> executePid( WaypointUtilities::PidParams params, Waypoin
 
     switch( params.type )
     {
-        case WaypointUtilities::FAST_PID:
+        case FAST_PID:
             vel_PID = &pids.fast_vel_pid;
             yaw_PID = &pids.fast_yaw_pid;
             break;
-        case WaypointUtilities::SLOW_PID:
+        case SLOW_PID:
             vel_PID = &pids.slow_vel_pid;
             yaw_PID = &pids.slow_yaw_pid;
             break;
-        case WaypointUtilities::CONST_PID:
+        case CONST_PID:
             vel_PID = &pids.const_vel_pid;
             yaw_PID = &pids.const_yaw_pid;
             break;
