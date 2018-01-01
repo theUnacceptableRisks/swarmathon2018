@@ -10,6 +10,7 @@ class SimpleWaypointState : public State
         SimpleWaypointState( std::string id ) : State( id ) {}
         virtual bool setOwner( StateMachine *sm );
         virtual std::string transition();
+        virtual std::string debugString() { return ( "running state: " + getIdentifier() ); }
     protected:
         SimpleWaypoint *sw_owner;
 };

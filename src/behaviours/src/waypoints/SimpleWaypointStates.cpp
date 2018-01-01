@@ -31,6 +31,8 @@ std::string SimpleWaypointState::transition()
 {
     std::string transition_to = getIdentifier();
 
+    std::cout << "starting transition" << std::endl;
+
     if( sw_owner->updateDrivingParams() )
     {
         if( WaypointUtilities::getDistance( sw_owner->driving_params ) < .1 ) //todo setup distance tolerance handling
@@ -40,7 +42,7 @@ std::string SimpleWaypointState::transition()
         else
         {
             float angularCorrection = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->driving_params );
-            if( fabs( angularCorrection ) > .2 ) //todo setup angular tolerance handling
+            if( fabs( angularCorrection ) > .3 ) //todo setup angular tolerance handling
             {
                 transition_to = "simple_rotate";
             }
@@ -54,6 +56,7 @@ std::string SimpleWaypointState::transition()
     {
         messaging::errorMsg( __func__, "updateDrivingParams failed to update." );
     }
+    return transition_to;
 }
 
 
@@ -69,15 +72,17 @@ void SimpleWaypointRotate::action()
 
     if( sw_owner->updateDrivingParams() )
     {
-        params.type = WaypointUtilities::FAST_PID;
+        params.type = WaypointUtilities::SLOW_PID;
         params.velocity_error = 0.0;
         params.velocity_goal = 0.0;
         params.angular_error = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->driving_params );
         params.angular_goal = WaypointUtilities::getGoalTheta( sw_owner->driving_params );
-        params.saturation_point = 180; //180 seems to be standard...?
+        params.saturation_point = 20; //180 seems to be standard...?
 
-        WaypointUtilities::executePid( params, sw_owner->pids );
+        leftAndRight = WaypointUtilities::executePid( params, sw_owner->pids );
     }
+    std::cout << "Left is " << std::get<0>( leftAndRight ) << std::endl;
+    std::cout << "Right is " << std::get<1>( leftAndRight ) << std::endl;
 
     sw_owner->setOutputLeftVelocity( std::get<0>( leftAndRight ) );
     sw_owner->setOutputRightVelocity( std::get<1>( leftAndRight ) );
@@ -101,7 +106,7 @@ void SimpleWaypointSkid::action()
         params.angular_goal = WaypointUtilities::getGoalTheta( sw_owner->driving_params );
         params.saturation_point = 180; //180 seems to be standard...?
 
-        WaypointUtilities::executePid( params, sw_owner->pids );
+        leftAndRight = WaypointUtilities::executePid( params, sw_owner->pids );
     }
 
     sw_owner->setOutputLeftVelocity( std::get<0>( leftAndRight ) );

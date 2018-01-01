@@ -179,15 +179,24 @@ std::tuple<int,int> WaypointUtilities::executePid( PidParams params, PidPackage 
     }
 
     vel = vel_PID->PIDOut( params.velocity_error, params.velocity_goal );
+    std::cout << "yaw_PID->config.Kp is " << yaw_PID->config.Kp << std::endl;
+    std::cout << "Angular Error is " << params.angular_error << std::endl;
+    std::cout << "Angular Goal is " << params.angular_goal << std::endl;
     yaw = yaw_PID->PIDOut( params.angular_error, params.angular_goal );
+    std::cout << "yaw is " << yaw << std::endl;
+    left = (int)(vel - yaw);
+    right = (int)(vel + yaw);
 
-    left = vel - yaw;
-    right = vel + yaw;
+    std::cout << "UtilLeft is " << left << std::endl;
+    std::cout << "UtilRight is " << right << std::endl;
 
     if (left  >  params.saturation_point) {left  =  params.saturation_point;}
     if (left  < -params.saturation_point) {left  = -params.saturation_point;}
     if (right >  params.saturation_point) {right =  params.saturation_point;}
     if (right < -params.saturation_point) {right = -params.saturation_point;}
+
+    std::cout << "UtilLeftAfterSat is " << left << std::endl;
+    std::cout << "UtilRightAfterSat is " << right << std::endl;
 
     return std::make_tuple( left, right );
 }

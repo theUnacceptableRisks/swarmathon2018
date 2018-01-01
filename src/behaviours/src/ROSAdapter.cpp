@@ -285,7 +285,7 @@ int main(int argc, char **argv)
     setupSubscribers( ros_handle, published_name );
     setupPublishers( ros_handle, published_name );
     setupTimerCallbacks( ros_handle );
-
+    setupLogicMachine();
 
     //TBD How to wrap this section up
     std_msgs::String msg;
@@ -328,6 +328,16 @@ void runStateMachines(const ros::TimerEvent&)
     // Robot is in automode
     if (currentMode == 2 || currentMode == 3)
     {
+        IOInt *left;
+        IOInt *right;
+
+        std::cout << "getting here." << std::endl;
+        test->run();
+        left = (IOInt *)test->getOutput( "left_velocity" );
+        right = (IOInt *)test->getOutput( "right_velocity" );
+
+        std::cout << "left: " << left->getValue() << " right: " << right->getValue() << std::endl;
+        sendDriveCommand( left->getValue(), right->getValue() );
 
     }
     else

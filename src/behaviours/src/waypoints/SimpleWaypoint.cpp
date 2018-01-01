@@ -1,4 +1,4 @@
- #include "SimpleWaypoint.h"
+#include "SimpleWaypoint.h"
 #include "SimpleWaypointStates.h"
 
 SimpleWaypoint::SimpleWaypoint( struct SimpleWaypointParams params ) : Waypoint(), goal_x(params.x), goal_y(params.y)
