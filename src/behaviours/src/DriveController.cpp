@@ -211,7 +211,8 @@ Result DriveController::DoWork()
   //package data for left and right values into result struct for use in ROSAdapter
   result.pd.right = right;
   result.pd.left = left;
-
+   std::cout << "left is " << left << std::endl;
+   std::cout << "right is " << right << std::endl;
   //return modified struct
   return result;
 
