@@ -34,7 +34,7 @@ PIDConfig WaypointUtilities::fastVelConfig()
 
   config.Kp = 60; //proportional constant
   config.Ki = 10; //integral constant
-  config.Kd = 2; //derivative constant
+  config.Kd = 02; //derivative constant
   config.satUpper = 255; //upper limit for PID output
   config.satLower = -255; //lower limit for PID output
   config.antiWindup = config.satUpper; //prevent integral from acruing error untill proportional output drops below a certain limit
@@ -53,9 +53,9 @@ PIDConfig WaypointUtilities::fastVelConfig()
 PIDConfig WaypointUtilities::fastYawConfig() {
   PIDConfig config;
 
-  config.Kp = 60;
-  config.Ki = 15;
-  config.Kd = 5;
+  config.Kp = 100;
+  config.Ki = 0;
+  config.Kd = 0;
   config.satUpper = 255;
   config.satLower = -255;
   config.antiWindup = config.satUpper/6;
@@ -74,7 +74,7 @@ PIDConfig WaypointUtilities::fastYawConfig() {
 PIDConfig WaypointUtilities::slowVelConfig() {
   PIDConfig config;
 
-  config.Kp = 100;
+  config.Kp = 120;
   config.Ki = 8;
   config.Kd = 1.1;
   config.satUpper = 255;
@@ -155,12 +155,14 @@ PIDConfig WaypointUtilities::constYawConfig() {
   return config;
 }
 
-std::tuple<int,int> WaypointUtilities::executePid( PidParams params, PidPackage &pids )
+std::tuple<int,int> WaypointUtilities::executePid( PidParams &params, PidPackage &pids )
 {
     PID *vel_PID;
     PID *yaw_PID;
-    float vel, yaw;
-    int left, right;
+    float vel = 0.0;
+    float yaw = 0.0;
+    int left = 0;
+    int right = 0;
 
     switch( params.type )
     {
@@ -179,24 +181,14 @@ std::tuple<int,int> WaypointUtilities::executePid( PidParams params, PidPackage 
     }
 
     vel = vel_PID->PIDOut( params.velocity_error, params.velocity_goal );
-    std::cout << "yaw_PID->config.Kp is " << yaw_PID->config.Kp << std::endl;
-    std::cout << "Angular Error is " << params.angular_error << std::endl;
-    std::cout << "Angular Goal is " << params.angular_goal << std::endl;
     yaw = yaw_PID->PIDOut( params.angular_error, params.angular_goal );
-    std::cout << "yaw is " << yaw << std::endl;
     left = (int)(vel - yaw);
     right = (int)(vel + yaw);
-
-    std::cout << "UtilLeft is " << left << std::endl;
-    std::cout << "UtilRight is " << right << std::endl;
 
     if (left  >  params.saturation_point) {left  =  params.saturation_point;}
     if (left  < -params.saturation_point) {left  = -params.saturation_point;}
     if (right >  params.saturation_point) {right =  params.saturation_point;}
     if (right < -params.saturation_point) {right = -params.saturation_point;}
-
-    std::cout << "UtilLeftAfterSat is " << left << std::endl;
-    std::cout << "UtilRightAfterSat is " << right << std::endl;
 
     return std::make_tuple( left, right );
 }

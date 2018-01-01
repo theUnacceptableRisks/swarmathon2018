@@ -320,24 +320,21 @@ int main(int argc, char **argv)
 // controllers in the abridge package.
 void runStateMachines(const ros::TimerEvent&)
 {
-    std_msgs::String stateMachineMsg;
-
     // time since timerStartTime was set to current time
-    timerTimeElapsed = time(0) - timerStartTime;
+    //timerTimeElapsed = time(0) - timerStartTime;
 
     // Robot is in automode
     if (currentMode == 2 || currentMode == 3)
     {
-        IOInt *left;
-        IOInt *right;
+        IOInt *left = 0;
+        IOInt *right = 0;
 
-        std::cout << "getting here." << std::endl;
         test->run();
         left = (IOInt *)test->getOutput( "left_velocity" );
         right = (IOInt *)test->getOutput( "right_velocity" );
 
-        std::cout << "left: " << left->getValue() << " right: " << right->getValue() << std::endl;
-        sendDriveCommand( left->getValue(), right->getValue() );
+        if( left && right )
+            sendDriveCommand( left->getValue(), right->getValue() );
 
     }
     else

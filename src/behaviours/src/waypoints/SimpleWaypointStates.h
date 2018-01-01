@@ -7,7 +7,7 @@
 class SimpleWaypointState : public State
 {
     public:
-        SimpleWaypointState( std::string id ) : State( id ) {}
+        SimpleWaypointState( std::string id ) : State( id ), sw_owner(0) {}
         virtual bool setOwner( StateMachine *sm );
         virtual std::string transition();
         virtual std::string debugString() { return ( "running state: " + getIdentifier() ); }

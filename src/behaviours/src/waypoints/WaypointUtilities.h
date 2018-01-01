@@ -10,13 +10,13 @@ namespace WaypointUtilities
 {
     typedef struct driving_params
     {
-        float goal_x;
-        float goal_y;
-        float current_x;
-        float current_y;
-        float current_theta;
-        float current_linear_vel;
-        float current_angular_vel;
+        float goal_x = 0.0;
+        float goal_y = 0.0;
+        float current_x = 0.0;
+        float current_y = 0.0;
+        float current_theta = 0.0;
+        float current_linear_vel = 0.0;
+        float current_angular_vel = 0.0;
     } DrivingParams;
 
     /******************
@@ -38,14 +38,14 @@ namespace WaypointUtilities
 
     typedef struct pid_package
     {
-        PID fast_vel_pid = PID( fastVelConfig() );
-        PID fast_yaw_pid = PID( fastYawConfig() );
+        PID fast_vel_pid; //= PID( fastVelConfig() );
+        PID fast_yaw_pid; //= PID( fastYawConfig() );
 
-        PID slow_vel_pid = PID( slowVelConfig() );
-        PID slow_yaw_pid = PID( slowYawConfig() );
+        PID slow_vel_pid; //= PID( slowVelConfig() );
+        PID slow_yaw_pid; //= PID( slowYawConfig() );
 
-        PID const_vel_pid = PID( constVelConfig() );
-        PID const_yaw_pid = PID( constYawConfig() );
+        PID const_vel_pid; //= PID( constVelConfig() );
+        PID const_yaw_pid; //= PID( constYawConfig() );
     } PidPackage;
 
     typedef enum
@@ -55,15 +55,15 @@ namespace WaypointUtilities
 
     typedef struct pid_params
     {
-        PidType type;
-        float velocity_error;	//the discrepency between current velocity and what you want to be at
-        float angular_error;	//the discrepency between the current angle and what angle you want to be facing
-        float velocity_goal;
-        float angular_goal;
-        float saturation_point;	//not quite sure what this is about... entirely...
+        PidType type = CONST_PID;
+        float velocity_error = 0.0;	//the discrepency between current velocity and what you want to be at
+        float angular_error = 0.0;	//the discrepency between the current angle and what angle you want to be facing
+        float velocity_goal = 0.0;
+        float angular_goal = 0.0;
+        float saturation_point = 0.0;	//not quite sure what this is about... entirely...
     } PidParams;
 
-    std::tuple<int,int> executePid( PidParams params, PidPackage &pids );
+    std::tuple<int,int> executePid( PidParams &params, PidPackage &pids );
 
 };
 

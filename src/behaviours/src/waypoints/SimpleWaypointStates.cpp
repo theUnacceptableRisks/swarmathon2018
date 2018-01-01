@@ -31,9 +31,7 @@ std::string SimpleWaypointState::transition()
 {
     std::string transition_to = getIdentifier();
 
-    std::cout << "starting transition" << std::endl;
-
-    if( sw_owner->updateDrivingParams() )
+    if( sw_owner && sw_owner->updateDrivingParams() )
     {
         if( WaypointUtilities::getDistance( sw_owner->driving_params ) < .1 ) //todo setup distance tolerance handling
         {
@@ -42,7 +40,7 @@ std::string SimpleWaypointState::transition()
         else
         {
             float angularCorrection = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->driving_params );
-            if( fabs( angularCorrection ) > .3 ) //todo setup angular tolerance handling
+            if( fabs( angularCorrection ) > .4 ) //todo setup angular tolerance handling
             {
                 transition_to = "simple_rotate";
             }
@@ -68,24 +66,22 @@ std::string SimpleWaypointState::transition()
 void SimpleWaypointRotate::action()
 {
     WaypointUtilities::PidParams params;
-    std::tuple<int,int> leftAndRight;
+    std::tuple<int,int> leftAndRight = std::make_tuple<int,int>( 0, 0 );
 
-    if( sw_owner->updateDrivingParams() )
+    if( sw_owner && sw_owner->updateDrivingParams() )
     {
-        params.type = WaypointUtilities::SLOW_PID;
+        params.type = WaypointUtilities::FAST_PID;
         params.velocity_error = 0.0;
         params.velocity_goal = 0.0;
         params.angular_error = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->driving_params );
         params.angular_goal = WaypointUtilities::getGoalTheta( sw_owner->driving_params );
-        params.saturation_point = 20; //180 seems to be standard...?
+        params.saturation_point = 180; //180 seems to be standard...?
 
         leftAndRight = WaypointUtilities::executePid( params, sw_owner->pids );
-    }
-    std::cout << "Left is " << std::get<0>( leftAndRight ) << std::endl;
-    std::cout << "Right is " << std::get<1>( leftAndRight ) << std::endl;
 
-    sw_owner->setOutputLeftVelocity( std::get<0>( leftAndRight ) );
-    sw_owner->setOutputRightVelocity( std::get<1>( leftAndRight ) );
+        sw_owner->setOutputLeftVelocity( std::get<0>( leftAndRight ) );
+        sw_owner->setOutputRightVelocity( std::get<1>( leftAndRight ) );
+    }
 }
 
 /*******************************
@@ -95,22 +91,22 @@ void SimpleWaypointRotate::action()
 void SimpleWaypointSkid::action()
 {
     WaypointUtilities::PidParams params;
-    std::tuple<int,int> leftAndRight;
+    std::tuple<int,int> leftAndRight = std::make_tuple<int,int>( 0, 0 );
 
-    if( sw_owner->updateDrivingParams() )
+    if( sw_owner && sw_owner->updateDrivingParams() )
     {
         params.type = WaypointUtilities::FAST_PID;
-        params.velocity_error = sw_owner->driving_params.current_linear_vel - .35;
+        params.velocity_error = .35 - sw_owner->driving_params.current_linear_vel;
         params.velocity_goal = .35;
         params.angular_error = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->driving_params );
         params.angular_goal = WaypointUtilities::getGoalTheta( sw_owner->driving_params );
         params.saturation_point = 180; //180 seems to be standard...?
 
         leftAndRight = WaypointUtilities::executePid( params, sw_owner->pids );
-    }
 
-    sw_owner->setOutputLeftVelocity( std::get<0>( leftAndRight ) );
-    sw_owner->setOutputRightVelocity( std::get<1>( leftAndRight ) );
+        sw_owner->setOutputLeftVelocity( std::get<0>( leftAndRight ) );
+        sw_owner->setOutputRightVelocity( std::get<1>( leftAndRight ) );
+    }
 }
 
 /*******************************
@@ -119,8 +115,11 @@ void SimpleWaypointSkid::action()
 
 void SimpleWaypointArrived::action()
 {
-    sw_owner->setOutputLeftVelocity( 0 );
-    sw_owner->setOutputRightVelocity( 0 );
+    if( sw_owner )
+    {
+        sw_owner->setOutputLeftVelocity( 0 );
+        sw_owner->setOutputRightVelocity( 0 );
+    }
 }
 
 
