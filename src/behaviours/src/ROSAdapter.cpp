@@ -211,7 +211,6 @@ void sigintEventHandler(int signal);
  ***********************/
 
 StateMachine logic_machine;
-SimpleWaypoint *test;
 
 void setupLogicMachine()
 {
@@ -231,22 +230,13 @@ void setupLogicMachine()
     logic_machine.addInput( "odom_accel_gps", io_odom_accel_gps );
     logic_machine.addInput( "sonar", io_sonar_array );
     logic_machine.addInput( "tags", io_tags );
-
-//    SimplyWaypoint test( { io_odom, 0.0, 0.0 } );
-    test = new SimpleWaypoint( { io_odom_accel, io_linear_vel_oa, io_angular_vel_oa, -2, 0 } );
+    logic_machine.addInput( "linear_vel_oa", io_linear_vel_oa );
+    logic_machine.addInput( "angular_vel_oa", io_angular_vel_oa );
+    logic_machine.addInput( "linear_vel_oag", io_linear_vel_oag );
+    logic_machine.addInput( "angular_vel_oag", io_angular_vel_oag );
 
     return;
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -326,10 +316,13 @@ void runStateMachines(const ros::TimerEvent&)
     // Robot is in automode
     if (currentMode == 2 || currentMode == 3)
     {
+        Waypoint *current_waypoint = 0;
         IOInt *left = 0;
         IOInt *right = 0;
 
-        test->run();
+        
+
+        current_waypoint->run();
         left = (IOInt *)test->getOutput( "left_velocity" );
         right = (IOInt *)test->getOutput( "right_velocity" );
 
