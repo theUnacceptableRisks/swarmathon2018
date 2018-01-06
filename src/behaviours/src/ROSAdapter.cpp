@@ -235,6 +235,8 @@ void setupLogicMachine()
     logic_machine.addInput( "linear_vel_oag", io_linear_vel_oag );
     logic_machine.addInput( "angular_vel_oag", io_angular_vel_oag );
 
+    /* add States */
+
     return;
 }
 
@@ -320,14 +322,21 @@ void runStateMachines(const ros::TimerEvent&)
         IOInt *left = 0;
         IOInt *right = 0;
 
-        
+        logic_machine.run();
+        current_waypoint = logic_machine.getOutput( "current_waypoint" );
 
-        current_waypoint->run();
-        left = (IOInt *)test->getOutput( "left_velocity" );
-        right = (IOInt *)test->getOutput( "right_velocity" );
+        /* TODO: add else messaging */
+        if( current_waypoint && is_io_valid( current_waypoint, iowp_validator ) )
+        {
+            current_waypoint->run();
 
-        if( left && right )
-            sendDriveCommand( left->getValue(), right->getValue() );
+            left = (IOInt *)current_waypoint->getOutput( "left_velocity" );
+            right = (IOInt *)current_waypoint->getOutput( "right_velocity" );
+
+            /* TODO: add else messaging */
+            if( ( left && right ) && ( is_io_valid( left, ioint_validator ) && is_io_valid( right, ioint_validator ) )
+                sendDriveCommand( left->getValue(), right->getValue() );
+        }
 
     }
     else
