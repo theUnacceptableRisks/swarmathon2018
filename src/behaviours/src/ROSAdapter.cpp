@@ -323,10 +323,10 @@ void runStateMachines(const ros::TimerEvent&)
         IOInt *right = 0;
 
         logic_machine.run();
-        current_waypoint = logic_machine.getOutput( "current_waypoint" );
+        current_waypoint = logic_machine.getCurrentWaypoint();
 
         /* TODO: add else messaging */
-        if( current_waypoint && is_io_valid( current_waypoint, iowp_validator ) )
+        if( current_waypoint )
         {
             current_waypoint->run();
 
