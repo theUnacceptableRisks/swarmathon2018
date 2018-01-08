@@ -11,7 +11,7 @@ class Waypoint : public StateMachine
 
         bool hasArrived( void ) { return has_arrived; }
 
-        std::tuple<float,float> getOutput()
+        std::tuple<int,int> getOutput()
         {
             return std::make_tuple( output_left_pwm, output_right_pwm );
         }
