@@ -62,23 +62,6 @@ void humanTime();
 void sendDriveCommand(double linearVel, double angularVel);
 
 
-// Numeric Variables for rover positioning
-geometry_msgs::Pose2D current_location_odom;
-geometry_msgs::Pose2D current_location_odom_accel;
-geometry_msgs::Pose2D current_location_odom_accel_gps;
-
-float linear_vel_odom_accel = 0.0;
-float angular_vel_odom_accel = 0.0;
-
-float linear_vel_odom_accel_gps = 0.0;
-float angular_vel_odom_accel_gps = 0.0;
-
-double us_left = 3.0;
-double us_right = 3.0;
-double us_center = 3.0;
-
-vector<Tag> tags;
-
 int currentMode = 0;
 const float state_machines_loop = 0.1; // time between state machines function call
 const float status_publish_interval = 1;
@@ -96,7 +79,6 @@ float drift_tolerance = 0.5; // meters
 std_msgs::String msg;
 
 
-geometry_msgs::Twist velocity;
 char host[128];
 char prev_state_machine[128];
 // records time for delays in sequanced actions, 1 second resolution.
@@ -114,10 +96,10 @@ long int getROSTimeInMilliSecs();
  * END ALPHABET GLOBAL SOUP *
  ****************************/
 
-
-
-
-
+/*****************
+ * Sensor Inputs *
+ *****************/
+LogicInputs inputs;
 
 
 /******************
@@ -210,31 +192,10 @@ void sigintEventHandler(int signal);
  * Logic State Machine *
  ***********************/
 
-StateMachine logic_machine;
+StateMachine logic_machine( inputs );
 
 void setupLogicMachine()
 {
-    InputLocation *io_odom = new InputLocation( &current_location_odom );
-    InputLocation *io_odom_accel = new InputLocation( &current_location_odom_accel );
-    InputLocation *io_odom_accel_gps = new InputLocation( &current_location_odom_accel_gps );
-    InputSonarArray *io_sonar_array = new InputSonarArray( &us_left, &us_right, &us_center );
-    InputTags *io_tags = new InputTags( &tags );
-    IOFloat *io_linear_vel_oa = new IOFloat( &linear_vel_odom_accel );
-    IOFloat *io_angular_vel_oa = new IOFloat( &angular_vel_odom_accel );
-    IOFloat *io_linear_vel_oag = new IOFloat( &linear_vel_odom_accel_gps );
-    IOFloat *io_angular_vel_oag = new IOFloat( &angular_vel_odom_accel_gps );
-
-
-    logic_machine.addInput( "odom", io_odom );
-    logic_machine.addInput( "odom_accel", io_odom_accel );
-    logic_machine.addInput( "odom_accel_gps", io_odom_accel_gps );
-    logic_machine.addInput( "sonar", io_sonar_array );
-    logic_machine.addInput( "tags", io_tags );
-    logic_machine.addInput( "linear_vel_oa", io_linear_vel_oa );
-    logic_machine.addInput( "angular_vel_oa", io_angular_vel_oa );
-    logic_machine.addInput( "linear_vel_oag", io_linear_vel_oag );
-    logic_machine.addInput( "angular_vel_oag", io_angular_vel_oag );
-
     /* add States */
 
     return;
@@ -347,8 +308,11 @@ void runStateMachines(const ros::TimerEvent&)
 
 void sendDriveCommand(double left, double right)
 {
+    geometry_msgs::Twist velocity;
+
     velocity.linear.x = left,
     velocity.angular.z = right;
+
     // publish the drive commands
     drive_control_publish.publish(velocity);
 }
@@ -399,48 +363,48 @@ void modeHandler(const std_msgs::UInt8::ConstPtr& message)
 /* this is awkward... do nothing for now*/
 void sonarHandler(const sensor_msgs::Range::ConstPtr& sonar_left, const sensor_msgs::Range::ConstPtr& sonar_center, const sensor_msgs::Range::ConstPtr& sonar_right)
 {
-    us_left = sonar_left->range;
-    us_right = sonar_right->range;
-    us_center = sonar_center->range;
+    inputs.us_left = sonar_left->range;
+    inputs.us_right = sonar_right->range;
+    inputs.us_center = sonar_center->range;
 }
 
 void odomHandler(const nav_msgs::Odometry::ConstPtr& message)
 {
-    current_location_odom.x = message->pose.pose.position.x;
-    current_location_odom.y = message->pose.pose.position.y;
+    inputs.raw_odom.x = message->pose.pose.position.x;
+    inputs.raw_odom.y = message->pose.pose.position.y;
 }
 void odomAndAccelHandler(const nav_msgs::Odometry::ConstPtr& message)
 {
     //Get (x,y) location directly from pose
-    current_location_odom_accel.x = message->pose.pose.position.x;
-    current_location_odom_accel.y = message->pose.pose.position.y;
+    inputs.odom_accel.x = message->pose.pose.position.x;
+    inputs.odom_accel.y = message->pose.pose.position.y;
 
     //Get theta rotation by converting quaternion orientation to pitch/roll/yaw
     tf::Quaternion q(message->pose.pose.orientation.x, message->pose.pose.orientation.y, message->pose.pose.orientation.z, message->pose.pose.orientation.w);
     tf::Matrix3x3 m(q);
     double roll, pitch, yaw;
     m.getRPY(roll, pitch, yaw);
-    current_location_odom_accel.theta = yaw;
+    inputs.odom_accel.theta = yaw;
 
-    linear_vel_odom_accel = message->twist.twist.linear.x;
-    angular_vel_odom_accel = message->twist.twist.angular.z;
+    inputs.linear_vel_odom_accel = message->twist.twist.linear.x;
+    inputs.angular_vel_odom_accel = message->twist.twist.angular.z;
 }
 
 void odomAccelAndGPSHandler(const nav_msgs::Odometry::ConstPtr& message)
 {
   //Get (x,y) location directly from pose
-  current_location_odom_accel_gps.x = message->pose.pose.position.x;
-  current_location_odom_accel_gps.y = message->pose.pose.position.y;
+  inputs.odom_accel_gps.x = message->pose.pose.position.x;
+  inputs.odom_accel_gps.y = message->pose.pose.position.y;
 
   //Get theta rotation by converting quaternion orientation to pitch/roll/yaw
   tf::Quaternion q(message->pose.pose.orientation.x, message->pose.pose.orientation.y, message->pose.pose.orientation.z, message->pose.pose.orientation.w);
   tf::Matrix3x3 m(q);
   double roll, pitch, yaw;
   m.getRPY(roll, pitch, yaw);
-  current_location_odom_accel_gps.theta = yaw;
+  inputs.odom_accel_gps.theta = yaw;
 
-  linear_vel_odom_accel_gps = message->twist.twist.linear.x;
-  angular_vel_odom_accel_gps = message->twist.twist.angular.z;
+  inputs.linear_vel_odom_accel_gps = message->twist.twist.linear.x;
+  inputs.angular_vel_odom_accel_gps = message->twist.twist.angular.z;
 }
 
 void joyCmdHandler(const sensor_msgs::Joy::ConstPtr& message)
