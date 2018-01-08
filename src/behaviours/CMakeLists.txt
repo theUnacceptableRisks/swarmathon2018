@@ -29,7 +29,7 @@ add_executable(
   src/PID.cpp
   src/state_machine/Error.cpp
   src/state_machine/IOType.cpp
-  src/inputs/Validators.cpp
+  src/io_types/Validators.cpp
   src/waypoints/WaypointUtilities.cpp
   src/waypoints/SimpleWaypoint.cpp
   src/waypoints/SimpleWaypointStates.cpp
