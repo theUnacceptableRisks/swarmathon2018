@@ -33,11 +33,8 @@
  * New Includes *
  ****************/
 #include "state_machine/StateMachine.h"
-#include "inputs/InputLocation.h"
-#include "inputs/InputSonarArray.h"
-#include "inputs/InputTags.h"
 #include "waypoints/SimpleWaypoint.h"
-
+#include "logic/LogicMachine.h"
 
 // To handle shutdown signals so the node quits
 // properly in response to "rosnode kill"
@@ -95,11 +92,6 @@ long int getROSTimeInMilliSecs();
 /****************************
  * END ALPHABET GLOBAL SOUP *
  ****************************/
-
-/*****************
- * Sensor Inputs *
- *****************/
-LogicInputs inputs;
 
 
 /******************
@@ -188,11 +180,16 @@ void setupTimerCallbacks( ros::NodeHandle &ros_handle )
  ******************/
 void sigintEventHandler(int signal);
 
+/*****************
+ * Sensor Inputs *
+ *****************/
+LogicInputs inputs;
+
 /***********************
  * Logic State Machine *
  ***********************/
 
-StateMachine logic_machine( inputs );
+LogicMachine logic_machine( &inputs );
 
 void setupLogicMachine()
 {
@@ -289,14 +286,17 @@ void runStateMachines(const ros::TimerEvent&)
         /* TODO: add else messaging */
         if( current_waypoint )
         {
-            current_waypoint->run();
+            int left = 0;
+            int right = 0;
+            std::tuple<int,int> outputs;
 
-            left = (IOInt *)current_waypoint->getOutput( "left_velocity" );
-            right = (IOInt *)current_waypoint->getOutput( "right_velocity" );
+            current_waypoint->run();
+            outputs = current_waypoint->getOutput();
+            left = std::get<0>( outputs );
+            right = std::get<1>( outputs );
 
             /* TODO: add else messaging */
-            if( ( left && right ) && ( is_io_valid( left, ioint_validator ) && is_io_valid( right, ioint_validator ) )
-                sendDriveCommand( left->getValue(), right->getValue() );
+            sendDriveCommand( left, right );
         }
 
     }
@@ -330,7 +330,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
 
     if (message->detections.size() > 0)
     {
-        tags.clear();
+        inputs.tags.clear();
 
         for (int i = 0; i < message->detections.size(); i++)
         {
@@ -349,7 +349,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
                                                                   tagPose.pose.orientation.y,
                                                                   tagPose.pose.orientation.z,
                                                                   tagPose.pose.orientation.w ) );
-            tags.push_back(loc);
+            inputs.tags.push_back(loc);
         }
     }
 }
