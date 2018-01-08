@@ -12,11 +12,11 @@ namespace WaypointUtilities
     {
         float goal_x = 0.0;
         float goal_y = 0.0;
-        float current_x = 0.0;
-        float current_y = 0.0;
-        float current_theta = 0.0;
-        float current_linear_vel = 0.0;
-        float current_angular_vel = 0.0;
+        float *current_x = 0;
+        float *current_y = 0;
+        float *current_theta = 0;
+        float *current_linear_vel = 0;
+        float *current_angular_vel = 0;
     } DrivingParams;
 
     /******************

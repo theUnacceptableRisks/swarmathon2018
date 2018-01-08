@@ -7,15 +7,6 @@
 
 //SimpleWaypointStates seperate .cpp/.h
 
-struct SimpleWaypointParams
-{
-    InputLocation *current_position;
-    IOFloat *linear_vel;
-    IOFloat *angular_vel;
-    float x;
-    float y;
-};
-
 class SimpleWaypoint : public Waypoint
 {
     friend class SimpleWaypointState;
@@ -23,11 +14,10 @@ class SimpleWaypoint : public Waypoint
     friend class SimpleWaypointSkid;
     friend class SimpleWaypointArrived;
     public:
-        SimpleWaypoint( struct SimpleWaypointParams params );
-        bool updateDrivingParams();
+        SimpleWaypoint( DrivingParams i );
     private:
         WaypointUtilities::PidPackage pids;
-        WaypointUtilities::DrivingParams driving_params;
+        WaypointUtilities::DrivingParams inputs;
         const float goal_x;
         const float goal_y;
 };
