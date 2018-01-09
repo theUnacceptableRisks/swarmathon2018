@@ -3,6 +3,7 @@
 
 #include "../state_machine/State.h"
 #include "LogicMachine.h"
+#include "search/SearchMachine.h"
 
 class SearchState : public LogicState
 {
