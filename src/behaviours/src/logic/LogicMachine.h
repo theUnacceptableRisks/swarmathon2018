@@ -1,3 +1,6 @@
+#ifndef logicmachine_h
+#define logicmachine_h
+
 #include "../state_machine/StateMachine.h"
 #include "../waypoints/Waypoint.h"
 #include <geometry_msgs/Pose2D.h>
@@ -35,3 +38,5 @@ class LogicMachine : public StateMachine
         LogicInputs *inputs;
         Waypoint *current_waypoint;
 };
+
+#endif
