@@ -14,6 +14,7 @@ bool SimpleWaypointState::setOwner( StateMachine *sm )
     {
        owner = sm;
        sw_owner = (SimpleWaypoint *)sm;
+       success = true;
     }
     return success;
 }
