@@ -1,8 +1,8 @@
 #ifndef logicstate_h
 #define logicstate_h
 
-#include "../state_machine/StateMachine.h"
-
+#include "../state_machine/State.h"
+#include "LogicMachine.h"
 class LogicState : public State
 {
     public:

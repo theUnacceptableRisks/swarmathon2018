@@ -6,13 +6,14 @@
 #include <geometry_msgs/Pose2D.h>
 #include "../Tag.h"
 #include <vector>
+#include "SearchState.h"
 
 typedef struct logic_inputs
 {
     geometry_msgs::Pose2D	raw_odom;
     geometry_msgs::Pose2D	odom_accel;
     geometry_msgs::Pose2D	odom_accel_gps;
-    vector<Tag> 		tags;
+    std::vector<Tag> 		tags;
     double			us_left = 0.0;
     double			us_right = 0.0;
     double			us_center = 0.0;
@@ -32,11 +33,15 @@ class LogicMachine : public StateMachine
     friend class StateDropOff;
     friend class StateObstacleAvoidance;
     public:
-        LogicMachine( LogicInputs *i ) : inputs(i), current_waypoint(0) {}
+        LogicMachine( LogicInputs *i ) : inputs(i), current_waypoint(0)
+        {
+            addState( "search_state", new SearchState( i ) );
+        }
         Waypoint *getCurrentWaypoint() { return current_waypoint; }
+    protected:
+        Waypoint *current_waypoint;
     private:
         LogicInputs *inputs;
-        Waypoint *current_waypoint;
 };
 
 #endif

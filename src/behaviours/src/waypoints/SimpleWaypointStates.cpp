@@ -122,6 +122,7 @@ void SimpleWaypointArrived::action()
     {
         sw_owner->setOutputLeftPWM( 0 );
         sw_owner->setOutputRightPWM( 0 );
+        sw_owner->has_arrived = true;
     }
 }
 

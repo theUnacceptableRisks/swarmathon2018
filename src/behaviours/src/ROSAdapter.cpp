@@ -194,7 +194,7 @@ LogicMachine logic_machine( &inputs );
 void setupLogicMachine()
 {
     /* add States */
-
+    logic_machine.addState( "search_state", new SearchState( &inputs ) );
     return;
 }
 

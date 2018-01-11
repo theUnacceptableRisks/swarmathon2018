@@ -33,6 +33,10 @@ add_executable(
   src/waypoints/WaypointUtilities.cpp
   src/waypoints/SimpleWaypoint.cpp
   src/waypoints/SimpleWaypointStates.cpp
+  src/logic/LogicState.cpp
+  src/logic/SearchState.cpp
+  src/logic/search/SearchMachine.cpp
+  src/logic/search/SearchStateBase.cpp
 )
 
 add_dependencies(behaviours ${catkin_EXPORTED_TARGETS})

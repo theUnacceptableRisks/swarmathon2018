@@ -8,12 +8,10 @@ class SearchMachine : public LogicMachine
     friend class SearchInit;
     friend class SearchDrive;
     public:
-        SearchMachine( LogicInputs *i ) : LogicMachine( i ) {}
+        SearchMachine( LogicInputs *i );
     private:
-        std::vector<Waypoint*> waypoints;
-}
-
-
-
+        void nextWaypoint();
+        std::vector<Waypoint> waypoints;
+};
 
 #endif

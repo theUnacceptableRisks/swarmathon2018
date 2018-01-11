@@ -18,8 +18,8 @@ class Waypoint : public StateMachine
     protected:
         void setOutputLeftPWM( int pwm ) { output_left_pwm = pwm; }
         void setOutputRightPWM( int pwm ) { output_right_pwm = pwm; }
-    private:
         bool has_arrived;
+    private:
         int output_left_pwm;
         int output_right_pwm;
 };
