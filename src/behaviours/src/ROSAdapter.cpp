@@ -296,6 +296,10 @@ void runStateMachines(const ros::TimerEvent&)
             /* TODO: add else messaging */
             sendDriveCommand( left, right );
         }
+        else
+        {
+            sendDriveCommand( 0, 0 );
+        }
 
     }
     else
