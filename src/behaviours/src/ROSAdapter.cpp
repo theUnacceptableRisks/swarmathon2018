@@ -277,8 +277,6 @@ void runStateMachines(const ros::TimerEvent&)
     if (currentMode == 2 || currentMode == 3)
     {
         Waypoint *current_waypoint = 0;
-        IOInt *left = 0;
-        IOInt *right = 0;
 
         logic_machine.run();
         current_waypoint = logic_machine.getCurrentWaypoint();
