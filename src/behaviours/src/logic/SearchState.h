@@ -8,7 +8,7 @@
 class SearchState : public LogicState
 {
    public:
-       SearchState() : State ( "search_state" ), ss_owner(0) {}
+       SearchState( LogicInputs *i ) : State ( "search_state" ), search_machine(i), ss_owner(0) {}
        virtual bool setOwner( StateMachine *sm );
        virtual void action( void );
 //       virtual std::string transition( void );
