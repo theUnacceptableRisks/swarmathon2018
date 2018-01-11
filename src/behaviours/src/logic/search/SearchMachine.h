@@ -3,12 +3,13 @@
 
 #include "../LogicMachine.h"
 
-class SearchMachine : public LogicMachine
+class SearchMachine : public StateMachine
 {
     friend class SearchInit;
     friend class SearchDrive;
     public:
         SearchMachine( LogicInputs *i );
+        Waypoint *getCurrentWaypoint();
     private:
         void nextWaypoint();
         std::vector<Waypoint> waypoints;

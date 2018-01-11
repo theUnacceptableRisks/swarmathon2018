@@ -6,7 +6,7 @@
 class LogicState : public State
 {
     public:
-        LogicState() : lm_owner(0) {}
+        LogicState( std::string identifier ) : State( identifier ), lm_owner(0) {}
         virtual bool setOwner( StateMachine *sm );
     private:
         LogicMachine *lm_owner;

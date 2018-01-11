@@ -19,3 +19,8 @@ void SearchMachine::nextWaypoint()
     }
 
 }
+
+Waypoint *SearchMachine::getCurrentWaypoint()
+{
+    return &waypoints.at(0);
+}

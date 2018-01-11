@@ -3,12 +3,13 @@
 
 #include "../state_machine/State.h"
 #include "LogicMachine.h"
-#include "search/SearchMachine.h"
+
+class SearchMachine;
 
 class SearchState : public LogicState
 {
    public:
-       SearchState( LogicInputs *i ) : State ( "search_state" ), ss_owner(0) {}
+       SearchState() : LogicState ( "search_state" ), ss_owner(0) {}
        virtual bool setOwner( StateMachine *sm );
        virtual void action( void );
 //       virtual std::string transition( void );
