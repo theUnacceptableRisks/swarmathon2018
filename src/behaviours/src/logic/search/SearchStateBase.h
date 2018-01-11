@@ -7,7 +7,7 @@
 class SearchStateBase : public State
 {
     public:
-        SearchStateBase( std::string identifier ) : State( identifier ), ssm_machine(0) {}
+        SearchStateBase( std::string identifier ) : State( identifier ), ssm_owner(0) {}
         virtual bool setOwner( StateMachine *sm );
     private:
         SearchMachine *ssm_owner;

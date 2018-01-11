@@ -8,9 +8,11 @@ class SearchMachine : public StateMachine
     friend class SearchInit;
     friend class SearchDrive;
     public:
+        SearchMachine();
         SearchMachine( LogicInputs *i );
         Waypoint *getCurrentWaypoint();
     private:
+        LogicInputs *inputs;
         void nextWaypoint();
         std::vector<Waypoint> waypoints;
 };

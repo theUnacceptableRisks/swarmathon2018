@@ -6,7 +6,6 @@
 #include <geometry_msgs/Pose2D.h>
 #include "../Tag.h"
 #include <vector>
-#include "SearchState.h"
 
 typedef struct logic_inputs
 {
@@ -26,21 +25,17 @@ typedef struct logic_inputs
 class LogicMachine : public StateMachine
 {
     /* need to write these  inits */
-    friend class StateInit;
-    friend class StateSearch;
-    friend class StatePickUp;
-    friend class StateFindHome;
-    friend class StateDropOff;
-    friend class StateObstacleAvoidance;
+    friend class InitState;
+    friend class SearchState;
+    friend class PickUpState;
+    friend class FindHomeState;
+    friend class DropOffState;
+    friend class ObstacleAvoidanceState;
     public:
-        LogicMachine( LogicInputs *i ) : inputs(i), current_waypoint(0)
-        {
-            addState( "search_state", new SearchState( i ) );
-        }
+        LogicMachine( LogicInputs *i );
         Waypoint *getCurrentWaypoint() { return current_waypoint; }
-    protected:
-        Waypoint *current_waypoint;
     private:
+        Waypoint *current_waypoint;
         LogicInputs *inputs;
 };
 

@@ -35,6 +35,7 @@
 #include "state_machine/StateMachine.h"
 #include "waypoints/SimpleWaypoint.h"
 #include "logic/LogicMachine.h"
+#include "logic/SearchState.h"
 
 // To handle shutdown signals so the node quits
 // properly in response to "rosnode kill"
@@ -193,8 +194,10 @@ LogicMachine logic_machine( &inputs );
 
 void setupLogicMachine()
 {
+    State *search_state = new SearchState();
+    std::cout << "state identifier " << search_state->getIdentifier() << std::endl;
     /* add States */
-    logic_machine.addState( "search_state", new SearchState( &inputs ) );
+    logic_machine.addState( search_state->getIdentifier(), search_state );
     return;
 }
 
@@ -279,6 +282,7 @@ void runStateMachines(const ros::TimerEvent&)
         Waypoint *current_waypoint = 0;
 
         logic_machine.run();
+        std::cout << "current state is..." << logic_machine.getCurrentIdentifier() << std::endl;
         current_waypoint = logic_machine.getCurrentWaypoint();
 
         /* TODO: add else messaging */
@@ -289,15 +293,19 @@ void runStateMachines(const ros::TimerEvent&)
             std::tuple<int,int> outputs;
 
             current_waypoint->run();
+
             outputs = current_waypoint->getOutput();
             left = std::get<0>( outputs );
             right = std::get<1>( outputs );
 
+            std::cout << "Left is " << left << std::endl;
+            std::cout << "Right is " << right << std::endl;
             /* TODO: add else messaging */
             sendDriveCommand( left, right );
         }
         else
         {
+            std::cout << "Current Waypoint is null" << std::endl;
             sendDriveCommand( 0, 0 );
         }
 
