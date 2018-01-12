@@ -2,11 +2,11 @@
 
 void SearchState::action()
 {
-    search_machine.run();
+    search_machine->run();
     //TODO: else messaging
     if( lm_owner )
     {
-        lm_owner->current_waypoint = search_machine.getCurrentWaypoint();
+        lm_owner->current_waypoint = search_machine->getCurrentWaypoint();
     }
 }
 
@@ -18,7 +18,7 @@ bool SearchState::setOwner( StateMachine *sm )
     {
         owner = sm;
         lm_owner = (LogicMachine *)sm;
-        search_machine = SearchMachine( lm_owner->inputs );
+        search_machine = new SearchMachine( lm_owner->inputs );
         success = true;
     }
 
