@@ -2,26 +2,44 @@
 #define searchinit_h
 
 #include "SearchStateBase.h"
+#include "../../waypoints/WaypointUtilities.h"
 
 class SearchInit : public SearchStateBase
 {
     public:
-        SearchInit() : SearchStateBase( "search_init" )
+        SearchInit() : SearchStateBase( "search_init" ), setup_complete(false) {}
+        virtual void action()
         {
-            WaypointUtilities::DrivingParams params;
-            params.goal_x = -2.0;
-            params.goal_y = 0;
-            params.current_x = &ssm_owner->inputs.odom_accel.x;
-            params.current_y = &ssm_owner->inputs.odom_accel.y;
-            params.current_theta = &ssm_owner->inputs.odom_accel.theta;
-            params.current_linear_vel = &ssm_owner->inputs.linear_vel_odom_accel;
-            params.current_angular_vel = &ssm_owner->inputs.angular_vel_odom_accel;
-            ssm_owner->waypoints.push_back();
+            if( ssm_owner )
+            {
+                WaypointUtilities::DrivingParams params;
+
+                params.goal_x = -2.0;
+                params.goal_y = 0;
+                params.current_x = &ssm_owner->inputs->odom_accel.x;
+                params.current_y = &ssm_owner->inputs->odom_accel.y;
+                params.current_theta = &ssm_owner->inputs->odom_accel.theta;
+                params.current_linear_vel = &ssm_owner->inputs->linear_vel_odom_accel;
+                params.current_angular_vel = &ssm_owner->inputs->angular_vel_odom_accel;
+
+                SimpleWaypoint *waypoint = new SimpleWaypoint( params );
+
+                ssm_owner->waypoints.push_back( waypoint );
+                setup_complete = true;
+            }
+
         }
-        virtual void transition()
+        virtual std::string transition()
         {
-            return "search_drive";
+            std::string transition_to = getIdentifier();
+
+            if( setup_complete )
+                transition_to = "search_drive";
+
+            return transition_to;
         }
-}
+    private:
+        bool setup_complete;
+};
 
 #endif

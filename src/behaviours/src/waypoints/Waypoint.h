@@ -7,7 +7,7 @@
 class Waypoint : public StateMachine
 {
     public:
-        Waypoint() : has_arrived(false), output_left_pwm(0), output_right_pwm(0) {}
+        Waypoint() : StateMachine(), has_arrived(false), output_left_pwm(0), output_right_pwm(0) {}
 
         bool hasArrived( void ) { return has_arrived; }
 

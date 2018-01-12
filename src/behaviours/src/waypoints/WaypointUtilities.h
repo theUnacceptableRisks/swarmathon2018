@@ -10,13 +10,13 @@ namespace WaypointUtilities
 {
     typedef struct driving_params
     {
-        float goal_x = 0.0;
-        float goal_y = 0.0;
-        float *current_x = 0;
-        float *current_y = 0;
-        float *current_theta = 0;
-        float *current_linear_vel = 0;
-        float *current_angular_vel = 0;
+        double goal_x = 0.0;
+        double goal_y = 0.0;
+        double *current_x = 0;
+        double *current_y = 0;
+        double *current_theta = 0;
+        double *current_linear_vel = 0;
+        double *current_angular_vel = 0;
     } DrivingParams;
 
     /******************

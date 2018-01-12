@@ -189,13 +189,11 @@ LogicInputs inputs;
 /***********************
  * Logic State Machine *
  ***********************/
-
 LogicMachine logic_machine( &inputs );
 SearchState search_state;
 
 void setupLogicMachine()
 {
-    std::cout << "state identifier " << search_state.getIdentifier() << std::endl;
     /* add States */
     logic_machine.addState( search_state.getIdentifier(), (State *)&search_state );
     return;

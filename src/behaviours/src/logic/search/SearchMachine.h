@@ -5,6 +5,7 @@
 
 class SearchMachine : public StateMachine
 {
+    friend class SearchStateBase;
     friend class SearchInit;
     friend class SearchDrive;
     public:
@@ -14,7 +15,7 @@ class SearchMachine : public StateMachine
     private:
         LogicInputs *inputs;
         void nextWaypoint();
-        std::vector<Waypoint> waypoints;
+        std::vector<Waypoint*> waypoints;
 };
 
 #endif

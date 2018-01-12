@@ -1,11 +1,12 @@
 #ifndef logicmachine_h
 #define logicmachine_h
 
+#include <vector>
+#include <geometry_msgs/Pose2D.h>
+
 #include "../state_machine/StateMachine.h"
 #include "../waypoints/Waypoint.h"
-#include <geometry_msgs/Pose2D.h>
 #include "../Tag.h"
-#include <vector>
 
 typedef struct logic_inputs
 {
@@ -16,10 +17,10 @@ typedef struct logic_inputs
     double			us_left = 0.0;
     double			us_right = 0.0;
     double			us_center = 0.0;
-    float			linear_vel_odom_accel = 0.0;
-    float			linear_vel_odom_accel_gps = 0.0;
-    float			angular_vel_odom_accel = 0.0;
-    float			angular_vel_odom_accel_gps = 0.0;
+    double			linear_vel_odom_accel = 0.0;
+    double			linear_vel_odom_accel_gps = 0.0;
+    double			angular_vel_odom_accel = 0.0;
+    double			angular_vel_odom_accel_gps = 0.0;
 } LogicInputs;
 
 class LogicMachine : public StateMachine

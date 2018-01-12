@@ -7,8 +7,17 @@ class SearchDrive : public SearchStateBase
         SearchDrive() : SearchStateBase( "search_drive" ) {}
         virtual void action()
         {
-           if( ssm_owner->waypoints.at(0)->hasArrived() )
-              ssm_owner->nextWaypoint();
+           if( ssm_owner && ssm_owner->waypoints.size() > 0 )
+           {
+               Waypoint *waypoint = 0;
+               if( ssm_owner->waypoints.front() )
+               {
+                   if( waypoint->hasArrived() )
+                       ssm_owner->nextWaypoint();
+               }
+               else
+                   std::cout << "waypoint is null... shouldn't be" << std::endl;
+           }
         }
 };
 
