@@ -9,8 +9,8 @@ class SearchDrive : public SearchStateBase
         {
            if( ssm_owner && ssm_owner->waypoints.size() > 0 )
            {
-               Waypoint *waypoint = 0;
-               if( ssm_owner->waypoints.front() )
+               Waypoint *waypoint = ssm_owner->waypoints.front();
+               if( waypoint )
                {
                    if( waypoint->hasArrived() )
                        ssm_owner->nextWaypoint();

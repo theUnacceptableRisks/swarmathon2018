@@ -23,8 +23,8 @@ class SearchInit : public SearchStateBase
                 params.current_angular_vel = &ssm_owner->inputs->angular_vel_odom_accel;
 
                 SimpleWaypoint *waypoint = new SimpleWaypoint( params );
+                ssm_owner->waypoints.push_back( (Waypoint *)waypoint );
 
-                ssm_owner->waypoints.push_back( waypoint );
                 setup_complete = true;
             }
 
