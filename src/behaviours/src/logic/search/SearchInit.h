@@ -26,8 +26,8 @@ class SearchInit : public SearchStateBase
                 //ssm_owner->waypoints.push_back( (Waypoint *)waypoint );
 
                 for(int i = 0; i < 15; i ++){
-                    params.goal_x = ((int)(i/4)*4) * (((i%2)*2)-1)/3;
-                    params.goal_y = ((int)((i-2)/4)*4) * ((((i-2)%2)*2)-1)/3;
+                    params.goal_x = ( ( ((int)((i+4)/4))) * (pow(-1,((i+2)/2)) ) ) ;
+                    params.goal_y = ( ( ((int)((i+3)/4))) * (pow(-1,((i+1)/2)) ) ) ;
                     ssm_owner->waypoints.push_back( new SimpleWaypoint( params ) );
                 }
 
