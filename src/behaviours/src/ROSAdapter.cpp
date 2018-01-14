@@ -36,6 +36,7 @@
 #include "waypoints/SimpleWaypoint.h"
 #include "logic/LogicMachine.h"
 #include "logic/SearchState.h"
+#include "logic/search/SearchInit.h"
 
 // To handle shutdown signals so the node quits
 // properly in response to "rosnode kill"
@@ -90,6 +91,10 @@ float timerTimeElapsed = 0;
 // Converts the time passed as reported by ROS (which takes Gazebo simulation rate into account) into milliseconds as an integer.
 long int getROSTimeInMilliSecs();
 
+int roverID = 0;
+int numberOfRovers = 1;
+string roverName = "";
+
 /****************************
  * END ALPHABET GLOBAL SOUP *
  ****************************/
@@ -105,6 +110,7 @@ ros::Publisher wrist_angle_publish;
 ros::Publisher info_log_publisher;
 ros::Publisher drive_control_publish;
 ros::Publisher heartbeat_publisher;
+ros::Publisher rover_id_publisher;
 
 void setupPublishers( ros::NodeHandle &ros_handle, string published_name )
 {
@@ -115,6 +121,13 @@ void setupPublishers( ros::NodeHandle &ros_handle, string published_name )
     info_log_publisher = ros_handle.advertise<std_msgs::String>("/infoLog", 1, true);
     drive_control_publish = ros_handle.advertise<geometry_msgs::Twist>((published_name + "/driveControl"), 10);
     heartbeat_publisher = ros_handle.advertise<std_msgs::String>((published_name + "/behaviour/heartbeat"), 1, true);
+    rover_id_publisher = ros_handle.advertise<std_msgs::String>(("roverID"), 1, true);
+
+    //Publish name to roverID topic
+    roverName = published_name;
+    std_msgs::String name;
+    name.data = published_name;
+    rover_id_publisher.publish(name);
 }
 
 /*******************
@@ -125,6 +138,7 @@ ros::Subscriber mode_subscriber;
 ros::Subscriber target_subscriber;
 ros::Subscriber odometry_subscriber;
 ros::Subscriber map_subscriber;
+ros::Subscriber rover_id_subscriber;
 
 /******************************************
  * ROS Callback Functions for Subscribers *
@@ -137,6 +151,7 @@ void odomAndAccelHandler(const nav_msgs::Odometry::ConstPtr& message);
 void odomAccelAndGPSHandler(const nav_msgs::Odometry::ConstPtr& message);
 void manualWaypointHandler(const swarmie_msgs::Waypoint& message);
 void sonarHandler(const sensor_msgs::Range::ConstPtr& sonarLeft, const sensor_msgs::Range::ConstPtr& sonarCenter, const sensor_msgs::Range::ConstPtr& sonarRight);
+void roverIDHandler(const std_msgs::String::ConstPtr& message);
 
 void setupSubscribers( ros::NodeHandle &ros_handle, string published_name )
 {
@@ -145,6 +160,7 @@ void setupSubscribers( ros::NodeHandle &ros_handle, string published_name )
     target_subscriber = ros_handle.subscribe((published_name + "/targets"), 10, targetHandler);
     odometry_subscriber = ros_handle.subscribe((published_name + "/odom/filtered"), 10, odomAndAccelHandler);
     map_subscriber = ros_handle.subscribe((published_name + "/odom/ekf"), 10, odomAccelAndGPSHandler);
+    rover_id_subscriber = ros_handle.subscribe("/roverID", 10, roverIDHandler);
 
     //Sonar Stuff
     message_filters::Subscriber<sensor_msgs::Range> sonar_left_subscriber(ros_handle, (published_name + "/sonarLeft"), 10);
@@ -248,7 +264,7 @@ int main(int argc, char **argv)
     msg.data = ss.str();
     info_log_publisher.publish(msg);
     timerStartTime = time(0);
-
+    
     ros::spin();
 
     return EXIT_SUCCESS;
@@ -328,6 +344,22 @@ void sendDriveCommand(double left, double right)
 /*************************
  * ROS CALLBACK HANDLERS *
  *************************/
+
+ void roverIDHandler(const std_msgs::String::ConstPtr& message){
+    string msgName = message->data;
+    for(int i = 0; (i < roverName.length() && i < msgName.length()); i++){
+        if(roverName.at(i) > msgName.at(i)){
+            roverID++;
+            numberOfRovers++;
+            i = roverName.length();
+            break;
+        } else if (roverName.at(i) < msgName.at(i)){
+            numberOfRovers ++;
+            i = roverName.length();
+            break;
+        }
+    }
+ }
 
 void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& message)
 {

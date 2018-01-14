@@ -4,6 +4,13 @@
 #include "SearchStateBase.h"
 #include "../../waypoints/WaypointUtilities.h"
 
+#include <math.h> 
+
+#define PI 3.14159265
+
+extern int roverID;
+extern int numberOfRovers;
+
 class SearchInit : public SearchStateBase
 {
     public:
@@ -25,12 +32,20 @@ class SearchInit : public SearchStateBase
                 //SimpleWaypoint *waypoint = new SimpleWaypoint( params );
                 //ssm_owner->waypoints.push_back( (Waypoint *)waypoint );
 
+                /*
+                *   Square spiral search made by Oliver.
+                *//*
                 for(int i = 0; i < 15; i ++){
                     params.goal_x = ( ( ((int)((i+4)/4))) * (pow(-1,((i+2)/2)) ) ) ;
                     params.goal_y = ( ( ((int)((i+3)/4))) * (pow(-1,((i+1)/2)) ) ) ;
                     ssm_owner->waypoints.push_back( new SimpleWaypoint( params ) );
                 }
-
+                */
+                for(int i = 0; i < 15; i ++){
+                    params.goal_x = cos( ((((2*PI)/numberOfRovers)*roverID ) * ((i%4)/2)  ) + ((((2*PI)/numberOfRovers)*(roverID+1) ) * (int)( (i+2)%4/2)) ) * (int) ((i+1)/2);
+                    params.goal_y = sin( ((((2*PI)/numberOfRovers)*roverID ) * ((i%4)/2)  ) + ((((2*PI)/numberOfRovers)*(roverID+1) ) * (int)( (i+2)%4/2)) ) * (int) ((i+1)/2);
+                    ssm_owner->waypoints.push_back( new SimpleWaypoint( params ) );
+                }
 
                 setup_complete = true;
             }
