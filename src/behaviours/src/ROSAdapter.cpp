@@ -359,8 +359,8 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
 {
     // Don't pass April tag data to the logic controller if the robot is not in autonomous mode.
     // This is to make sure autonomous behaviours are not triggered while the rover is in manual mode.
-    if(currentMode == 0 || currentMode == 1)
-        return;
+//    if(currentMode == 0 || currentMode == 1)
+  //      return;
 
     if (message->detections.size() > 0)
     {
@@ -383,9 +383,9 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
                                                                   tagPose.pose.orientation.y,
                                                                   tagPose.pose.orientation.z,
                                                                   tagPose.pose.orientation.w ) );
-            cout << loc << std::endl;
+            inputs.tags.push_back( loc );
 
-            inputs.tags.push_back(loc);
+            cout << loc << std::endl;
         }
     }
 }
