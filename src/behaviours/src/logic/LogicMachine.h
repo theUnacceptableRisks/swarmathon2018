@@ -6,6 +6,7 @@
 
 #include "../state_machine/StateMachine.h"
 #include "../waypoints/Waypoint.h"
+#include "../Gripper.h"
 #include "../Tag.h"
 
 typedef struct logic_inputs
@@ -35,8 +36,10 @@ class LogicMachine : public StateMachine
     public:
         LogicMachine( LogicInputs *i );
         Waypoint *getCurrentWaypoint() { return current_waypoint; }
+        Gripper::gripper_position getCurrentGripperPosition() { return current_gripper_position; }
     private:
         Waypoint *current_waypoint;
+        Gripper::gripper_position current_gripper_position;
         LogicInputs *inputs;
 };
 
