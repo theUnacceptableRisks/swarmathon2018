@@ -28,6 +28,7 @@ add_executable(
   src/ROSAdapter.cpp
   src/PID.cpp
   src/Gripper.cpp
+  src/TagUtilities.cpp
   src/state_machine/Error.cpp
   src/waypoints/WaypointUtilities.cpp
   src/waypoints/SimpleWaypoint.cpp
