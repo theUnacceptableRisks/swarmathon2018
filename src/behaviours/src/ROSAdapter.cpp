@@ -36,6 +36,7 @@
 #include "waypoints/SimpleWaypoint.h"
 #include "logic/LogicMachine.h"
 #include "logic/SearchState.h"
+#include "Gripper.h"
 
 // To handle shutdown signals so the node quits
 // properly in response to "rosnode kill"
@@ -58,7 +59,7 @@ void humanTime();
 
 // Behaviours Logic Functions
 void sendDriveCommand(double linearVel, double angularVel);
-
+void sendGripperPosition( Gripper::gripper_position pos );
 
 int currentMode = 0;
 const float state_machines_loop = 0.1; // time between state machines function call
@@ -278,12 +279,19 @@ void runStateMachines(const ros::TimerEvent&)
     if (currentMode == 2 || currentMode == 3)
     {
         Waypoint *current_waypoint = 0;
+        Gripper::gripper_position gripper_pos;
 
+
+        /***************************
+         * State Machine Execution *
+         ***************************/
         logic_machine.run();
         std::cout << "current state is..." << logic_machine.getCurrentIdentifier() << std::endl;
         current_waypoint = logic_machine.getCurrentWaypoint();
 
-        /* TODO: add else messaging */
+        /*****************
+         * Drive Portion *
+         *****************/
         if( current_waypoint )
         {
             int left = 0;
@@ -298,6 +306,7 @@ void runStateMachines(const ros::TimerEvent&)
 
             std::cout << "Left is " << left << std::endl;
             std::cout << "Right is " << right << std::endl;
+
             /* TODO: add else messaging */
             sendDriveCommand( left, right );
         }
@@ -306,7 +315,11 @@ void runStateMachines(const ros::TimerEvent&)
             std::cout << "Current Waypoint is null" << std::endl;
             sendDriveCommand( 0, 0 );
         }
-
+        /*******************
+         * Gripper Portion *
+         *******************/
+        gripper_pos = logic_machine.getCurrentGripperPosition();
+        sendGripperPosition( gripper_pos );
     }
     else
     {
@@ -323,6 +336,19 @@ void sendDriveCommand(double left, double right)
 
     // publish the drive commands
     drive_control_publish.publish(velocity);
+}
+
+void sendGripperPosition( Gripper::gripper_position pos )
+{
+    std_msgs::Float32 wrist;
+    std_msgs::Float32 fingers;
+    std::tuple<double,double> values = Gripper::getWristFingerValuesForPosition( pos );
+
+    wrist.data = std::get<0>( values );
+    fingers.data = std::get<1>( values );
+
+    wrist_angle_publish.publish( wrist );
+    finger_angle_publish.publish( fingers );
 }
 
 /*************************
