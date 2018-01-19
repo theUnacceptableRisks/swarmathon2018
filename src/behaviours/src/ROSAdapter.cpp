@@ -383,6 +383,8 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
                                                                   tagPose.pose.orientation.y,
                                                                   tagPose.pose.orientation.z,
                                                                   tagPose.pose.orientation.w ) );
+            cout << loc << std::endl;
+
             inputs.tags.push_back(loc);
         }
     }
