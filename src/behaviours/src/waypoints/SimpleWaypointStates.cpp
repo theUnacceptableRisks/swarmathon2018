@@ -34,15 +34,31 @@ std::string SimpleWaypointState::transition()
 
     if( sw_owner )
     {
-        if( WaypointUtilities::getDistance( sw_owner->inputs ) < .1 ) //todo setup distance tolerance handling
+        float angularCorrection = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->inputs );
+
+        if( WaypointUtilities::getDistance( sw_owner->inputs ) < sw_owner->supplemental_inputs.final_approach_threshold &&
+            angularCorrection < sw_owner->supplemental_inputs.skid_steer_threshold ) //todo setup distance tolerance handling
         {
-            transition_to = "simple_arrived";
+            if( sw_owner->supplemental_inputs.odom_x && sw_owner->supplemental_inputs.odom_y )
+                transition_to = "simple_final_approach";
+            else
+                transition_to = "simple_arrived";
+        }
+        else if( getIdentifier() == "simple_final_approach" )
+        {
+            WaypointUtilities::DrivingParams final_params;
+            final_params.goal_x = sw_owner->approach_x;
+            final_params.goal_y = sw_owner->approach_y;
+            final_params.current_x = sw_owner->supplemental_inputs.odom_x;
+            final_params.current_y = sw_owner->supplemental_inputs.odom_y;
+
+            if( WaypointUtilities::getDistance( final_params ) <= sw_owner->supplemental_inputs.final_approach_threshold )
+                transition_to = "simple_arrived";
+
         }
         else
         {
-            float angularCorrection = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->inputs );
-
-            if( fabs( angularCorrection ) > .4 ) //todo setup angular tolerance handling
+            if( fabs( angularCorrection ) > sw_owner->supplemental_inputs.skid_steer_threshold ) //todo setup angular tolerance handling
             {
                 transition_to = "simple_rotate";
             }
@@ -66,6 +82,12 @@ std::string SimpleWaypointState::transition()
  * SimpleWaypoint Rotate State *
  *******************************/
 
+void SimpleWaypointRotate::onExit( std::string next_state )
+{
+    if( sw_owner && next_state == "simple_final_approach" )
+        sw_owner->approach_vel = 20;
+}
+
 void SimpleWaypointRotate::action()
 {
     WaypointUtilities::PidParams params;
@@ -73,7 +95,6 @@ void SimpleWaypointRotate::action()
 
     if( sw_owner )
     {
-        params.type = WaypointUtilities::FAST_PID;
         params.velocity_error = 0.0;
         params.velocity_goal = 0.0;
         params.angular_error = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->inputs );
@@ -91,6 +112,17 @@ void SimpleWaypointRotate::action()
  * SimpleWaypoint Skid State *
  *******************************/
 
+void SimpleWaypointSkid::onExit( std::string next_state )
+{
+    if( sw_owner && next_state == "simple_final_approach" )
+    {
+        sw_owner->approach_vel = 0;
+        sw_owner->approach_vel += std::get<0>( sw_owner->getOutput() );
+        sw_owner->approach_vel += std::get<1>( sw_owner->getOutput() );
+        sw_owner->approach_vel /= 2;
+    }
+}
+
 void SimpleWaypointSkid::action()
 {
     WaypointUtilities::PidParams params;
@@ -98,8 +130,7 @@ void SimpleWaypointSkid::action()
 
     if( sw_owner )
     {
-        params.type = WaypointUtilities::FAST_PID;
-        params.velocity_error = .35 - *sw_owner->inputs.current_linear_vel;
+        params.velocity_error = WaypointUtilities::getDistance( sw_owner->inputs );
         params.velocity_goal = .35;
         params.angular_error = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->inputs );
         params.angular_goal = WaypointUtilities::getGoalTheta( sw_owner->inputs );
@@ -110,6 +141,24 @@ void SimpleWaypointSkid::action()
         sw_owner->setOutputLeftPWM( std::get<0>( leftAndRight ) );
         sw_owner->setOutputRightPWM( std::get<1>( leftAndRight ) );
     }
+}
+
+/***************************************
+ * SimpleWaypoint Final Approach State *
+ ***************************************/
+void SimpleWaypointFinalApproach::onEnter( std::string prev_state )
+{
+    if( sw_owner && sw_owner->supplemental_inputs.odom_x && sw_owner->supplemental_inputs.odom_y )
+    {
+        sw_owner->approach_x = *sw_owner->supplemental_inputs.odom_x;
+        sw_owner->approach_y = *sw_owner->supplemental_inputs.odom_y;
+    }
+}
+
+void SimpleWaypointFinalApproach::action()
+{
+    sw_owner->setOutputLeftPWM( sw_owner->approach_vel );
+    sw_owner->setOutputRightPWM( sw_owner->approach_vel );
 }
 
 /*******************************

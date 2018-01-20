@@ -13,6 +13,7 @@ class SearchInit : public SearchStateBase
             if( ssm_owner )
             {
                 WaypointUtilities::DrivingParams params;
+                SimpleWaypointSupplementalInputs s_params;
 
                 params.goal_x = -2.0;
                 params.goal_y = 0;
@@ -22,7 +23,10 @@ class SearchInit : public SearchStateBase
                 params.current_linear_vel = &ssm_owner->inputs->linear_vel_odom_accel;
                 params.current_angular_vel = &ssm_owner->inputs->angular_vel_odom_accel;
 
-                SimpleWaypoint *waypoint = new SimpleWaypoint( params );
+                s_params.odom_x = &ssm_owner->inputs->raw_odom.x;
+                s_params.odom_y = &ssm_owner->inputs->raw_odom.y;
+
+                SimpleWaypoint *waypoint = new SimpleWaypoint( params, s_params );
                 ssm_owner->waypoints.push_back( (Waypoint *)waypoint );
 
                 setup_complete = true;
