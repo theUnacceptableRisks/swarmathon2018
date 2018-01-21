@@ -3,18 +3,14 @@
 
 #include "../Tag.h"
 #include "../TagUtilities.h"
+#include "../logic/LogicTypes.h"
 #include "Waypoint.h"
 
-typedef struct approach_tag_params
-{
-    std::vector<Tag> *tags = 0.0;
-    int value = 0;
-} ApproachTagParams;
 
 class ApproachTagWaypoint : public Waypoint
 {
     public:
-        ApproachTagWaypoint( ApproachTagParams p );
+        ApproachTagWaypoint( LogicInputs *i );
     private:
         WaypointUtilties::PidPackage pids;
         ApproachTagParams inputs;
