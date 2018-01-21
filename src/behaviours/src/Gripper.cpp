@@ -1,6 +1,6 @@
 #include "Gripper.h"
 
-std::tuple<double,double> Gripper::getWristFingerValuesForPosition( gripper_position pos )
+std::tuple<double,double> Gripper::getWristFingerValuesForPosition( Position pos )
 {
     double wrist = 0.0;
     double fingers = 0.0;
