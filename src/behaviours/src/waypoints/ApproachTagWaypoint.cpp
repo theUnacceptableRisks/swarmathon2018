@@ -1,6 +1,6 @@
 #include "ApproachTagWaypoint.h"
 
-ApproachTagWaypoint::ApproachTagWaypoint( LogicInputs *i ) : inputs(i)
+ApproachTagWaypoint::ApproachTagWaypoint( LogicInputs *i ) : Waypoint( i )
 {
     //addState
 
@@ -40,6 +40,6 @@ ApproachTagWaypoint::ApproachTagWaypoint( LogicInputs *i ) : inputs(i)
     yaw_config.integralMax = yaw_config.satUpper/3;
     yaw_config.derivativeAlpha = 0.7;
 
-    pids.fast_vel_pid.SetConfiguration( vel_config );
-    pids.fast_yaw_pid.SetConfiguration( yaw_config );
+    pids.vel_pid.SetConfiguration( vel_config );
+    pids.yaw_pid.SetConfiguration( yaw_config );
 }

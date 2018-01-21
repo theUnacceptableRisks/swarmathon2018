@@ -5,7 +5,7 @@
 #include "../TagUtilities.h"
 #include "../logic/LogicTypes.h"
 #include "Waypoint.h"
-
+#include "WaypointUtilities.h"
 
 class ApproachTagWaypoint : public Waypoint
 {
@@ -13,7 +13,6 @@ class ApproachTagWaypoint : public Waypoint
         ApproachTagWaypoint( LogicInputs *i );
     private:
         WaypointUtilities::PidPackage pids;
-        LogicInputs *inputs;
 };
 
 #endif
