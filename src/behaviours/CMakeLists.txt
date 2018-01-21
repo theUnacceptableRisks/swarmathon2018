@@ -30,6 +30,7 @@ add_executable(
   src/Gripper.cpp
   src/TagUtilities.cpp
   src/state_machine/Error.cpp
+  src/waypoints/Waypoint.cpp
   src/waypoints/WaypointUtilities.cpp
   src/waypoints/SimpleWaypoint.cpp
   src/waypoints/SimpleWaypointStates.cpp
