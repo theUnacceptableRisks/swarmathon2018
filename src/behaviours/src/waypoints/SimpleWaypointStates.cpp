@@ -34,31 +34,31 @@ std::string SimpleWaypointState::transition()
 
     if( sw_owner )
     {
-        float angularCorrection = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->inputs );
+        float angularCorrection = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->driving_params );
 
-        if( WaypointUtilities::getDistance( sw_owner->inputs ) < sw_owner->supplemental_inputs.final_approach_threshold &&
-            angularCorrection < sw_owner->supplemental_inputs.skid_steer_threshold ) //todo setup distance tolerance handling
+        std::cout << "waypoint dist: " << WaypointUtilities::getDistance( sw_owner->driving_params ) << std::endl;
+        std::cout << "goal x " << sw_owner->driving_params.goal_x << std::endl;
+        std::cout << "goal y " << sw_owner->driving_params.goal_y << std::endl;
+        std::cout << "current x " << *sw_owner->driving_params.current_x << std::endl;
+        std::cout << "current y " << *sw_owner->driving_params.current_y << std::endl;
+        if( WaypointUtilities::getDistance( sw_owner->driving_params ) < sw_owner->simple_params.final_approach_threshold &&
+            angularCorrection < sw_owner->simple_params.skid_steer_threshold ) //todo setup distance tolerance handling
         {
-            if( sw_owner->supplemental_inputs.odom_x && sw_owner->supplemental_inputs.odom_y )
+            if( sw_owner->secondary_driving_params.current_x && sw_owner->secondary_driving_params.current_y )
                 transition_to = "simple_final_approach";
             else
                 transition_to = "simple_arrived";
         }
         else if( getIdentifier() == "simple_final_approach" )
         {
-            WaypointUtilities::DrivingParams final_params;
-            final_params.goal_x = sw_owner->approach_x;
-            final_params.goal_y = sw_owner->approach_y;
-            final_params.current_x = sw_owner->supplemental_inputs.odom_x;
-            final_params.current_y = sw_owner->supplemental_inputs.odom_y;
-
-            if( WaypointUtilities::getDistance( final_params ) <= sw_owner->supplemental_inputs.final_approach_threshold )
+            cout << "distance on final approach" << WaypointUtilities::getDistance( sw_owner->secondary_driving_params ) << std::endl;
+            if( fabs( WaypointUtilities::getDistance( sw_owner->secondary_driving_params ) ) >= sw_owner->simple_params.final_approach_threshold )
                 transition_to = "simple_arrived";
 
         }
         else
         {
-            if( fabs( angularCorrection ) > sw_owner->supplemental_inputs.skid_steer_threshold ) //todo setup angular tolerance handling
+            if( fabs( angularCorrection ) > sw_owner->simple_params.skid_steer_threshold ) //todo setup angular tolerance handling
             {
                 transition_to = "simple_rotate";
             }
@@ -97,8 +97,8 @@ void SimpleWaypointRotate::action()
     {
         params.velocity_error = 0.0;
         params.velocity_goal = 0.0;
-        params.angular_error = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->inputs );
-        params.angular_goal = WaypointUtilities::getGoalTheta( sw_owner->inputs );
+        params.angular_error = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->driving_params );
+        params.angular_goal = WaypointUtilities::getGoalTheta( sw_owner->driving_params );
         params.saturation_point = 180; //180 seems to be standard...?
 
         leftAndRight = WaypointUtilities::executePid( params, sw_owner->pids );
@@ -130,10 +130,10 @@ void SimpleWaypointSkid::action()
 
     if( sw_owner )
     {
-        params.velocity_error = WaypointUtilities::getDistance( sw_owner->inputs );
+        params.velocity_error = WaypointUtilities::getDistance( sw_owner->driving_params );
         params.velocity_goal = .35;
-        params.angular_error = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->inputs );
-        params.angular_goal = WaypointUtilities::getGoalTheta( sw_owner->inputs );
+        params.angular_error = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->driving_params );
+        params.angular_goal = WaypointUtilities::getGoalTheta( sw_owner->driving_params );
         params.saturation_point = 180; //180 seems to be standard...?
 
         leftAndRight = WaypointUtilities::executePid( params, sw_owner->pids );
@@ -148,10 +148,10 @@ void SimpleWaypointSkid::action()
  ***************************************/
 void SimpleWaypointFinalApproach::onEnter( std::string prev_state )
 {
-    if( sw_owner && sw_owner->supplemental_inputs.odom_x && sw_owner->supplemental_inputs.odom_y )
+    if( sw_owner && sw_owner->secondary_driving_params.current_x && sw_owner->secondary_driving_params.current_y )
     {
-        sw_owner->approach_x = *sw_owner->supplemental_inputs.odom_x;
-        sw_owner->approach_y = *sw_owner->supplemental_inputs.odom_y;
+        sw_owner->secondary_driving_params.goal_x = *sw_owner->secondary_driving_params.current_x;
+        sw_owner->secondary_driving_params.goal_y = *sw_owner->secondary_driving_params.current_y;
     }
 }
 

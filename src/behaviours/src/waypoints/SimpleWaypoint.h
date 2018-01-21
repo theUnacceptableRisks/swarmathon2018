@@ -7,13 +7,13 @@
 
 //SimpleWaypointStates seperate .cpp/.h
 
-typedef struct simple_waypoint_supplemental_params
+typedef struct simple_params
 {
     double skid_steer_threshold = 0.4;
     double final_approach_threshold = 0.2;
-    double *odom_x = 0;
-    double *odom_y = 0;
-} SimpleWaypointSupplementalInputs;
+    double goal_x = 0;
+    double goal_y = 0;
+} SimpleParams;
 
 
 class SimpleWaypoint : public Waypoint
@@ -24,14 +24,13 @@ class SimpleWaypoint : public Waypoint
     friend class SimpleWaypointFinalApproach;
     friend class SimpleWaypointArrived;
     public:
-        SimpleWaypoint( WaypointUtilities::DrivingParams i, SimpleWaypointSupplementalInputs si );
+        SimpleWaypoint( LogicInputs *i, SimpleParams sp );
     private:
         WaypointUtilities::PidPackage pids;
-        WaypointUtilities::DrivingParams inputs;
-        SimpleWaypointSupplementalInputs supplemental_inputs;
+        SimpleParams simple_params;
+        WaypointUtilities::DrivingParams driving_params;
+        WaypointUtilities::DrivingParams secondary_driving_params;
         double approach_vel;
-        double approach_x;
-        double approach_y;
  };
 
 #endif
