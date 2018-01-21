@@ -11,7 +11,7 @@ void PickUpState::action()
 
 }
 
-bool PickUpMachine::setOwner( StateMachine *sm )
+bool PickUpState::setOwner( StateMachine *sm )
 {
     bool success = false;
 

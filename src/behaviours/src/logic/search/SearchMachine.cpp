@@ -15,6 +15,21 @@ SearchMachine::SearchMachine( LogicInputs *i ) : StateMachine(), inputs(i)
     addState( drive->getIdentifier(), (State *)drive );
 }
 
+Waypoint *SearchMachine::getCurrentWaypoint()
+{
+    Waypoint *waypoint = 0;
+
+    if( waypoints.size() > 0 )
+       waypoint = waypoints.at(0);
+
+    return waypoint;
+}
+
+Gripper::Position SearchMachine::getCurrentGripperPosition()
+{
+    return gripper_position;
+}
+
 void SearchMachine::nextWaypoint()
 {
     Waypoint *waypoint = 0;
@@ -25,12 +40,8 @@ void SearchMachine::nextWaypoint()
     }
 }
 
-Waypoint *SearchMachine::getCurrentWaypoint()
+void SearchMachine::clearWaypoints()
 {
-    Waypoint *waypoint = 0;
-
-    if( waypoints.size() > 0 )
-       waypoint = waypoints.at(0);
-
-    return waypoint;
+    while( waypoints.size() != 0 )
+        nextWaypoint();
 }

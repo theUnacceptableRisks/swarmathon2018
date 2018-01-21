@@ -9,12 +9,12 @@
 class PickUpState : public LogicState
 {
     public:
-        SearchState() : LogicState( "pickup_state" ), pickup_machine(0) {}
-        ~SearchState()
+        PickUpState() : LogicState( "pickup_state" ), pickup_machine(0) {}
+        ~PickUpState()
         {
             if( pickup_machine )
-                delete search_machine;
-            search_machine = 0;
+                delete pickup_machine;
+            pickup_machine = 0;
         }
         virtual bool setOwner( StateMachine *sm );
         virtual void action( void );

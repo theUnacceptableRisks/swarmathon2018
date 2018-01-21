@@ -18,10 +18,10 @@ class LogicMachine : public StateMachine
     public:
         LogicMachine( LogicInputs *i );
         Waypoint *getCurrentWaypoint() { return current_waypoint; }
-        Gripper::gripper_position getCurrentGripperPosition() { return current_gripper_position; }
+        Gripper::Position getCurrentGripperPosition() { return current_gripper_position; }
     private:
         Waypoint *current_waypoint;
-        Gripper::gripper_position current_gripper_position;
+        Gripper::Position current_gripper_position;
         LogicInputs *inputs;
 };
 

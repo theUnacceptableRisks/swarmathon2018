@@ -12,10 +12,14 @@ class SearchMachine : public StateMachine
         SearchMachine();
         SearchMachine( LogicInputs *i );
         Waypoint *getCurrentWaypoint();
+        Gripper::Position getCurrentGripperPosition();
     private:
         LogicInputs *inputs;
         void nextWaypoint();
+        void clearWaypoints();
+
         std::vector<Waypoint*> waypoints;
+        Gripper::Position gripper_position;
 };
 
 #endif
