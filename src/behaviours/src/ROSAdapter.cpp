@@ -36,6 +36,7 @@
 #include "waypoints/SimpleWaypoint.h"
 #include "logic/LogicMachine.h"
 #include "logic/SearchState.h"
+#include "logic/PickUpState.h"
 #include "Gripper.h"
 
 // To handle shutdown signals so the node quits
@@ -194,11 +195,13 @@ LogicInputs inputs;
  ***********************/
 LogicMachine logic_machine( &inputs );
 SearchState search_state;
+PickUpState pickup_state;
 
 void setupLogicMachine()
 {
     /* add States */
-    logic_machine.addState( search_state.getIdentifier(), (State *)&search_state );
+    logic_machine.addState( search_state.getIdentifier(), dynamic_cast<State *>(&search_state) );
+    logic_machine.addState( pickup_state.getIdentifier(), dynamic_cast<State *>(&pickup_State) ); 
     return;
 }
 
