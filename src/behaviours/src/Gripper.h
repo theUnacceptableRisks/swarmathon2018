@@ -12,7 +12,7 @@ namespace Gripper
         GRIPPER_UP_OPEN, GRIPPER_UP_CLOSED,
         GRIPPER_DOWN_OPEN, GRIPPER_DOWN_CLOSED,
         GRIPPER_HOVER_OPEN, GRIPPER_HOVER_CLOSED
-    } gripper_position;
+    } Position;
 
     std::tuple<double,double> getWristFingerValuesForPosition( gripper_position pos );
 }
