@@ -7,7 +7,7 @@ bool LogicState::setOwner( StateMachine *sm )
     if( !owner && !lm_owner )
     {
         owner = sm;
-        lm_owner = (LogicMachine *)sm;
+        lm_owner = dynamic_cast<LogicMachine *>(sm);
         success = true;
     }
     return success;
