@@ -59,7 +59,7 @@ void humanTime();
 
 // Behaviours Logic Functions
 void sendDriveCommand(double linearVel, double angularVel);
-void sendGripperPosition( Gripper::gripper_position pos );
+void sendGripperPosition( Gripper::Position pos );
 
 int currentMode = 0;
 const float state_machines_loop = 0.1; // time between state machines function call
@@ -281,7 +281,7 @@ void runStateMachines(const ros::TimerEvent&)
     if (currentMode == 2 || currentMode == 3)
     {
         Waypoint *current_waypoint = 0;
-        Gripper::gripper_position gripper_pos;
+        Gripper::Position gripper_pos;
 
 
         /***************************
@@ -341,7 +341,7 @@ void sendDriveCommand(double left, double right)
     drive_control_publish.publish(velocity);
 }
 
-void sendGripperPosition( Gripper::gripper_position pos )
+void sendGripperPosition( Gripper::Position pos )
 {
     std_msgs::Float32 wrist;
     std_msgs::Float32 fingers;
