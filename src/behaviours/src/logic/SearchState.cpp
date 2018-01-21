@@ -7,6 +7,7 @@ void SearchState::action()
     if( lm_owner )
     {
         lm_owner->current_waypoint = search_machine->getCurrentWaypoint();
+        lm_owner->current_gripper_position = search_machine->getCurrentGripperPosition();
     }
 }
 

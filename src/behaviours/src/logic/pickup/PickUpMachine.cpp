@@ -4,7 +4,7 @@ PickUpMachine::PickUpMachine()
 {
 }
 
-PickUpMachine::PickUpMachine( LogicInputs *i ) : StateMachine(), inputs(i)
+PickUpMachine::PickUpMachine( LogicInputs *i ) : StateMachine(), inputs(i), gripper_position(Gripper::HOVER_OPEN)
 {
     //init/add states
 }

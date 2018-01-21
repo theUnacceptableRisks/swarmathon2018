@@ -12,12 +12,26 @@ class SearchInit : public SearchStateBase
         {
             if( ssm_owner )
             {
+                SimpleWaypoint *waypoint = 0;
                 SimpleParams params;
-                params.goal_x = -2.0;
-                params.goal_y = 0.0;
+                double x = 0;
+                double y = 0;
 
-                SimpleWaypoint *waypoint = new SimpleWaypoint( ssm_owner->inputs, params );
-                ssm_owner->waypoints.push_back( (Waypoint *)waypoint );
+                params.skid_steer_threshold = 0.15;
+                for( double n = 1.0; n < 10; n += 1.0 )
+                {
+                    y += n * pow( (-1.0), ( n + 1.0 ) );
+                    params.goal_x = x;
+                    params.goal_y = y;
+                    waypoint = new SimpleWaypoint( ssm_owner->inputs, params );
+                    ssm_owner->waypoints.push_back( (Waypoint *)waypoint );
+
+                    x += ( n + 1.0 ) * pow( (-1.0), ( n + 1.0 ) );
+                    params.goal_x = x;
+                    params.goal_y = y;
+                    waypoint = new SimpleWaypoint( ssm_owner->inputs, params );
+                    ssm_owner->waypoints.push_back( (Waypoint *)waypoint );
+                }
 
                 setup_complete = true;
             }

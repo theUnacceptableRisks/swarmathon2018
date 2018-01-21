@@ -325,7 +325,7 @@ void runStateMachines(const ros::TimerEvent&)
     }
     else
     {
-        sendGripperPosition( Gripper::GRIPPER_HOVER_OPEN );
+        sendGripperPosition( Gripper::HOVER_OPEN );
         /* some output about manual mode? */
     }
 }

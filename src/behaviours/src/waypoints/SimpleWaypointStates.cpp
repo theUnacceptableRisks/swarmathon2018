@@ -99,7 +99,7 @@ void SimpleWaypointRotate::action()
         params.velocity_goal = 0.0;
         params.angular_error = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->driving_params );
         params.angular_goal = WaypointUtilities::getGoalTheta( sw_owner->driving_params );
-        params.saturation_point = 180; //180 seems to be standard...?
+        params.saturation_point = sw_owner->simple_params.max_vel; //180 seems to be standard...?
 
         leftAndRight = WaypointUtilities::executePid( params, sw_owner->pids );
 
@@ -134,7 +134,7 @@ void SimpleWaypointSkid::action()
         params.velocity_goal = .35;
         params.angular_error = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->driving_params );
         params.angular_goal = WaypointUtilities::getGoalTheta( sw_owner->driving_params );
-        params.saturation_point = 180; //180 seems to be standard...?
+        params.saturation_point = sw_owner->simple_params.max_vel; //180 seems to be standard...?
 
         leftAndRight = WaypointUtilities::executePid( params, sw_owner->pids );
 

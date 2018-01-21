@@ -7,6 +7,7 @@ void PickUpState::action()
     if( lm_owner )
     {
         lm_owner->current_waypoint = pickup_machine->getCurrentWaypoint();
+        lm_owner->current_gripper_position = pickup_machine->getCurrentGripperPosition();
     }
 
 }

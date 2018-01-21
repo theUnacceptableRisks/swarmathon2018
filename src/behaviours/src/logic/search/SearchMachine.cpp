@@ -6,7 +6,7 @@ SearchMachine::SearchMachine()
 {
 }
 
-SearchMachine::SearchMachine( LogicInputs *i ) : StateMachine(), inputs(i)
+SearchMachine::SearchMachine( LogicInputs *i ) : StateMachine(), inputs(i), gripper_position(Gripper::HOVER_OPEN)
 {
     SearchInit *init = new SearchInit();
     SearchDrive *drive = new SearchDrive();
