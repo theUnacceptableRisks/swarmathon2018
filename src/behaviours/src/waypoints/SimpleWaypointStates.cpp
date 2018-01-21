@@ -36,11 +36,6 @@ std::string SimpleWaypointState::transition()
     {
         float angularCorrection = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->driving_params );
 
-        std::cout << "waypoint dist: " << WaypointUtilities::getDistance( sw_owner->driving_params ) << std::endl;
-        std::cout << "goal x " << sw_owner->driving_params.goal_x << std::endl;
-        std::cout << "goal y " << sw_owner->driving_params.goal_y << std::endl;
-        std::cout << "current x " << *sw_owner->driving_params.current_x << std::endl;
-        std::cout << "current y " << *sw_owner->driving_params.current_y << std::endl;
         if( WaypointUtilities::getDistance( sw_owner->driving_params ) < sw_owner->simple_params.final_approach_threshold &&
             angularCorrection < sw_owner->simple_params.skid_steer_threshold ) //todo setup distance tolerance handling
         {
@@ -51,7 +46,6 @@ std::string SimpleWaypointState::transition()
         }
         else if( getIdentifier() == "simple_final_approach" )
         {
-            cout << "distance on final approach" << WaypointUtilities::getDistance( sw_owner->secondary_driving_params ) << std::endl;
             if( fabs( WaypointUtilities::getDistance( sw_owner->secondary_driving_params ) ) >= sw_owner->simple_params.final_approach_threshold )
                 transition_to = "simple_arrived";
 

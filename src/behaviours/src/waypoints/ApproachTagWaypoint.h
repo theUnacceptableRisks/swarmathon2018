@@ -12,8 +12,8 @@ class ApproachTagWaypoint : public Waypoint
     public:
         ApproachTagWaypoint( LogicInputs *i );
     private:
-        WaypointUtilties::PidPackage pids;
-        ApproachTagParams inputs;
+        WaypointUtilities::PidPackage pids;
+        LogicInputs *inputs;
 };
 
 #endif
