@@ -18,7 +18,7 @@ class SearchState : public LogicState
        }
        virtual bool setOwner( StateMachine *sm );
        virtual void action( void );
-//       virtual std::string transition( void );
+       virtual std::string transition( void );
        virtual std::string debugString() { return "search state running"; }
    private:
        SearchMachine *search_machine;
