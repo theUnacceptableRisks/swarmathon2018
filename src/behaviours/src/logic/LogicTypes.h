@@ -18,6 +18,7 @@ typedef struct logic_inputs
     double			linear_vel_odom_accel_gps = 0.0;
     double			angular_vel_odom_accel = 0.0;
     double			angular_vel_odom_accel_gps = 0.0;
+    ros::Time			time;
 } LogicInputs;
 
 #endif
