@@ -124,6 +124,7 @@ void setupPublishers( ros::NodeHandle &ros_handle, string published_name )
 ros::Subscriber joy_subscriber;
 ros::Subscriber mode_subscriber;
 ros::Subscriber target_subscriber;
+ros::Subscriber raw_odom_subscriber;
 ros::Subscriber odometry_subscriber;
 ros::Subscriber map_subscriber;
 
@@ -144,6 +145,7 @@ void setupSubscribers( ros::NodeHandle &ros_handle, string published_name )
     joy_subscriber = ros_handle.subscribe((published_name + "/joystick"), 10, joyCmdHandler);
     mode_subscriber = ros_handle.subscribe((published_name + "/mode"), 1, modeHandler);
     target_subscriber = ros_handle.subscribe((published_name + "/targets"), 10, targetHandler);
+    raw_odom_subscriber = ros_handle.subscribe((published_name + "/odom/"), 10, odomHandler);
     odometry_subscriber = ros_handle.subscribe((published_name + "/odom/filtered"), 10, odomAndAccelHandler);
     map_subscriber = ros_handle.subscribe((published_name + "/odom/ekf"), 10, odomAccelAndGPSHandler);
 
