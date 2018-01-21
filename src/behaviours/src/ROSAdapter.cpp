@@ -281,7 +281,6 @@ void runStateMachines(const ros::TimerEvent&)
     //timerTimeElapsed = time(0) - timerStartTime;
     // Robot is in automode
     inputs.time = ros::Time::now();
-    std::cout << "ROS Time: " << inputs.time.toSec() << std::endl;
     if (currentMode == 2 || currentMode == 3)
     {
         Waypoint *current_waypoint = 0;
