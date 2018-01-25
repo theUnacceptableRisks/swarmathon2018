@@ -1,13 +1,16 @@
 #ifndef searchdrive_h
 #define searchdrive_h
 
-class SearchDrive : public SearchStateBase
+#include "../../state_machine/State.h"
+#include "SearchMachine.h"
+
+class SearchDrive : public State
 {
     public:
-        SearchDrive() : SearchStateBase( "search_drive" ) {}
+        SearchDrive() : State( "search_drive" ) {}
         virtual void action()
         {
-            SearchMachine *ssm = std::dynamic_cast<SearchMachine *> (owner);
+            SearchMachine *ssm = dynamic_cast<SearchMachine *> (owner);
             if( ssm && ssm->waypoints.size() > 0 )
             {
                 Waypoint *waypoint = ssm->waypoints.front();

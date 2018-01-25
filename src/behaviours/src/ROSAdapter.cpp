@@ -189,13 +189,16 @@ void sigintEventHandler(int signal);
  * Sensor Inputs *
  *****************/
 LogicInputs inputs;
-LogicOututs outputs;
+LogicOutputs outputs;
+IOTable iotable = { &inputs, &outputs };
+//iotable.inputs = &inputs;
+//iotable.outputs = &outputs;
 /***********************
  * Logic State Machine *
  ***********************/
-LogicMachine logic_machine( &inputs, &outputs );
-SearchState search_state;
-PickUpState pickup_state;
+LogicMachine logic_machine( &iotable );
+SearchState search_state( &iotable );
+PickUpState pickup_state( &iotable );
 
 void setupLogicMachine()
 {

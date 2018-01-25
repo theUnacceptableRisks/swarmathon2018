@@ -1,6 +1,6 @@
 #include "PickUpMachine.h"
 
-PickUpMachine::PickUpMachine( IOTable *io ) : IOTable(io)
+PickUpMachine::PickUpMachine( IOTable *io ) : SubMachine( io )
 {
     //init/add states
 }

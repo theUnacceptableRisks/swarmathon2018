@@ -1,3 +1,4 @@
+#include <iostream>
 #include "SearchState.h"
 #include "../TagUtilities.h"
 
@@ -15,7 +16,7 @@ std::string SearchState::transition()
 {
     std::string transition_to = getIdentifier();
 
-    LogicMachine *lm = std::dynamic_cast<LogicMachine *> (owner);
+    LogicMachine *lm = dynamic_cast<LogicMachine *> (owner);
     if( lm )
     {
         if( TagUtilities::hasTag( &lm->inputs->tags, 0 ) )

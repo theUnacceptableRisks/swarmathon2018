@@ -1,7 +1,10 @@
 #ifndef searchinit_h
 #define searchinit_h
 
-#include "SearchStateBase.h"
+#include "SearchMachine.h"
+#include "../../state_machine/State.h"
+#include "../../waypoints/Waypoint.h"
+#include "../../waypoints/SimpleWaypoint.h"
 #include "../../waypoints/WaypointUtilities.h"
 
 class SearchInit : public State
@@ -10,7 +13,7 @@ class SearchInit : public State
         SearchInit() : State( "search_init" ), setup_complete(false) {}
         virtual void action()
         {
-            SearchMachine *ssm = std::dynamic_cast<SearchMachine *> (owner);
+            SearchMachine *ssm = dynamic_cast<SearchMachine *> (owner);
             if( ssm )
             {
                 SimpleWaypoint *waypoint = 0;

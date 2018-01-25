@@ -1,7 +1,8 @@
-#ifndef submachines_h
-#define submachines_h
+#ifndef submachine_h
+#define submachine_h
 
-#include "../state_machines/StateMachine.h"
+#include "../state_machine/StateMachine.h"
+#include "../waypoints/Waypoint.h"
 #include "LogicTypes.h"
 
 class SubMachine : public StateMachine

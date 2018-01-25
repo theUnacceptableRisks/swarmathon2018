@@ -1,6 +1,6 @@
-#include "SubMachines.h"
+#include "SubMachine.h"
 
-void SubMachines::nextWaypoint()
+void SubMachine::nextWaypoint()
 {
     Waypoint *waypoint = 0;
     if( waypoints.size() != 0 )
@@ -14,7 +14,7 @@ void SubMachines::nextWaypoint()
     }
 }
 
-void SubMachines::clearWaypoints()
+void SubMachine::clearWaypoints()
 {
     while( waypoints.size() != 0 )
         nextWaypoint();

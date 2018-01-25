@@ -1,9 +1,9 @@
 #ifndef pickupmachine_h
 #define pickupmachine_h
 
-#include "../LogicMachine.h"
+#include "../SubMachine.h"
 
-class PickUpMachine : public StateMachine
+class PickUpMachine : public SubMachine
 {
     public:
         PickUpMachine( IOTable *io );

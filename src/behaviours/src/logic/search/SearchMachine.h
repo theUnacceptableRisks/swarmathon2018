@@ -1,7 +1,7 @@
 #ifndef searchmachine_h
 #define searchmachine_h
 
-#include "../LogicMachine.h"
+#include "../SubMachine.h"
 
 class SearchMachine : public SubMachine
 {

@@ -5,7 +5,8 @@
 #include <geometry_msgs/Pose2D.h>
 #include "../Tag.h"
 #include "../Gripper.h"
-#include"../waypoints/Waypoint.h"
+
+class Waypoint;
 
 typedef struct logic_inputs
 {
@@ -25,14 +26,14 @@ typedef struct logic_inputs
 
 typedef struct logic_outputs
 {
-    Gripper::Position gripper_position = HOVER_OPEN;
+    Gripper::Position gripper_position = Gripper::HOVER_OPEN;
     Waypoint *current_waypoint = 0;
 } LogicOutputs;
 
 typedef struct io_table
 {
-    LogicInputs *input;
-    LogicOutputs *output;
+    LogicInputs *inputs;
+    LogicOutputs *outputs;
 } IOTable;
 
 #endif
