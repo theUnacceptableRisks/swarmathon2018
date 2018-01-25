@@ -7,17 +7,18 @@ class SearchDrive : public SearchStateBase
         SearchDrive() : SearchStateBase( "search_drive" ) {}
         virtual void action()
         {
-           if( ssm_owner && ssm_owner->waypoints.size() > 0 )
-           {
-               Waypoint *waypoint = ssm_owner->waypoints.front();
-               if( waypoint )
-               {
-                   if( waypoint->hasArrived() )
-                       ssm_owner->nextWaypoint();
-               }
-               else
+            SearchMachine *ssm = std::dynamic_cast<SearchMachine *> (owner);
+            if( ssm && ssm->waypoints.size() > 0 )
+            {
+                Waypoint *waypoint = ssm->waypoints.front();
+                if( waypoint )
+                {
+                    if( waypoint->hasArrived() )
+                        ssm->nextWaypoint();
+                }
+                else
                    std::cout << "waypoint is null... shouldn't be" << std::endl;
-           }
+            }
         }
 };
 

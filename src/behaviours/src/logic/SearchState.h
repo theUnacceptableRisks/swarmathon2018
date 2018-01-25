@@ -9,12 +9,12 @@
 class SearchState : public State
 {
     public:
-        SearchState() : State ( "search_state" ), search_machine(0) {}
+        SearchState( IOTable *io );
         virtual void action( void );
         virtual void onEnter( std::string prev_state );
         virtual std::string transition( void );
     private:
-        SearchMachine *search_machine; 
+        SearchMachine search_machine;
 };
 
 #endif

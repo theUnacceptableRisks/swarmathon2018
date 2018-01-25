@@ -283,31 +283,26 @@ void runStateMachines(const ros::TimerEvent&)
     inputs.time = ros::Time::now();
     if (currentMode == 2 || currentMode == 3)
     {
-        Waypoint *current_waypoint = 0;
-        Gripper::Position gripper_pos;
-
-
         /***************************
          * State Machine Execution *
          ***************************/
         logic_machine.run();
         std::cout << "current state is..." << logic_machine.getCurrentIdentifier() << std::endl;
-        current_waypoint = logic_machine.getCurrentWaypoint();
 
         /*****************
          * Drive Portion *
          *****************/
-        if( current_waypoint )
+        if( outputs.current_waypoint )
         {
             int left = 0;
             int right = 0;
-            std::tuple<int,int> outputs;
+            std::tuple<int,int> output;
 
-            current_waypoint->run();
+            outputs.current_waypoint->run();
 
-            outputs = current_waypoint->getOutput();
-            left = std::get<0>( outputs );
-            right = std::get<1>( outputs );
+            output = outputs.current_waypoint->getOutput();
+            left = std::get<0>( output );
+            right = std::get<1>( output );
 
             std::cout << "Left is " << left << std::endl;
             std::cout << "Right is " << right << std::endl;
@@ -323,8 +318,7 @@ void runStateMachines(const ros::TimerEvent&)
         /*******************
          * Gripper Portion *
          *******************/
-        gripper_pos = logic_machine.getCurrentGripperPosition();
-        sendGripperPosition( gripper_pos );
+        sendGripperPosition( outputs.gripper_position );
     }
     else
     {

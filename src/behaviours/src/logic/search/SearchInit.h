@@ -4,13 +4,14 @@
 #include "SearchStateBase.h"
 #include "../../waypoints/WaypointUtilities.h"
 
-class SearchInit : public SearchStateBase
+class SearchInit : public State
 {
     public:
-        SearchInit() : SearchStateBase( "search_init" ), setup_complete(false) {}
+        SearchInit() : State( "search_init" ), setup_complete(false) {}
         virtual void action()
         {
-            if( ssm_owner )
+            SearchMachine *ssm = std::dynamic_cast<SearchMachine *> (owner);
+            if( ssm )
             {
                 SimpleWaypoint *waypoint = 0;
                 SimpleParams params;
@@ -23,19 +24,17 @@ class SearchInit : public SearchStateBase
                     y += n * pow( (-1.0), ( n + 1.0 ) );
                     params.goal_x = x;
                     params.goal_y = y;
-                    waypoint = new SimpleWaypoint( ssm_owner->inputs, params );
-                    ssm_owner->waypoints.push_back( (Waypoint *)waypoint );
+                    waypoint = new SimpleWaypoint( ssm->inputs, params );
+                    ssm->waypoints.push_back( (Waypoint *)waypoint );
 
                     x += ( n + 1.0 ) * pow( (-1.0), ( n + 1.0 ) );
                     params.goal_x = x;
                     params.goal_y = y;
-                    waypoint = new SimpleWaypoint( ssm_owner->inputs, params );
-                    ssm_owner->waypoints.push_back( (Waypoint *)waypoint );
+                    waypoint = new SimpleWaypoint( ssm->inputs, params );
+                    ssm->waypoints.push_back( (Waypoint *)waypoint );
                 }
-
                 setup_complete = true;
             }
-
         }
         virtual std::string transition()
         {

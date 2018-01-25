@@ -1,7 +1,7 @@
 #include "LogicMachine.h"
 #include "SearchState.h"
 
-LogicMachine::LogicMachine( LogicInputs *i ) : StateMachine(), inputs(i), outputs(o)
+LogicMachine::LogicMachine( IOTable *io ) : StateMachine(), inputs(io->inputs), outputs(io->outputs)
 {
 //    addState( "search_state", new SearchState() );
 }

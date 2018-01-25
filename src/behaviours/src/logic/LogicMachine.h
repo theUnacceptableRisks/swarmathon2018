@@ -16,7 +16,7 @@ class LogicMachine : public StateMachine
     friend class DropOffState;
     friend class ObstacleAvoidanceState;
     public:
-        LogicMachine( LogicInputs *i, LogicOutputs *o );
+        LogicMachine( IOTable *io );
         Waypoint *getCurrentWaypoint() { return current_waypoint; }
         Gripper::Position getCurrentGripperPosition() { return current_gripper_position; }
     private:

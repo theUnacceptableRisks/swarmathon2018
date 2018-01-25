@@ -29,4 +29,10 @@ typedef struct logic_outputs
     Waypoint *current_waypoint = 0;
 } LogicOutputs;
 
+typedef struct io_table
+{
+    LogicInputs *input;
+    LogicOutputs *output;
+} IOTable;
+
 #endif
