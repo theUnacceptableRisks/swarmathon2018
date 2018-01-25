@@ -6,20 +6,11 @@
 #include "LogicState.h"
 #include "pickup/PickUpMachine.h"
 
-class PickUpState : public LogicState
+class PickUpState : public State
 {
     public:
         PickUpState() : LogicState( "pickup_state" ), pickup_machine(0) {}
-        ~PickUpState()
-        {
-            if( pickup_machine )
-                delete pickup_machine;
-            pickup_machine = 0;
-        }
-        virtual bool setOwner( StateMachine *sm );
         virtual void action( void );
-    private:
-        PickUpMachine *pickup_machine;
 };
 
 #endif

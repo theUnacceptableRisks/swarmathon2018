@@ -4,6 +4,8 @@
 #include <vector>
 #include <geometry_msgs/Pose2D.h>
 #include "../Tag.h"
+#include "../Gripper.h"
+#include"../waypoints/Waypoint.h"
 
 typedef struct logic_inputs
 {
@@ -20,5 +22,11 @@ typedef struct logic_inputs
     double			angular_vel_odom_accel_gps = 0.0;
     ros::Time			time;
 } LogicInputs;
+
+typedef struct logic_outputs
+{
+    Gripper::Position gripper_position = HOVER_OPEN;
+    Waypoint *current_waypoint = 0;
+} LogicOutputs;
 
 #endif

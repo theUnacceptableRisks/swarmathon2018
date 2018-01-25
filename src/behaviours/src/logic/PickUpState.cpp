@@ -4,25 +4,14 @@ void PickUpState::action()
 {
     pickup_machine->run();
     //TODO: else messaging
-    if( lm_owner )
+    if( owner )
     {
-        lm_owner->current_waypoint = pickup_machine->getCurrentWaypoint();
-        lm_owner->current_gripper_position = pickup_machine->getCurrentGripperPosition();
+        LogicMachine *lm_owner = std::dynamic_cast<LogicMachine *>( owner );
+        if( lm_owner )
+        {
+            lm_owner->outputs->current_waypoint = pickup_machine->getCurrentWaypoint();
+            lm_owner->outputs->current_gripper_position = pickup_machine->getCurrentGripperPosition();
+        }
     }
 
-}
-
-bool PickUpState::setOwner( StateMachine *sm )
-{
-    bool success = false;
-
-    if( !owner && !lm_owner )
-    {
-        owner = sm;
-        lm_owner = dynamic_cast<LogicMachine *>(sm);
-        pickup_machine = new PickUpMachine( lm_owner->inputs );
-        success = true;
-    }
-
-    return success;
 }

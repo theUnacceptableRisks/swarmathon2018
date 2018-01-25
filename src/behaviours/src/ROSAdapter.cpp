@@ -189,11 +189,11 @@ void sigintEventHandler(int signal);
  * Sensor Inputs *
  *****************/
 LogicInputs inputs;
-
+LogicOututs outputs;
 /***********************
  * Logic State Machine *
  ***********************/
-LogicMachine logic_machine( &inputs );
+LogicMachine logic_machine( &inputs, &outputs );
 SearchState search_state;
 PickUpState pickup_state;
 

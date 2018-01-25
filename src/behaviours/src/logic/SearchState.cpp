@@ -1,29 +1,30 @@
 #include "SearchState.h"
 #include "../TagUtilities.h"
 
-bool SearchState::setOwner( StateMachine *sm )
-{
-    bool success = false;
-
-    if( !owner && !lm_owner )
-    {
-        owner = sm;
-        lm_owner = dynamic_cast<LogicMachine *>(sm);
-        search_machine = new SearchMachine( lm_owner->inputs );
-        success = true;
-    }
-
-    return success;
-}
-
 void SearchState::action()
 {
-    search_machine->run();
-    //TODO: else messaging
-    if( lm_owner )
+    if( search_machine )
     {
-        lm_owner->current_waypoint = search_machine->getCurrentWaypoint();
-        lm_owner->current_gripper_position = search_machine->getCurrentGripperPosition();
+        search_machine->run();
+        //TODO: else messaging
+        if( owner )
+        {
+            LogicMachine *lm_owner = std::dynamic_cast<LogicMachine *>( owner );
+            if( lm_owner )
+            {
+                lm_owner->outputs->current_waypoint = search_machine->getCurrentWaypoint();
+                lm_owner->outputs->current_gripper_position = search_machine->getCurrentGripperPosition();
+            }
+        }
+    }
+}
+
+void SearchState::onEnter( std::string prev_string )
+{
+    if( !search_machine && owner )
+    {
+        LogicMachine *lm_owner = std::dynamic_cast<LogicMachine *>( owner );
+        search_machine = new SearchMachine( lm_owner->inputs );
     }
 }
 

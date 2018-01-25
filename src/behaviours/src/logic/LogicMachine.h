@@ -16,13 +16,12 @@ class LogicMachine : public StateMachine
     friend class DropOffState;
     friend class ObstacleAvoidanceState;
     public:
-        LogicMachine( LogicInputs *i );
+        LogicMachine( LogicInputs *i, LogicOutputs *o );
         Waypoint *getCurrentWaypoint() { return current_waypoint; }
         Gripper::Position getCurrentGripperPosition() { return current_gripper_position; }
     private:
-        Waypoint *current_waypoint;
-        Gripper::Position current_gripper_position;
         LogicInputs *inputs;
+        LogicOutputs *outputs;
 };
 
 #endif
