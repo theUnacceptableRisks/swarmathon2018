@@ -6,17 +6,8 @@
 class PickUpMachine : public StateMachine
 {
     public:
-        PickUpMachine();
-        PickUpMachine( LogicInputs *i );
-        Waypoint *getCurrentWaypoint();
-        Gripper::Position getCurrentGripperPosition();
+        PickUpMachine( IOTable *io );
     private:
-        LogicInputs *inputs;
-        void nextWaypoint();
-        void clearWaypoints();
-
-        std::vector<Waypoint*> waypoints;
-        Gripper::Position gripper_position;
 };
 
 #endif

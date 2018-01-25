@@ -7,6 +7,10 @@ void SubMachines::nextWaypoint()
     {
         delete waypoints.front();
         waypoints.erase( waypoints.begin() );
+        if( waypoints.size() != 0 )
+            outputs->current_waypoint = waypoints.front();
+        else
+            outputs->current_waypoint = 0;
     }
 }
 
