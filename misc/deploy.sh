@@ -5,7 +5,7 @@
 #-------------------------READ THIS----------------------------#
 #If you have changed your rovers password you MUST edit this variable with the correct password to 
 #allow the reboot feature to work correctly!!
-roverPass="KSC-2018"
+roverPass="dtccswarm"
 #--------------------------------------------------------------#
 
 OPTION=$1
@@ -60,7 +60,8 @@ PullGit_Pack()
 			}
 			read stuff;
 			exit 1;
-		}		
+
+		}
 		read stuff
 		exit 1;
 		/bin/bash;' exec $SHELL"
