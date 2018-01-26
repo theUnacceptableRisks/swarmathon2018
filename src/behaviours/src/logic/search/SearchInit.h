@@ -7,6 +7,15 @@
 #include "../../waypoints/SimpleWaypoint.h"
 #include "../../waypoints/WaypointUtilities.h"
 
+
+
+#include <math.h> 
+
+#define PI 3.14159265
+
+extern int roverID;
+extern int numberOfRovers;
+
 class SearchInit : public State
 {
     public:
@@ -22,13 +31,6 @@ class SearchInit : public State
                 double y = 0;
 
                 params.skid_steer_threshold = 0.15;
-
-
-                for(int i = 0; i < 15; i ++){
-                    params.goal_x = cos( ((((2*PI)/numberOfRovers)*roverID ) * ((i%4)/2)  ) + ((((2*PI)/numberOfRovers)*(roverID+1) ) * (int)( (i+2)%4/2)) ) * (int) ((i+1)/2);
-                    params.goal_y = sin( ((((2*PI)/numberOfRovers)*roverID ) * ((i%4)/2)  ) + ((((2*PI)/numberOfRovers)*(roverID+1) ) * (int)( (i+2)%4/2)) ) * (int) ((i+1)/2);
-                    ssm_owner->waypoints.push_back( new SimpleWaypoint( params ) );
-                }
                 /*
                 for( double n = 1.0; n < 10; n += 1.0 )
                 {
@@ -44,6 +46,24 @@ class SearchInit : public State
                     waypoint = new SimpleWaypoint( ssm->inputs, params );
                     ssm->waypoints.push_back( (Waypoint *)waypoint );
                 }*/
+
+                /*
+                *   Square spiral search made by Oliver.
+                */
+                for(int i = 0; i < 15; i ++){
+                    params.goal_x = ( ( ((int)((i+4)/4))) * (pow(-1,((i+2)/2)) ) ) ;
+                    params.goal_y = ( ( ((int)((i+3)/4))) * (pow(-1,((i+1)/2)) ) ) ;
+                    ssm_owner->waypoints.push_back( new SimpleWaypoint( params ) );
+                }
+                /*
+                for(int i = 0; i < 15; i ++){
+                    params.goal_x = cos( ((((2*PI)/numberOfRovers)*roverID ) * ((i%4)/2)  ) + ((((2*PI)/numberOfRovers)*(roverID+1) ) * (int)( (i+2)%4/2)) ) * (int) ((i+1)/2);
+                    params.goal_y = sin( ((((2*PI)/numberOfRovers)*roverID ) * ((i%4)/2)  ) + ((((2*PI)/numberOfRovers)*(roverID+1) ) * (int)( (i+2)%4/2)) ) * (int) ((i+1)/2);
+                    
+                    waypoint = new SimpleWaypoint( ssm->inputs, params );
+                    ssm->waypoints.push_back( (Waypoint *)waypoint );
+                }*/
+
                 setup_complete = true;
             }
         }
