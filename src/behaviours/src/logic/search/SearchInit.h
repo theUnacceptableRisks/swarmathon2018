@@ -36,7 +36,6 @@ class SearchInit : public State
                     waypoint = new SimpleWaypoint( ssm->inputs, params );
                     ssm->waypoints.push_back( (Waypoint *)waypoint );
                 }
-                ssm->outputs->current_waypoint = ssm->waypoints.front();
                 setup_complete = true;
             }
         }

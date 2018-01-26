@@ -10,6 +10,7 @@ class SubMachine : public StateMachine
     public:
         SubMachine( IOTable *io ) : StateMachine(), inputs(io->inputs), outputs(io->outputs) {}
     protected:
+        virtual void runAddonsPre();
         void nextWaypoint();
         void clearWaypoints();
 
