@@ -1,5 +1,13 @@
 #include "SubMachine.h"
 
+void SubMachine::runAddonsPre()
+{
+    if( waypoints.size() != 0 )
+        outputs->current_waypoint = waypoints.front();
+    else
+        outputs->current_waypoint = 0;
+}
+
 void SubMachine::nextWaypoint()
 {
     Waypoint *waypoint = 0;
