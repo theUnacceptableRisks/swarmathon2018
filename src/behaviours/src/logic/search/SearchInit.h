@@ -22,6 +22,14 @@ class SearchInit : public State
                 double y = 0;
 
                 params.skid_steer_threshold = 0.15;
+
+
+                for(int i = 0; i < 15; i ++){
+                    params.goal_x = cos( ((((2*PI)/numberOfRovers)*roverID ) * ((i%4)/2)  ) + ((((2*PI)/numberOfRovers)*(roverID+1) ) * (int)( (i+2)%4/2)) ) * (int) ((i+1)/2);
+                    params.goal_y = sin( ((((2*PI)/numberOfRovers)*roverID ) * ((i%4)/2)  ) + ((((2*PI)/numberOfRovers)*(roverID+1) ) * (int)( (i+2)%4/2)) ) * (int) ((i+1)/2);
+                    ssm_owner->waypoints.push_back( new SimpleWaypoint( params ) );
+                }
+                /*
                 for( double n = 1.0; n < 10; n += 1.0 )
                 {
                     y += n * pow( (-1.0), ( n + 1.0 ) );
@@ -35,7 +43,7 @@ class SearchInit : public State
                     params.goal_y = y;
                     waypoint = new SimpleWaypoint( ssm->inputs, params );
                     ssm->waypoints.push_back( (Waypoint *)waypoint );
-                }
+                }*/
                 setup_complete = true;
             }
         }
