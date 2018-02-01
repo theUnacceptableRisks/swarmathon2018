@@ -15,13 +15,13 @@ typedef struct distance_pid_params
 
 class DistancePID : public Waypoint
 {
-    friend class DistancePIDStates;
+    friend class DistancePIDDrive;
     public:
         DistancePID( LogicInputs *i, DistancePIDParams p );
     private:
         DistancePIDParams params;
-        WaypointUtilties::PidPackage pids;
-        WaypointUtitlies::DrivingParams driving_params;
+        WaypointUtilities::PidPackage pids;
+        WaypointUtilities::DrivingParams driving_params;
 
 };
 

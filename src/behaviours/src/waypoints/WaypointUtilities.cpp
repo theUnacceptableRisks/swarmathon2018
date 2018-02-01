@@ -8,8 +8,8 @@ float WaypointUtilities::getDistance( DrivingParams params )
 {
     //simple hypotenuse of the difference between the two points
     //order shouldnt matter as long as its consistant
-    return hypot( fabs( params.goal_x - *params.current_x ),
-                  fabs( params.goal_y - *params.current_y ) );
+    return hypot( params.goal_x - *params.current_x,
+                  params.goal_y - *params.current_y );
 }
 
 float WaypointUtilities::getGoalTheta( DrivingParams params )
@@ -36,6 +36,9 @@ std::tuple<int,int> WaypointUtilities::executePid( PidParams &params, PidPackage
     int right = 0;
 
     vel = pids.vel_pid.PIDOut( params.velocity_error, params.velocity_goal );
+    cout << "error is " << params.velocity_error << std::endl;
+    cout << "goal is " << params.velocity_goal << std::endl;
+    cout << "vel is " << vel;
     yaw = pids.yaw_pid.PIDOut( params.angular_error, params.angular_goal );
     left = (int)(vel - yaw);
     right = (int)(vel + yaw);

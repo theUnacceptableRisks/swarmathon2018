@@ -1,9 +1,10 @@
 #include "DistancePID.h"
-#include "DistancePIDState.h"
+#include "DistancePIDStates.h"
 
-DistancePID::DistancePID( LogicInput *i, DistancePIDParams p ) : Waypoint( i ), params(p)
+DistancePID::DistancePID( LogicInputs *i, DistancePIDParams p ) : Waypoint( i ), params(p)
 {
     //states
+    addState( "drive_state", new DistancePIDDrive() );
 
     //driving params
     driving_params.goal_x = 0;
@@ -28,4 +29,6 @@ DistancePID::DistancePID( LogicInput *i, DistancePIDParams p ) : Waypoint( i ), 
     vel_config.integralErrorHistoryLength = 10000; //how many time ticks should error history should be st$
     vel_config.integralMax = vel_config.satUpper/2; //what is the limit of the integral output for the PID
     vel_config.derivativeAlpha = 0.7; //dead code not used
+
+    pids.vel_pid.SetConfiguration( vel_config );
 }

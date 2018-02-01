@@ -34,10 +34,12 @@
  ****************/
 #include "state_machine/StateMachine.h"
 #include "waypoints/SimpleWaypoint.h"
+#include "waypoints/DistancePID.h"
 #include "logic/LogicMachine.h"
 #include "logic/SearchState.h"
 #include "logic/PickUpState.h"
 #include "Gripper.h"
+
 
 // To handle shutdown signals so the node quits
 // properly in response to "rosnode kill"
@@ -205,6 +207,13 @@ void setupLogicMachine()
     /* add States */
     logic_machine.addState( search_state.getIdentifier(), dynamic_cast<State *>(&search_state) );
     logic_machine.addState( pickup_state.getIdentifier(), dynamic_cast<State *>(&pickup_state) );
+
+    DistancePIDParams w_params;
+    w_params.goal_distance = 1.0;
+    w_params.kp = 60.0;
+    w_params.ki = 0.0;
+    w_params.kd = 0.0;
+    outputs.current_waypoint = dynamic_cast<Waypoint*>( new DistancePID( &inputs, w_params ) );
     return;
 }
 
@@ -289,8 +298,8 @@ void runStateMachines(const ros::TimerEvent&)
         /***************************
          * State Machine Execution *
          ***************************/
-        logic_machine.run();
-        std::cout << "current state is..." << logic_machine.getCurrentIdentifier() << std::endl;
+//        logic_machine.run();
+//        std::cout << "current state is..." << logic_machine.getCurrentIdentifier() << std::endl;
 
         /*****************
          * Drive Portion *

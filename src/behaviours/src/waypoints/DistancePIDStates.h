@@ -7,7 +7,7 @@
 class DistancePIDDrive : public State
 {
     public:
-        DistancePIDDrive( std::string id ) : State( id ), owner(0) {}
+        DistancePIDDrive() : State( "drive_state" ) {}
         virtual void action();
 };
 

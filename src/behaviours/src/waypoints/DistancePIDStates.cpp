@@ -1,11 +1,12 @@
 #include "DistancePIDStates.h"
 #include "DistancePID.h"
 
-void DistancePIDStates::action()
+void DistancePIDDrive::action()
 {
     DistancePID *dps_owner = dynamic_cast<DistancePID*> ( owner );
 
-    WaypointsUtitlies::PidParams wp_params;
+    WaypointUtilities::PidParams wp_params;
+
     std::tuple<int,int> leftAndRight = std::make_tuple<int,int>( 0, 0 );
 
     if( dps_owner )
@@ -16,7 +17,7 @@ void DistancePIDStates::action()
 
         leftAndRight = WaypointUtilities::executePid( wp_params, dps_owner->pids );
 
-        dps_owner->setOutputLeftPWM( std::get<0>( leftAndRight );
-        dps_owner->setOutputRightPWM( std::get<1>( leftAndRight );
+        dps_owner->setOutputLeftPWM( std::get<0>( leftAndRight ) );
+        dps_owner->setOutputRightPWM( std::get<1>( leftAndRight ) );
     }
 }
