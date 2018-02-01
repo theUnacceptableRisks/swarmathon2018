@@ -65,5 +65,4 @@ SimpleWaypoint::SimpleWaypoint( LogicInputs *i, SimpleParams sp ) : Waypoint( i 
 
     pids.vel_pid.SetConfiguration( vel_config );
     pids.yaw_pid.SetConfiguration( yaw_config );
-
 }
