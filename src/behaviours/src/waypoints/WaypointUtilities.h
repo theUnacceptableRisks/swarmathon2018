@@ -4,6 +4,7 @@
 #include <math.h>
 #include <tuple>
 #include <angles/angles.h>
+#include "../Tag.h"
 #include "../PID.h"
 
 namespace WaypointUtilities
@@ -22,6 +23,7 @@ namespace WaypointUtilities
     /******************
      * Trig Shortcuts *
      ******************/
+    float getDistanceToTag( Tag tag );
     float getDistance( DrivingParams params );
     float getGoalTheta( DrivingParams params );
     float getAngularCorrectionNeeded( DrivingParams params );

@@ -4,6 +4,11 @@
 /******************
  * Trig Shortcuts *
  ******************/
+float WaypointUtilities::getDistanceToTag( Tag tag )
+{
+    return hypot( hypot( tag.getPositionX(), tag.getPositionY() ), tag.getPositionZ() );
+}
+
 float WaypointUtilities::getDistance( DrivingParams params )
 {
     //simple hypotenuse of the difference between the two points
