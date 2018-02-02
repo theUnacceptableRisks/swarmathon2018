@@ -11,6 +11,7 @@ class ApproachTagWaypoint : public Waypoint
 {
     public:
         ApproachTagWaypoint( LogicInputs *i );
+        virtual void run();
     private:
 };
 

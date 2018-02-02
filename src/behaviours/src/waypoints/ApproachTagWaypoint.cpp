@@ -43,3 +43,28 @@ ApproachTagWaypoint::ApproachTagWaypoint( LogicInputs *i ) : Waypoint( i )
     pids.vel_pid.SetConfiguration( vel_config );
     pids.yaw_pid.SetConfiguration( yaw_config );
 }
+
+void ApproachTagWaypoint::run()
+{
+    WaypointUtilities::PidParams params;
+    std::tuple<int,int> leftAndRight = std::make_tuple<int,int> ( 0, 0 );
+
+    if( TagUtilities::hasTag( &inputs->tags, 0 ) )
+    {
+        params.velocity_error = WaypointUtilities::getDistanceToTag( inputs->tags.back() );
+        params.velocity_goal = 0.0;
+        params.angular_error = (-1)*( inputs->tags.back().getPositionX() );
+        params.angular_goal = 0.028;
+        params.saturation_point = 30;
+
+        leftAndRight = WaypointUtilities::executePid( params, pids );
+
+        setOutputLeftPWM( std::get<0>( leftAndRight ) );
+        setOutputRightPWM( std::get<1>( leftAndRight ) );
+    }
+    else
+    {
+        setOutputLeftPWM( 0 );
+        setOutputRightPWM( 0 );
+    }
+}
