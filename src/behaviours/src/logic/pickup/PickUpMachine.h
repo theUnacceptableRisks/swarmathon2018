@@ -5,6 +5,7 @@
 
 class PickUpMachine : public SubMachine
 {
+    friend class PickUpApproach;
     public:
         PickUpMachine( IOTable *io );
     private:

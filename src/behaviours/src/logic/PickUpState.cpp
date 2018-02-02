@@ -2,5 +2,5 @@
 
 void PickUpState::action()
 {
-//    pickup_machine.run();
+    pickup_machine.run();
 }

@@ -32,7 +32,7 @@ ApproachTagWaypoint::ApproachTagWaypoint( LogicInputs *i ) : Waypoint( i )
     yaw_config.satLower = -255;
     yaw_config.antiWindup = yaw_config.satUpper/6;
     yaw_config.errorHistLength = 4;
-    yaw_config.alwaysIntegral = false;
+    yaw_config.alwaysIntegral = true;
     yaw_config.resetOnSetpoint = true;
     yaw_config.feedForwardMultiplier = 0;
     yaw_config.integralDeadZone = 0.01;
@@ -55,7 +55,7 @@ void ApproachTagWaypoint::run()
         params.velocity_goal = 0.0;
         params.angular_error = (-1)*( inputs->tags.back().getPositionX() );
         params.angular_goal = 0.028;
-        params.saturation_point = 30;
+        params.saturation_point = 20;
 
         leftAndRight = WaypointUtilities::executePid( params, pids );
 

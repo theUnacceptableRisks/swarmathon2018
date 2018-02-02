@@ -364,10 +364,10 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
     // This is to make sure autonomous behaviours are not triggered while the rover is in manual mode.
 //    if(currentMode == 0 || currentMode == 1)
   //      return;
+    inputs.tags.clear();
 
     if (message->detections.size() > 0)
     {
-        inputs.tags.clear();
 
         for (int i = 0; i < message->detections.size(); i++)
         {
