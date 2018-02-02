@@ -2,7 +2,6 @@
 #define simplewaypoint_h
 
 #include "Waypoint.h"
-#include "WaypointUtilities.h"
 #include "../PID.h"
 
 //SimpleWaypointStates seperate .cpp/.h
@@ -27,7 +26,6 @@ class SimpleWaypoint : public Waypoint
     public:
         SimpleWaypoint( LogicInputs *i, SimpleParams sp );
     private:
-        WaypointUtilities::PidPackage pids;
         SimpleParams simple_params;
         WaypointUtilities::DrivingParams driving_params;
         WaypointUtilities::DrivingParams secondary_driving_params;

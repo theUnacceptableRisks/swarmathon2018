@@ -9,14 +9,14 @@ ApproachTagWaypoint::ApproachTagWaypoint( LogicInputs *i ) : Waypoint( i )
     pids.yaw_pid = PID();
 
     PIDConfig vel_config;
-    vel_config.Kp = 10; //proportional constant
+    vel_config.Kp = 180; //proportional constant
     vel_config.Ki = 0; //integral constant
     vel_config.Kd = 0; //derivative constant
     vel_config.satUpper = 255; //upper limit for PID output
     vel_config.satLower = -255; //lower limit for PID output
     vel_config.antiWindup = vel_config.satUpper; //prevent integral from acruing error untill propor$
     vel_config.errorHistLength = 4; //how many time steps to average error over
-    vel_config.alwaysIntegral = true; //should the integral alway be on or only when there is error
+    vel_config.alwaysIntegral = false; //should the integral alway be on or only when there is error
     vel_config.resetOnSetpoint = true; //reset the integral and error history whent he setpoint chan$
     vel_config.feedForwardMultiplier = 0; //gives 127 pwm at 0.4 commandedspeed  ORIG:320
     vel_config.integralDeadZone = 0.01; //set the integral dead zone, prevented integral from growin$
@@ -25,8 +25,8 @@ ApproachTagWaypoint::ApproachTagWaypoint( LogicInputs *i ) : Waypoint( i )
     vel_config.derivativeAlpha = 0.7; //dead code not used
 
     PIDConfig yaw_config;
-    yaw_config.Kp = 20;
-    yaw_config.Ki = 0;
+    yaw_config.Kp = 430;
+    yaw_config.Ki = 7;
     yaw_config.Kd = 0;
     yaw_config.satUpper = 255;
     yaw_config.satLower = -255;

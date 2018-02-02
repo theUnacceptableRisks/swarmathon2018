@@ -1,6 +1,7 @@
 #ifndef waypoint_h
 #define waypoint_h
 
+#include "WaypointUtilities.h"
 #include "../state_machine/StateMachine.h"
 #include "../logic/LogicTypes.h"
 #include <tuple>
@@ -14,6 +15,7 @@ class Waypoint : public StateMachine
     protected:
         void setOutputLeftPWM( int pwm );
         void setOutputRightPWM( int pwm );
+        WaypointUtilities::PidPackage pids;
         LogicInputs *inputs;
         bool has_arrived;
     private:
