@@ -5,6 +5,11 @@
 #include <tuple> // For packaging position and orientation values
 #include <iostream> // For output streams
 
+//Frames with respect to image plane
+//Z - Out of Page
+//Y - Positive Up
+//X - Positive Right
+
 // Stores AprilTag data
 class Tag {
  public:

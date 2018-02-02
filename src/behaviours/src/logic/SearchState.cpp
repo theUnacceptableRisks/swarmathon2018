@@ -1,26 +1,26 @@
+#include <iostream>
 #include "SearchState.h"
+#include "../TagUtilities.h"
+
+SearchState::SearchState( IOTable *io ) : State( "search_state" ), search_machine(SearchMachine( io ))
+{
+
+}
 
 void SearchState::action()
 {
-    search_machine->run();
-    //TODO: else messaging
-    if( lm_owner )
-    {
-        lm_owner->current_waypoint = search_machine->getCurrentWaypoint();
-    }
+    search_machine.run();
 }
 
-bool SearchState::setOwner( StateMachine *sm )
+std::string SearchState::transition()
 {
-    bool success = false;
+    std::string transition_to = getIdentifier();
 
-    if( !owner && !lm_owner )
+    LogicMachine *lm = dynamic_cast<LogicMachine *> (owner);
+    if( lm )
     {
-        owner = sm;
-        lm_owner = (LogicMachine *)sm;
-        search_machine = new SearchMachine( lm_owner->inputs );
-        success = true;
+        if( TagUtilities::hasTag( &lm->inputs->tags, 0 ) )
+            transition_to = "pickup_state";
     }
-
-    return success;
+    return transition_to;
 }

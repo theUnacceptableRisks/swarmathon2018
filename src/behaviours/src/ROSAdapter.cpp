@@ -37,6 +37,8 @@
 #include "logic/LogicMachine.h"
 #include "logic/SearchState.h"
 #include "logic/search/SearchInit.h"
+#include "logic/PickUpState.h"
+#include "Gripper.h"
 
 // To handle shutdown signals so the node quits
 // properly in response to "rosnode kill"
@@ -59,7 +61,7 @@ void humanTime();
 
 // Behaviours Logic Functions
 void sendDriveCommand(double linearVel, double angularVel);
-
+void sendGripperPosition( Gripper::Position pos );
 
 int currentMode = 0;
 const float state_machines_loop = 0.1; // time between state machines function call
@@ -136,6 +138,7 @@ void setupPublishers( ros::NodeHandle &ros_handle, string published_name )
 ros::Subscriber joy_subscriber;
 ros::Subscriber mode_subscriber;
 ros::Subscriber target_subscriber;
+ros::Subscriber raw_odom_subscriber;
 ros::Subscriber odometry_subscriber;
 ros::Subscriber map_subscriber;
 ros::Subscriber rover_id_subscriber;
@@ -158,6 +161,7 @@ void setupSubscribers( ros::NodeHandle &ros_handle, string published_name )
     joy_subscriber = ros_handle.subscribe((published_name + "/joystick"), 10, joyCmdHandler);
     mode_subscriber = ros_handle.subscribe((published_name + "/mode"), 1, modeHandler);
     target_subscriber = ros_handle.subscribe((published_name + "/targets"), 10, targetHandler);
+    raw_odom_subscriber = ros_handle.subscribe((published_name + "/odom/"), 10, odomHandler);
     odometry_subscriber = ros_handle.subscribe((published_name + "/odom/filtered"), 10, odomAndAccelHandler);
     map_subscriber = ros_handle.subscribe((published_name + "/odom/ekf"), 10, odomAccelAndGPSHandler);
     rover_id_subscriber = ros_handle.subscribe("/roverID", 10, roverIDHandler);
@@ -201,17 +205,22 @@ void sigintEventHandler(int signal);
  * Sensor Inputs *
  *****************/
 LogicInputs inputs;
-
+LogicOutputs outputs;
+IOTable iotable = { &inputs, &outputs };
+//iotable.inputs = &inputs;
+//iotable.outputs = &outputs;
 /***********************
  * Logic State Machine *
  ***********************/
-LogicMachine logic_machine( &inputs );
-SearchState search_state;
+LogicMachine logic_machine( &iotable );
+SearchState search_state( &iotable );
+PickUpState pickup_state( &iotable );
 
 void setupLogicMachine()
 {
     /* add States */
-    logic_machine.addState( search_state.getIdentifier(), (State *)&search_state );
+    logic_machine.addState( search_state.getIdentifier(), dynamic_cast<State *>(&search_state) );
+    logic_machine.addState( pickup_state.getIdentifier(), dynamic_cast<State *>(&pickup_state) );
     return;
 }
 
@@ -289,31 +298,34 @@ void runStateMachines(const ros::TimerEvent&)
 {
     // time since timerStartTime was set to current time
     //timerTimeElapsed = time(0) - timerStartTime;
-
     // Robot is in automode
+    inputs.time = ros::Time::now();
     if (currentMode == 2 || currentMode == 3)
     {
-        Waypoint *current_waypoint = 0;
-
+        /***************************
+         * State Machine Execution *
+         ***************************/
         logic_machine.run();
         std::cout << "current state is..." << logic_machine.getCurrentIdentifier() << std::endl;
-        current_waypoint = logic_machine.getCurrentWaypoint();
 
-        /* TODO: add else messaging */
-        if( current_waypoint )
+        /*****************
+         * Drive Portion *
+         *****************/
+        if( outputs.current_waypoint )
         {
             int left = 0;
             int right = 0;
-            std::tuple<int,int> outputs;
+            std::tuple<int,int> output;
 
-            current_waypoint->run();
+            outputs.current_waypoint->run();
 
-            outputs = current_waypoint->getOutput();
-            left = std::get<0>( outputs );
-            right = std::get<1>( outputs );
+            output = outputs.current_waypoint->getOutput();
+            left = std::get<0>( output );
+            right = std::get<1>( output );
 
             std::cout << "Left is " << left << std::endl;
             std::cout << "Right is " << right << std::endl;
+
             /* TODO: add else messaging */
             sendDriveCommand( left, right );
         }
@@ -322,10 +334,14 @@ void runStateMachines(const ros::TimerEvent&)
             std::cout << "Current Waypoint is null" << std::endl;
             sendDriveCommand( 0, 0 );
         }
-
+        /*******************
+         * Gripper Portion *
+         *******************/
+        sendGripperPosition( outputs.gripper_position );
     }
     else
     {
+        sendGripperPosition( Gripper::HOVER_OPEN );
         /* some output about manual mode? */
     }
 }
@@ -339,6 +355,19 @@ void sendDriveCommand(double left, double right)
 
     // publish the drive commands
     drive_control_publish.publish(velocity);
+}
+
+void sendGripperPosition( Gripper::Position pos )
+{
+    std_msgs::Float32 wrist;
+    std_msgs::Float32 fingers;
+    std::tuple<double,double> values = Gripper::getWristFingerValuesForPosition( pos );
+
+    wrist.data = std::get<0>( values );
+    fingers.data = std::get<1>( values );
+
+    wrist_angle_publish.publish( wrist );
+    finger_angle_publish.publish( fingers );
 }
 
 /*************************
@@ -365,8 +394,8 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
 {
     // Don't pass April tag data to the logic controller if the robot is not in autonomous mode.
     // This is to make sure autonomous behaviours are not triggered while the rover is in manual mode.
-    if(currentMode == 0 || currentMode == 1)
-        return;
+//    if(currentMode == 0 || currentMode == 1)
+  //      return;
 
     if (message->detections.size() > 0)
     {
@@ -389,7 +418,8 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
                                                                   tagPose.pose.orientation.y,
                                                                   tagPose.pose.orientation.z,
                                                                   tagPose.pose.orientation.w ) );
-            inputs.tags.push_back(loc);
+            inputs.tags.push_back( loc );
+
         }
     }
 }

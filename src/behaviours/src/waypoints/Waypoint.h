@@ -2,22 +2,19 @@
 #define waypoint_h
 
 #include "../state_machine/StateMachine.h"
+#include "../logic/LogicTypes.h"
 #include <tuple>
 
 class Waypoint : public StateMachine
 {
     public:
-        Waypoint() : StateMachine(), has_arrived(false), output_left_pwm(0), output_right_pwm(0) {}
-
-        bool hasArrived( void ) { return has_arrived; }
-
-        std::tuple<int,int> getOutput()
-        {
-            return std::make_tuple( output_left_pwm, output_right_pwm );
-        }
+        Waypoint( LogicInputs *i );
+        bool hasArrived( void );
+        std::tuple<int,int> getOutput();
     protected:
-        void setOutputLeftPWM( int pwm ) { output_left_pwm = pwm; }
-        void setOutputRightPWM( int pwm ) { output_right_pwm = pwm; }
+        void setOutputLeftPWM( int pwm );
+        void setOutputRightPWM( int pwm );
+        LogicInputs *inputs;
         bool has_arrived;
     private:
         int output_left_pwm;

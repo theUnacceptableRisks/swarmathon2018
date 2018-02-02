@@ -1,21 +1,14 @@
 #ifndef searchmachine_h
 #define searchmachine_h
 
-#include "../LogicMachine.h"
+#include "../SubMachine.h"
 
-class SearchMachine : public StateMachine
+class SearchMachine : public SubMachine
 {
-    friend class SearchStateBase;
     friend class SearchInit;
     friend class SearchDrive;
     public:
-        SearchMachine();
-        SearchMachine( LogicInputs *i );
-        Waypoint *getCurrentWaypoint();
-    private:
-        LogicInputs *inputs;
-        void nextWaypoint();
-        std::vector<Waypoint*> waypoints;
+        SearchMachine( IOTable *io );
 };
 
 #endif

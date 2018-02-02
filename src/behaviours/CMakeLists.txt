@@ -27,15 +27,20 @@ add_executable(
   src/Tag.cpp
   src/ROSAdapter.cpp
   src/PID.cpp
+  src/Gripper.cpp
+  src/TagUtilities.cpp
   src/state_machine/Error.cpp
+  src/waypoints/Waypoint.cpp
   src/waypoints/WaypointUtilities.cpp
   src/waypoints/SimpleWaypoint.cpp
   src/waypoints/SimpleWaypointStates.cpp
+  src/waypoints/ApproachTagWaypoint.cpp
   src/logic/LogicMachine.cpp
-  src/logic/LogicState.cpp
+  src/logic/SubMachine.cpp
   src/logic/SearchState.cpp
+  src/logic/PickUpState.cpp
   src/logic/search/SearchMachine.cpp
-  src/logic/search/SearchStateBase.cpp
+  src/logic/pickup/PickUpMachine.cpp
 )
 
 add_dependencies(behaviours ${catkin_EXPORTED_TARGETS})
