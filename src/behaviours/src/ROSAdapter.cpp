@@ -236,15 +236,15 @@ void setupLogicMachine()
 
 /*    DistancePIDParams w_params;
     w_params.goal_distance = 1.0;
-    w_params.kp = 60.0;
-    w_params.ki = 0.0;
-    w_params.kd = 0.0;
+    w_params.kp = kp;
+    w_params.ki = ki;
+    w_params.kd = kd;
     outputs.current_waypoint = dynamic_cast<Waypoint*>( new DistancePID( &inputs, w_params ) ); */
 
     CameraYawParams c_params;
-    c_params.kp = 60.0;
-    c_params.ki = 0.0;
-    c_params.kd = 0.0;
+    c_params.kp = kp;
+    c_params.ki = ki;
+    c_params.kd = kd;
     outputs.current_waypoint = dynamic_cast<Waypoint*>( new CameraYawPID( &inputs, c_params ) );
     return;
 }
