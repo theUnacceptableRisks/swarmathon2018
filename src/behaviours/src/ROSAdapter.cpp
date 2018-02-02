@@ -35,6 +35,7 @@
 #include "state_machine/StateMachine.h"
 #include "waypoints/SimpleWaypoint.h"
 #include "waypoints/DistancePID.h"
+#include "waypoints/CameraYawPID.h"
 #include "logic/LogicMachine.h"
 #include "logic/SearchState.h"
 #include "logic/PickUpState.h"
@@ -207,13 +208,19 @@ void setupLogicMachine()
     /* add States */
     logic_machine.addState( search_state.getIdentifier(), dynamic_cast<State *>(&search_state) );
     logic_machine.addState( pickup_state.getIdentifier(), dynamic_cast<State *>(&pickup_state) );
-
+/*
     DistancePIDParams w_params;
     w_params.goal_distance = 1.0;
     w_params.kp = 60.0;
     w_params.ki = 0.0;
     w_params.kd = 0.0;
     outputs.current_waypoint = dynamic_cast<Waypoint*>( new DistancePID( &inputs, w_params ) );
+    */
+    CameraYawParams c_params;
+    c_params.kp = 60.0;
+    c_params.ki = 0.0;
+    c_params.kd = 0.0;
+    outputs.current_waypoint = dynamic_cast<Waypoint*>( new CameraYawPID( &inputs, c_params ) );
     return;
 }
 
@@ -316,9 +323,6 @@ void runStateMachines(const ros::TimerEvent&)
             left = std::get<0>( output );
             right = std::get<1>( output );
 
-            std::cout << "Left is " << left << std::endl;
-            std::cout << "Right is " << right << std::endl;
-
             /* TODO: add else messaging */
             sendDriveCommand( left, right );
         }
@@ -373,11 +377,10 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
     // This is to make sure autonomous behaviours are not triggered while the rover is in manual mode.
 //    if(currentMode == 0 || currentMode == 1)
   //      return;
+    inputs.tags.clear();
 
     if (message->detections.size() > 0)
     {
-        inputs.tags.clear();
-
         for (int i = 0; i < message->detections.size(); i++)
         {
             // Package up the ROS AprilTag data into our own type that does not rely on ROS.
