@@ -37,6 +37,7 @@ add_executable(
   src/waypoints/ApproachTagWaypoint.cpp
   src/waypoints/DistancePID.cpp
   src/waypoints/DistancePIDStates.cpp
+  src/waypoints/CameraYawPID.cpp
   src/logic/LogicMachine.cpp
   src/logic/SubMachine.cpp
   src/logic/SearchState.cpp
