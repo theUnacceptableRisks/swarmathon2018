@@ -41,6 +41,7 @@
 #include "logic/PickUpState.h"
 #include "Gripper.h"
 
+#include <fstream>
 
 // To handle shutdown signals so the node quits
 // properly in response to "rosnode kill"
@@ -205,17 +206,41 @@ PickUpState pickup_state( &iotable );
 
 void setupLogicMachine()
 {
+    ifstream pid_file ( "/home/frankenbox/SwarmBaseCode-ROS/src/behaviours/src/pid.txt" );
+    double kp = 0.0;
+    double ki = 0.0;
+    double kd = 0.0;
+
+    if( pid_file.is_open() )
+    {
+        std::string line;
+        getline( pid_file, line );
+        std::stringstream ss(line);
+
+        ss >> kp;
+        ss.ignore();
+        ss >> ki;
+        ss.ignore();
+        ss >> kd;
+
+        cout << "kp is " << kp << std::endl;
+        cout << "ki is " << ki << std::endl;
+        cout << "kd is " << kd << std::endl;
+    }
+    else
+        cout << "didn't open" << std::endl;
+
     /* add States */
     logic_machine.addState( search_state.getIdentifier(), dynamic_cast<State *>(&search_state) );
     logic_machine.addState( pickup_state.getIdentifier(), dynamic_cast<State *>(&pickup_state) );
-/*
-    DistancePIDParams w_params;
+
+/*    DistancePIDParams w_params;
     w_params.goal_distance = 1.0;
     w_params.kp = 60.0;
     w_params.ki = 0.0;
     w_params.kd = 0.0;
-    outputs.current_waypoint = dynamic_cast<Waypoint*>( new DistancePID( &inputs, w_params ) );
-    */
+    outputs.current_waypoint = dynamic_cast<Waypoint*>( new DistancePID( &inputs, w_params ) ); */
+
     CameraYawParams c_params;
     c_params.kp = 60.0;
     c_params.ki = 0.0;

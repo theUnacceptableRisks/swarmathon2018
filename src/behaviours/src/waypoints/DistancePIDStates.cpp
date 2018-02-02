@@ -11,7 +11,7 @@ void DistancePIDDrive::action()
 
     if( dps_owner )
     {
-        wp_params.velocity_error = WaypointUtilities::getDistance( dps_owner->driving_params );
+        wp_params.velocity_error = dps_owner->inputs->raw_odom.x;
         wp_params.velocity_goal = 1.0;
         wp_params.saturation_point = 60;
 
