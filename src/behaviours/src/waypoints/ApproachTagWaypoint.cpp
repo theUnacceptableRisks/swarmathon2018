@@ -9,7 +9,7 @@ ApproachTagWaypoint::ApproachTagWaypoint( LogicInputs *i ) : Waypoint( i )
     pids.yaw_pid = PID();
 
     PIDConfig vel_config;
-    vel_config.Kp = 180; //proportional constant
+    vel_config.Kp = 160; //proportional constant
     vel_config.Ki = 0; //integral constant
     vel_config.Kd = 0; //derivative constant
     vel_config.satUpper = 255; //upper limit for PID output
@@ -25,7 +25,7 @@ ApproachTagWaypoint::ApproachTagWaypoint( LogicInputs *i ) : Waypoint( i )
     vel_config.derivativeAlpha = 0.7; //dead code not used
 
     PIDConfig yaw_config;
-    yaw_config.Kp = 430;
+    yaw_config.Kp = 480;
     yaw_config.Ki = 7;
     yaw_config.Kd = 0;
     yaw_config.satUpper = 255;
@@ -54,8 +54,8 @@ void ApproachTagWaypoint::run()
         params.velocity_error = WaypointUtilities::getDistanceToTag( inputs->tags.back() );
         params.velocity_goal = 0.0;
         params.angular_error = (-1)*( inputs->tags.back().getPositionX() );
-        params.angular_goal = 0.028;
-        params.saturation_point = 20;
+        params.angular_goal = 0.00;
+        params.saturation_point = 40;
 
         leftAndRight = WaypointUtilities::executePid( params, pids );
 
