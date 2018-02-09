@@ -7,7 +7,7 @@
 namespace TagUtilities
 {
     bool hasTag( std::vector<Tag> *tags, int id );
-    float getDistance( Tag tag );
+    double getDistance( Tag tag );
 
     //pids specific to tag info
     

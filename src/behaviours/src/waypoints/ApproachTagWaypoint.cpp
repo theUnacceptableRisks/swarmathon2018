@@ -69,7 +69,7 @@ void ApproachTagWaypoint::run()
             {
                 params.velocity_error = curr_dist_to_tag;
                 params.velocity_goal = 0.0;
-                params.angular_error = 0.023 + (-1)*( inputs->tags.back().getPositionX() );
+                params.angular_error = (-1)*( inputs->tags.back().getPositionX() );
                 params.angular_goal = 0.00;
                 params.saturation_point = 40;
 
@@ -77,19 +77,18 @@ void ApproachTagWaypoint::run()
 
                 setOutputLeftPWM( std::get<0>( leftAndRight ) );
                 setOutputRightPWM( std::get<1>( leftAndRight ) );
+                prev_dist_to_tag = curr_dist_to_tag;
             }
 
         }
         else if( prev_dist_to_tag < MAX_DISTANCE_FOR_ARRIVAL )
         {
-            std::cout << "this zero" << std::endl;
             setOutputLeftPWM( 0 );
             setOutputRightPWM( 0 );
             has_arrived = true;
         }
         else
         {
-            std::cout << "that zero" << std::endl;
             /* need to start counting failures here */
             setOutputLeftPWM( 0 );
             setOutputRightPWM( 0 );

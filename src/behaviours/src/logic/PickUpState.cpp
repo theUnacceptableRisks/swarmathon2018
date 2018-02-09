@@ -1,4 +1,5 @@
 #include "PickUpState.h"
+#include "../Gripper.h"
 
 /********************
  * Basic Operations *
@@ -89,7 +90,7 @@ void PickUpState::internalAction()
             //does nothing for now
             break;
         case PICKUP_CLAW_DOWN:
-            std::cout << "Made it to claw down!!!" << std::endl;
+            outputs->gripper_position = Gripper::DOWN_CLOSED;
             break;
         case PICKUP_CLAW_CLOSE:
         case PICKUP_CLAW_UP:

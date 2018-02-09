@@ -1,6 +1,6 @@
 #include "TagUtilities.h"
 
-float TagUtilities::getDistance( Tag tag )
+double TagUtilities::getDistance( Tag tag )
 {
     return hypot( hypot( tag.getPositionX(), tag.getPositionY() ), tag.getPositionZ() );
 }
