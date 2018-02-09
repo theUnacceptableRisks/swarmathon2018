@@ -82,12 +82,14 @@ void ApproachTagWaypoint::run()
         }
         else if( prev_dist_to_tag < MAX_DISTANCE_FOR_ARRIVAL )
         {
+            std::cout << "this zero" << std::endl;
             setOutputLeftPWM( 0 );
             setOutputRightPWM( 0 );
             has_arrived = true;
         }
         else
         {
+            std::cout << "that zero" << std::endl;
             /* need to start counting failures here */
             setOutputLeftPWM( 0 );
             setOutputRightPWM( 0 );

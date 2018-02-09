@@ -2,19 +2,44 @@
 #define pickupstate_h
 
 #include "../state_machine/State.h"
+#include "../waypoints/ApproachTagWaypoint.h"
 #include "LogicTypes.h"
-#include "pickup/PickUpMachine.h"
+
+#define MAX_ATTEMPTS 20
+
+typedef enum
+{
+    PICKUP_INIT,
+    PICKUP_APPROACH,
+    PICKUP_CLAW_DOWN,
+    PICKUP_CLAW_CLOSE,
+    PICKUP_CLAW_UP,
+    PICKUP_CONFIRM,
+    PICKUP_HOVER_CLOSE,
+    PICKUP_COMPLETE,
+    PICKUP_FAIL
+} PUState;
 
 class PickUpState : public State
 {
     public:
-        PickUpState( IOTable *io ) : State( "pickup_state" ), pickup_machine(PickUpMachine( io )) {}
+        PickUpState( IOTable *io ) : State( "pickup_state" ), internal_state(PICKUP_INIT), inputs(io->inputs), outputs(io->outputs) {}
         virtual void action( void );
         virtual void onEnter();
+        virtual void onExit();
+        virtual std::string transition();
+
     private:
-        std::vector<Waypoint*> waypoints;
+        PUState internalTransition();
+        void internalAction();
+        void forceTransition( PUState transition_to );
+
+        ApproachTagWaypoint *approach;
+        //short dist waypoint
         LogicInputs *inputs;
         LogicOutputs *outputs;
+        PUState internal_state;
+        int attempts;
 };
 
 #endif
