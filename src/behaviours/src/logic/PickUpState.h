@@ -10,8 +10,11 @@ class PickUpState : public State
     public:
         PickUpState( IOTable *io ) : State( "pickup_state" ), pickup_machine(PickUpMachine( io )) {}
         virtual void action( void );
+        virtual void onEnter();
     private:
-        PickUpMachine pickup_machine;
+        std::vector<Waypoint*> waypoints;
+        LogicInputs *inputs;
+        LogicOutputs *outputs;
 };
 
 #endif
