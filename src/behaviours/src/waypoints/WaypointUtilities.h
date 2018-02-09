@@ -23,7 +23,6 @@ namespace WaypointUtilities
     /******************
      * Trig Shortcuts *
      ******************/
-    float getDistanceToTag( Tag tag );
     float getDistance( DrivingParams params );
     float getGoalTheta( DrivingParams params );
     float getAngularCorrectionNeeded( DrivingParams params );

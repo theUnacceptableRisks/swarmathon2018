@@ -1,6 +1,6 @@
 #include "ApproachTagWaypoint.h"
 
-ApproachTagWaypoint::ApproachTagWaypoint( LogicInputs *i ) : Waypoint( i )
+ApproachTagWaypoint::ApproachTagWaypoint( LogicInputs *i, int dt ) : Waypoint( i ), desired_tag_id(dt)
 {
     //addState
 
@@ -48,23 +48,56 @@ void ApproachTagWaypoint::run()
 {
     WaypointUtilities::PidParams params;
     std::tuple<int,int> leftAndRight = std::make_tuple<int,int> ( 0, 0 );
+    double dist_to_curr_tag = 0.0;
+    double dist_to_prev_tag = 0.0;
 
-    if( TagUtilities::hasTag( &inputs->tags, 0 ) )
+    if( has_arrived == false )
     {
-        params.velocity_error = WaypointUtilities::getDistanceToTag( inputs->tags.back() );
-        params.velocity_goal = 0.0;
-        params.angular_error = (-1)*( inputs->tags.back().getPositionX() );
-        params.angular_goal = 0.00;
-        params.saturation_point = 40;
+        dist_to_prev_tag = TagUtilities::getDistance( last_tag );
 
-        leftAndRight = WaypointUtilities::executePid( params, pids );
+        if( TagUtilities::hasTag( &inputs->tags, desired_tag_id ) )
+        {
+            current_tag = inputs->tags.back();
+            dist_to_curr_tag = TagUtilities::getDistance( current_tag );
 
-        setOutputLeftPWM( std::get<0>( leftAndRight ) );
-        setOutputRightPWM( std::get<1>( leftAndRight ) );
-    }
-    else
-    {
-        setOutputLeftPWM( 0 );
-        setOutputRightPWM( 0 );
+            if( fabs( dist_to_curr_tag - dist_to_prev_tag ) > RATE_OF_CHANGE_MAX )
+            {
+                if( dist_to_prev_tag < MAX_DISTANCE_FOR_ARRIVAL )
+                {
+                     has_arrived = true;
+                     setOutputLeftPWM( 0 );
+                     setOutputRightPWM( 0 );
+                 }
+           }
+
+        }
+        else if( dist_to_prev_tag < MAX_DISTANCE_FOR_ARRIVAL )
+        {
+            setOutputLeftPWM( 0 );
+            setOutputRightPWM( 0 );
+            has_arrived = true;
+        }
+        else
+        {
+            setOutputLeftPWM( 0 );
+            setOutputRightPWM( 0 );
+        }
+
+        if( has_arrived == false )
+        {
+            params.velocity_error = 0.023 + TagUtilities::getDistance( current_tag );
+            params.velocity_goal = 0.0;
+            params.angular_error = (-1)*( inputs->tags.back().getPositionX() );
+            params.angular_goal = 0.00;
+            params.saturation_point = 40;
+
+            leftAndRight = WaypointUtilities::executePid( params, pids );
+
+            setOutputLeftPWM( std::get<0>( leftAndRight ) );
+            setOutputRightPWM( std::get<1>( leftAndRight ) );
+
+            last_tag = current_tag;
+        }
+
     }
 }
