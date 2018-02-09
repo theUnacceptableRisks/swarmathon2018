@@ -14,7 +14,7 @@ class PickUpApproach : public State
             PickUpMachine *pum = dynamic_cast<PickUpMachine*> ( owner );
             if( pum )
             {
-                ApproachTagWaypoint *waypoint = new ApproachTagWaypoint( pum->inputs );
+                ApproachTagWaypoint *waypoint = new ApproachTagWaypoint( pum->inputs, 0 );
                 pum->clearWaypoints();
                 pum->waypoints.push_back( dynamic_cast<Waypoint*>( waypoint)  );
             }
