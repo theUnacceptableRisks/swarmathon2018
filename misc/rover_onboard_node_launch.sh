@@ -95,7 +95,7 @@ nohup > logs/$HOSTNAME"_localization_navsat_log.txt" rosrun robot_localization n
 rosparam set /$HOSTNAME\_ODOM/odom0 /$HOSTNAME/odom
 rosparam set /$HOSTNAME\_ODOM/imu0 /$HOSTNAME/imu
 rosparam set /$HOSTNAME\_ODOM/odom0_config [false,false,false,false,false,false,true,false,false,false,false,true,false,false,false]
-rosparam set /$HOSTNAME\_ODOM/imu0_config [false,false,false,false,false,true,false,false,false,false,false,true,true,false,false]
+rosparam set /$HOSTNAME\_ODOM/imu0_config [false,false,false,false,false,true,false,false,false,false,false,true,false,false,false]
 nohup > logs/$HOSTNAME"_odom_EKF_log.txt" rosrun robot_localization ekf_localization_node _two_d_mode:=true _world_frame:=odom _frequency:=10 __name:=$HOSTNAME\_ODOM /odometry/filtered:=/$HOSTNAME/odom/filtered &
 
 rosparam set /$HOSTNAME\_MAP/odom0 /$HOSTNAME/odom/navsat
