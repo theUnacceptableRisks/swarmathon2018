@@ -9,6 +9,7 @@ class PickUpState : public State
     public:
         PickUpState( IOTable *io ) : State( "pickup_state" ) {}
         virtual void action( void );
+        virtual std::string transition( void );
 };
 
 #endif

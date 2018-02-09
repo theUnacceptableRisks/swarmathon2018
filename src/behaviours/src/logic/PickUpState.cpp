@@ -5,8 +5,8 @@ void PickUpState::action()
 //    pickup_machine.run();
 }
 
-std::string SearchState::transition()
+std::string PickUpState::transition()
 {
-    std::string transition_to = "return_state";
+    std::string transition_to = "dropoff_state";
     return transition_to;
 }
