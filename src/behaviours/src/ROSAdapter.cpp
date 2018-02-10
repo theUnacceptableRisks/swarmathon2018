@@ -290,7 +290,7 @@ void runStateMachines(const ros::TimerEvent&)
          * State Machine Execution *
          ***************************/
         logic_machine.run();
-        std::cout << "current state is..." << logic_machine.getCurrentIdentifier() << std::endl;
+//        std::cout << "current state is..." << logic_machine.getCurrentIdentifier() << std::endl;
 
         /*****************
          * Drive Portion *
@@ -307,15 +307,20 @@ void runStateMachines(const ros::TimerEvent&)
             left = std::get<0>( output );
             right = std::get<1>( output );
 
-            std::cout << "Left is " << left << std::endl;
-            std::cout << "Right is " << right << std::endl;
+            if( abs( left ) < 15 )
+               left = 0;
+            if( abs( right ) < 15 )
+               right = 0;
+
+  //          std::cout << "Left is " << left << std::endl;
+    //        std::cout << "Right is " << right << std::endl;
 
             /* TODO: add else messaging */
             sendDriveCommand( left, right );
         }
         else
         {
-            std::cout << "Current Waypoint is null" << std::endl;
+      //      std::cout << "Current Waypoint is null" << std::endl;
             sendDriveCommand( 0, 0 );
         }
         /*******************

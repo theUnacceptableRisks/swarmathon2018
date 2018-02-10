@@ -25,8 +25,8 @@ ApproachTagWaypoint::ApproachTagWaypoint( LogicInputs *i, int dt, double distanc
     vel_config.derivativeAlpha = 0.7; //dead code not used
 
     PIDConfig yaw_config;
-    yaw_config.Kp = 480;
-    yaw_config.Ki = 7;
+    yaw_config.Kp = 60;
+    yaw_config.Ki = 0;
     yaw_config.Kd = 0;
     yaw_config.satUpper = 255;
     yaw_config.satLower = -255;
@@ -67,10 +67,12 @@ void ApproachTagWaypoint::run()
             }
             else
             {
-                params.velocity_error = curr_dist_to_tag - 0.19;
+                params.velocity_error = 0; //curr_dist_to_tag - 0.19;
                 params.velocity_goal = 0.0;
-                params.angular_error = (-0.023) + (-1)*( inputs->tags.back().getPositionX() );
+                params.angular_error = (-0.018) + (-1)*( inputs->tags.back().getPositionX() );
+                cout << "angular error: " << params.angular_error << std::endl;
                 params.angular_goal = 0.00;
+                cout << "angular goal: " << params.angular_goal << std::endl;
                 params.saturation_point = 40;
 
                 leftAndRight = WaypointUtilities::executePid( params, pids );
