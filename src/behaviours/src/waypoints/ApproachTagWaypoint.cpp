@@ -10,7 +10,7 @@ ApproachTagWaypoint::ApproachTagWaypoint( LogicInputs *i, int dt, double distanc
 
     PIDConfig vel_config;
     vel_config.Kp = 160; //proportional constant
-    vel_config.Ki = 0; //integral constant
+    vel_config.Ki = 5; //integral constant
     vel_config.Kd = 0; //derivative constant
     vel_config.satUpper = 255; //upper limit for PID output
     vel_config.satLower = -255; //lower limit for PID output
@@ -67,9 +67,9 @@ void ApproachTagWaypoint::run()
             }
             else
             {
-                params.velocity_error = curr_dist_to_tag;
+                params.velocity_error = curr_dist_to_tag - 0.19;
                 params.velocity_goal = 0.0;
-                params.angular_error = (-1)*( inputs->tags.back().getPositionX() );
+                params.angular_error = 0.023 + (-1)*( inputs->tags.back().getPositionX() );
                 params.angular_goal = 0.00;
                 params.saturation_point = 40;
 

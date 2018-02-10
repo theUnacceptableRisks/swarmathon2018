@@ -87,6 +87,7 @@ void PickUpState::internalAction()
             break;
         case PICKUP_APPROACH:
             std::cout << "approaching" << std::endl;
+            outputs->gripper_position = Gripper::DOWN_OPEN;
             //does nothing for now
             break;
         case PICKUP_CLAW_DOWN:

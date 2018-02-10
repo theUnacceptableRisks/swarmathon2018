@@ -12,7 +12,7 @@
  *****************/
 
 #define RATE_OF_CHANGE_MAX 0.02
-#define MAX_DISTANCE_FOR_ARRIVAL 0.21
+#define MAX_DISTANCE_FOR_ARRIVAL 0.23
 
 class ApproachTagWaypoint : public Waypoint
 {
