@@ -38,9 +38,11 @@ add_executable(
   src/logic/LogicMachine.cpp
   src/logic/SubMachine.cpp
   src/logic/SearchState.cpp
+  src/logic/ReturnState.cpp
   src/logic/PickUpState.cpp
   src/logic/search/SearchMachine.cpp
   src/logic/pickup/PickUpMachine.cpp
+  src/logic/return/ReturnMachine.cpp
 )
 
 add_dependencies(behaviours ${catkin_EXPORTED_TARGETS})

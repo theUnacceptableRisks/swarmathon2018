@@ -19,8 +19,8 @@ std::string ReturnState::transition()
     LogicMachine *lm = dynamic_cast<LogicMachine *> (owner);
     if( lm )
     {
-        if( TagUtilities::hasTag( &lm->inputs->tags, 0 ) )
-            transition_to = "pickup_state";
+        if( TagUtilities::hasTag( &lm->inputs->tags,  256) )
+            transition_to = "search_state";
     }
     return transition_to;
 }

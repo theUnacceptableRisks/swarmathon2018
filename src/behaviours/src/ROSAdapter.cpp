@@ -38,6 +38,7 @@
 #include "logic/SearchState.h"
 #include "logic/search/SearchInit.h"
 #include "logic/PickUpState.h"
+#include "logic/ReturnState.h"
 #include "Gripper.h"
 
 // To handle shutdown signals so the node quits
@@ -215,12 +216,14 @@ IOTable iotable = { &inputs, &outputs };
 LogicMachine logic_machine( &iotable );
 SearchState search_state( &iotable );
 PickUpState pickup_state( &iotable );
+ReturnState return_state( &iotable );
 
 void setupLogicMachine()
 {
     /* add States */
     logic_machine.addState( search_state.getIdentifier(), dynamic_cast<State *>(&search_state) );
     logic_machine.addState( pickup_state.getIdentifier(), dynamic_cast<State *>(&pickup_state) );
+    logic_machine.addState( return_state.getIdentifier(), dynamic_cast<State *>(&return_state) );
     return;
 }
 

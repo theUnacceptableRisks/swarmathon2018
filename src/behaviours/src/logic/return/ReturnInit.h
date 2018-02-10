@@ -30,13 +30,13 @@ class ReturnInit : public State
                 double y = 0;
 
                 params.skid_steer_threshold = 0.15;
-                for(int i = 1; i < 15; i ++){
-                    params.goal_x = cos( ((((2*PI)/numberOfRovers)*roverID ) * ((i%4)/2)  ) + ((((2*PI)/numberOfRovers)*(roverID+1) ) * (int)( (i+2)%4/2)) ) * (int) ((i+1)/2);
-                    params.goal_y = sin( ((((2*PI)/numberOfRovers)*roverID ) * ((i%4)/2)  ) + ((((2*PI)/numberOfRovers)*(roverID+1) ) * (int)( (i+2)%4/2)) ) * (int) ((i+1)/2);
+                
+                    params.goal_x = 0;
+                    params.goal_y = 0;
                     cout << "x: " << params.goal_x << " | y: " << params.goal_y << endl;
                     waypoint = new SimpleWaypoint( ssm->inputs, params );
                     ssm->waypoints.push_back( (Waypoint *)waypoint );
-                }
+                
 
                 setup_complete = true;
             }

@@ -15,6 +15,7 @@ class LogicMachine : public StateMachine
     friend class FindHomeState;
     friend class DropOffState;
     friend class ObstacleAvoidanceState;
+    friend class ReturnState;
     public:
         LogicMachine( IOTable *io );
     private:

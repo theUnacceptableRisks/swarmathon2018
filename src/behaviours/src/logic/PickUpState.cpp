@@ -7,6 +7,6 @@ void PickUpState::action()
 
 std::string PickUpState::transition()
 {
-    std::string transition_to = "dropoff_state";
+    std::string transition_to = "return_state";
     return transition_to;
 }

@@ -15,9 +15,9 @@ SimpleWaypoint::SimpleWaypoint( LogicInputs *i, SimpleParams sp ) : Waypoint( i 
     //driving params
     driving_params.goal_x = simple_params.goal_x;
     driving_params.goal_y = simple_params.goal_y;
-    driving_params.current_x = &inputs->odom_accel.x;
-    driving_params.current_y = &inputs->odom_accel.y;
-    driving_params.current_theta = &inputs->odom_accel.theta;
+    driving_params.current_x = &inputs->odom_accel_gps.x;
+    driving_params.current_y = &inputs->odom_accel_gps.y;
+    driving_params.current_theta = &inputs->odom_accel_gps.theta;
     driving_params.current_linear_vel = &inputs->linear_vel_odom_accel;
     driving_params.current_angular_vel = &inputs->angular_vel_odom_accel;
 

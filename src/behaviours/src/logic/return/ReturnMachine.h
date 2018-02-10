@@ -8,7 +8,7 @@ class ReturnMachine : public SubMachine
     friend class ReturnInit;
     friend class ReturnDrive;
     public:
-        SearchMachine( IOTable *io );
+        ReturnMachine( IOTable *io );
 };
 
 #endif
