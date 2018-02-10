@@ -85,15 +85,15 @@ float Tag::getOrientationX() const {
 }
 
 float Tag::getOrientationY() const {
-  orientation.R_component_2();
+  return orientation.R_component_2();
 }
 
 float Tag::getOrientationZ() const {
-  orientation.R_component_3();
+  return orientation.R_component_3();
 }
 
 float Tag::getOrientationW() const {
-  orientation.R_component_4();
+  return orientation.R_component_4();
 }
 
 void Tag::setPositionX( float x ) {
