@@ -34,7 +34,7 @@ std::string SimpleWaypointState::transition()
 
     if( sw_owner )
     {
-        float angularCorrection = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->driving_params );
+        float angularCorrection = fabs( WaypointUtilities::getAngularCorrectionNeeded( sw_owner->driving_params ) );
 
         if( WaypointUtilities::getDistance( sw_owner->driving_params ) < sw_owner->simple_params.final_approach_threshold &&
             angularCorrection < sw_owner->simple_params.skid_steer_threshold ) //todo setup distance tolerance handling
@@ -75,6 +75,16 @@ std::string SimpleWaypointState::transition()
 /*******************************
  * SimpleWaypoint Rotate State *
  *******************************/
+void SimpleWaypointRotate::onEnter( std::string prev_state )
+{
+    PIDConfig yaw_config;
+    yaw_config.Kp = 40;
+    yaw_config.Ki = 0 ;
+    yaw_config.Kd = 0;
+    yaw_config.start_integrating = 0.21;
+
+    sw_owner->pids.yaw_pid.SetConfiguration( yaw_config );
+}
 
 void SimpleWaypointRotate::onExit( std::string next_state )
 {
@@ -95,7 +105,7 @@ void SimpleWaypointRotate::action()
         params.velocity_goal = 0.0;
         params.angular_error = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->driving_params );
         params.angular_goal = 0.0;
-        params.saturation_point = sw_owner->simple_params.max_vel; //180 seems to be standard...?
+        params.saturation_point = 30; //180 seems to be standard...?
 
         leftAndRight = WaypointUtilities::executePid( params, sw_owner->pids );
 
@@ -107,6 +117,17 @@ void SimpleWaypointRotate::action()
 /*******************************
  * SimpleWaypoint Skid State *
  *******************************/
+
+void SimpleWaypointSkid::onEnter( std::string prev_state )
+{
+    PIDConfig yaw_config;
+    yaw_config.Kp = 90;
+    yaw_config.Ki = 3;
+    yaw_config.Kd = 0;
+    yaw_config.start_integrating = 0.21;
+
+    sw_owner->pids.yaw_pid.SetConfiguration( yaw_config );
+}
 
 void SimpleWaypointSkid::onExit( std::string next_state )
 {

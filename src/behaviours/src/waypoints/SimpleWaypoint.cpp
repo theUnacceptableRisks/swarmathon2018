@@ -31,18 +31,11 @@ SimpleWaypoint::SimpleWaypoint( LogicInputs *i, SimpleParams sp ) : Waypoint( i 
     pids.yaw_pid = PID();
 
     PIDConfig vel_config;
-    vel_config.Kp = 60; //proportional constant
-    vel_config.Ki = 3; //integral constant
+    vel_config.Kp = 80; //proportional constant
+    vel_config.Ki = 0; //integral constant
     vel_config.Kd = 0; //derivative constant
-    vel_config.start_integrating = 0.22;
-
-    PIDConfig yaw_config;
-    yaw_config.Kp = 80;
-    yaw_config.Ki = 2;
-    yaw_config.Kd = 0;
-    yaw_config.start_integrating = 0.21;
+//    vel_config.start_integrating = 0.22;
 
     pids.vel_pid.SetConfiguration( vel_config );
-    pids.yaw_pid.SetConfiguration( yaw_config );
 
 }

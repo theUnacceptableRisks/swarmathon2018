@@ -5,6 +5,7 @@ PID::PID() {   }
 PID::PID(PIDConfig config)
 {
   this->config = config;
+  resetPID();
 }
 
 double PID::PIDOut( double current, double goal)

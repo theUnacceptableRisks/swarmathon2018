@@ -21,7 +21,6 @@ class SearchInit : public State
                 double x = 0;
                 double y = 0;
 
-                params.skid_steer_threshold = 0.15;
                 for( double n = 1.0; n < 10; n += 1.0 )
                 {
                     y += n * pow( (-1.0), ( n + 1.0 ) );

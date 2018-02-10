@@ -25,6 +25,7 @@ class SimpleWaypointRotate : public SimpleWaypointState
 {
     public:
         SimpleWaypointRotate() : SimpleWaypointState( "simple_rotate" ) {}
+        virtual void onEnter( std::string prev_state );
         virtual void onExit( std::string next_state );
         virtual void action();
 };
@@ -33,6 +34,7 @@ class SimpleWaypointSkid : public SimpleWaypointState
 {
     public:
         SimpleWaypointSkid() : SimpleWaypointState( "simple_skid" ) {}
+        virtual void onEnter( std::string prev_state );
         virtual void onExit( std::string next_state );
         virtual void action();
 };
