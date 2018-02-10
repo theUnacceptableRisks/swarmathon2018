@@ -9,9 +9,11 @@ ApproachTagWaypoint::ApproachTagWaypoint( LogicInputs *i, int dt ) : Waypoint( i
     pids.yaw_pid = PID();
 
     PIDConfig vel_config;
-    vel_config.Kp = 60; //proportional constant
-    vel_config.Ki = 0; //integral constant
+    vel_config.Kp = 120; //proportional constant
+    vel_config.Ki = 5; //integral constant
     vel_config.Kd = 0; //derivative constant
+    vel_config.start_integrating = 0.12;
+    vel_config.max_error_history = 20;
 
     PIDConfig yaw_config;
     yaw_config.Kp = 240;
@@ -80,7 +82,7 @@ void ApproachTagWaypoint::internalAction()
             break;
         case AT_APPROACH:
             std::cout << "AT APPROACH" << std::endl;
-            params.velocity_error = TagUtilities::getDistance( inputs->tags.back() ) - 0.2;
+            params.velocity_error = TagUtilities::getDistance( inputs->tags.back() ) - 0.1;
             params.velocity_goal = 0;
             params.angular_error = (-1)*(inputs->tags.back().getPositionX());
             params.angular_goal = 0.0;
