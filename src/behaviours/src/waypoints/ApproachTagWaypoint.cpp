@@ -69,7 +69,7 @@ void ApproachTagWaypoint::run()
             {
                 params.velocity_error = curr_dist_to_tag - 0.19;
                 params.velocity_goal = 0.0;
-                params.angular_error = 0.023 + (-1)*( inputs->tags.back().getPositionX() );
+                params.angular_error = (-0.023) + (-1)*( inputs->tags.back().getPositionX() );
                 params.angular_goal = 0.00;
                 params.saturation_point = 40;
 
