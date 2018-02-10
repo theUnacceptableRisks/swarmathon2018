@@ -79,7 +79,9 @@ std::string SimpleWaypointState::transition()
 void SimpleWaypointRotate::onExit( std::string next_state )
 {
     if( sw_owner && next_state == "simple_final_approach" )
-        sw_owner->approach_vel = 20;
+    {
+        sw_owner->approach_vel = 16;
+    }
 }
 
 void SimpleWaypointRotate::action()
@@ -92,7 +94,7 @@ void SimpleWaypointRotate::action()
         params.velocity_error = 0.0;
         params.velocity_goal = 0.0;
         params.angular_error = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->driving_params );
-        params.angular_goal = WaypointUtilities::getGoalTheta( sw_owner->driving_params );
+        params.angular_goal = 0.0;
         params.saturation_point = sw_owner->simple_params.max_vel; //180 seems to be standard...?
 
         leftAndRight = WaypointUtilities::executePid( params, sw_owner->pids );
@@ -110,10 +112,8 @@ void SimpleWaypointSkid::onExit( std::string next_state )
 {
     if( sw_owner && next_state == "simple_final_approach" )
     {
-        sw_owner->approach_vel = 0;
-        sw_owner->approach_vel += std::get<0>( sw_owner->getOutput() );
-        sw_owner->approach_vel += std::get<1>( sw_owner->getOutput() );
-        sw_owner->approach_vel /= 2;
+        sw_owner->approach_vel = 16;
+
     }
 }
 
@@ -127,7 +127,7 @@ void SimpleWaypointSkid::action()
         params.velocity_error = WaypointUtilities::getDistance( sw_owner->driving_params );
         params.velocity_goal = 0.0;
         params.angular_error = WaypointUtilities::getAngularCorrectionNeeded( sw_owner->driving_params );
-        params.angular_goal = WaypointUtilities::getGoalTheta( sw_owner->driving_params );
+        params.angular_goal = 0.0;
         params.saturation_point = sw_owner->simple_params.max_vel; //180 seems to be standard...?
 
         leftAndRight = WaypointUtilities::executePid( params, sw_owner->pids );
@@ -166,6 +166,7 @@ void SimpleWaypointArrived::action()
         sw_owner->setOutputLeftPWM( 0 );
         sw_owner->setOutputRightPWM( 0 );
         sw_owner->has_arrived = true;
+        std::cout << "ARRIVED" << std::endl;
     }
 }
 

@@ -8,8 +8,8 @@
 
 typedef struct simple_params
 {
-    double skid_steer_threshold = 0.4;
-    double final_approach_threshold = 0.2;
+    double skid_steer_threshold = 0.2;
+    double final_approach_threshold = 0.3;
     double max_vel = 40;
     double goal_x = 0;
     double goal_y = 0;

@@ -75,9 +75,10 @@ void PickUpState::internalAction()
     switch( internal_state )
     {
         case PICKUP_INIT:
+            std::cout << "PICKUP_INIT" << std::endl;
             if( TagUtilities::hasTag( &inputs->tags, 0 ) )
             {
-                approach = new ApproachTagWaypoint( inputs, 0, TagUtilities::getDistance( inputs->tags.back() ) );
+                approach = new ApproachTagWaypoint( inputs, 0 );
                 outputs->current_waypoint = approach;
             }
             else
@@ -86,11 +87,12 @@ void PickUpState::internalAction()
             }
             break;
         case PICKUP_APPROACH:
-            std::cout << "approaching" << std::endl;
+            std::cout << "PICKUP_APPROACH" << std::endl;
             outputs->gripper_position = Gripper::DOWN_OPEN;
             //does nothing for now
             break;
         case PICKUP_CLAW_DOWN:
+            std::cout << "PICKUP_CLAW_DOWN" << std::endl;
             outputs->gripper_position = Gripper::DOWN_CLOSED;
             break;
         case PICKUP_CLAW_CLOSE:

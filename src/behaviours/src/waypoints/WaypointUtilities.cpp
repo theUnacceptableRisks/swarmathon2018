@@ -35,8 +35,12 @@ std::tuple<int,int> WaypointUtilities::executePid( PidParams &params, PidPackage
     int left = 0;
     int right = 0;
 
+//    std::cout << "Executing Velocity PID" << std::endl << std::endl;
     vel = pids.vel_pid.PIDOut( params.velocity_error, params.velocity_goal );
+//    std::cout << std::endl << "Velocity Out: " << vel << std::endl;
+    std::cout << "Executing Yaw PID" << std::endl << std::endl;
     yaw = pids.yaw_pid.PIDOut( params.angular_error, params.angular_goal );
+//    std::cout << std::endl << "Yaw Out: " << yaw << std::endl;
     left = (int)(vel - yaw);
     right = (int)(vel + yaw);
 

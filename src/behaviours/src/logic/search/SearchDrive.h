@@ -2,6 +2,7 @@
 #define searchdrive_h
 
 #include "../../state_machine/State.h"
+#include "../../state_machine/Error.h"
 #include "SearchMachine.h"
 
 class SearchDrive : public State
@@ -20,7 +21,7 @@ class SearchDrive : public State
                         ssm->nextWaypoint();
                 }
                 else
-                   std::cout << "waypoint is null... shouldn't be" << std::endl;
+                    messaging::errorMsg( __func__, "waypoint is null and shouldn't be." );
             }
         }
 };
