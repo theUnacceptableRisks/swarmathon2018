@@ -40,6 +40,7 @@ add_executable(
   src/logic/SearchState.cpp
   src/logic/PickUpState.cpp
   src/logic/search/SearchMachine.cpp
+  src/TagExaminer.cpp
 )
 
 add_dependencies(behaviours ${catkin_EXPORTED_TARGETS})
