@@ -92,8 +92,6 @@ char prev_state_machine[128];
 // records time for delays in sequanced actions, 1 second resolution.
 time_t timerStartTime;
 
-TagExaminer tagexaminer;
-
 // An initial delay to allow the rover to gather enough position data to 
 // average its location.
 unsigned int startDelayInSeconds = 30;
@@ -397,7 +395,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
                                                                   tagPose.pose.orientation.z,
                                                                   tagPose.pose.orientation.w ) );
             inputs.tags.push_back( loc );
-            tagexaminer = TagExaminer( inputs.tags, examinerColumns, examinerCenter );
+            TagExaminer tagexaminer = TagExaminer( inputs.tags, examinerColumns, examinerCenter );
             cout << loc << std::endl;
         }
     }
