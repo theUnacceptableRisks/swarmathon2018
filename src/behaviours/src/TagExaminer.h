@@ -8,7 +8,7 @@ using namespace std;
 class TagExaminer
 {
 public:
-	TagExaminer(vector<Tag> column, int columnSize, int center);
+	TagExaminer(vector<Tag> column, int columnSize, double center);
 	vector<pair<double, double>> populate(double min, double max, double center, double wid);
 	vector<Tag> sortVec(vector<Tag> column);
 	vector<pair<double, double>> sortVec(vector<pair<double, double>> p);
@@ -17,6 +17,13 @@ public:
 	void vectorOut(vector<Tag> column);
 	void vectorOut(vector<pair<double, double>>);
 	void graph();
+
+	void setColumnSize(int newSize) {
+		colWid = newSize;
+	}
+	void setCenter(double newCenter){
+		center = newCenter;
+	}
 
 
 

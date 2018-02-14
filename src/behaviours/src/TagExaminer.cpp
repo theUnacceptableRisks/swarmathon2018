@@ -8,7 +8,7 @@
 
 using namespace std;
 
-TagExaminer::TagExaminer(vector<Tag> column, int columnSize, int center)
+TagExaminer::TagExaminer(vector<Tag> column, int columnSize, double center)
 {
 	//init member vars
 	this->rawTags = column;

@@ -39,6 +39,11 @@
 #include "logic/PickUpState.h"
 #include "Gripper.h"
 
+/***************
+ *Tag Examiner*/
+
+#include "TagExaminer.h"
+
 // To handle shutdown signals so the node quits
 // properly in response to "rosnode kill"
 #include <ros/ros.h>
@@ -76,6 +81,9 @@ float hoursTime = 0;
 
 float drift_tolerance = 0.5; // meters
 
+double examinerCenter;
+int examinerColumns;
+
 std_msgs::String msg;
 
 
@@ -83,6 +91,8 @@ char host[128];
 char prev_state_machine[128];
 // records time for delays in sequanced actions, 1 second resolution.
 time_t timerStartTime;
+
+TagExaminer tagexaminer;
 
 // An initial delay to allow the rover to gather enough position data to 
 // average its location.
@@ -387,6 +397,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
                                                                   tagPose.pose.orientation.z,
                                                                   tagPose.pose.orientation.w ) );
             inputs.tags.push_back( loc );
+            tagexaminer = TagExaminer( inputs.tags, examinerColumns, examinerCenter );
             cout << loc << std::endl;
         }
     }
