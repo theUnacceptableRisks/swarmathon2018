@@ -1,230 +1,106 @@
-
 #include "TagExaminer.h"
-#include <tuple>
-#include <vector>
-#include <utility>
-#include <iostream>
-#include <map>
+#include <utility>      // std::pair, std::make_pair
 
 using namespace std;
-
-TagExaminer::TagExaminer(vector<Tag> column, int columnSize, double center)
+TagExaminer::TagExaminer()
 {
-	//init member vars
-	this->rawTags = column;
-	this->colWid = columnSize;
-	this->center = center;
+	//Todo: Either make a algorithm to get all ranges
+	//Or manually place them all inside a vector pair and then
+	//redo determineRange Func
+	//ranges[0].first = -0.269;
+	//ranges[0].second = -0.209;
+}
 
-	//Set the mins and maxes of the x values in the vector of tags
-	//cout << "Sorting mins and maxes..." << endl;
-	getMinMax(column);
-	//cout << "Sorted." << endl;
+TagExaminer::~TagExaminer()
+{
+}
 
-	//Sort the vec in order from left to right based on X Position
-	//cout << "Sorting Tags" << endl;
-	this->sortedTags = sortVec(column);
-	//cout << "Tags sorted." << endl;
-
-	//vectorOut(sortedTags);
-
-	//Figure out the vector range
-	//cout << "Calculating ranges" << endl;
-	vector <pair < double, double >> populated = populate(min, max, center, colWid);
-	//cout << "Calculated." << endl;
-
-	//Put tags in appopriate range
-
-	//cout << "Populating Tags into ranges" << endl;
-	split(populated);
-	//cout << "Populated" << endl;
-
-	//graph
-	//cout << "\n\nGraphing the locations of tags" << endl;
-	cout << "\n\n-----------------------------------\n\n";
-
+void TagExaminer::loadTags(vector<Tag> fromTagHandler)
+{
+	tags = fromTagHandler;
+	determineRange();
 	graph();
-	cout << "\n\n-----------------------------------\n\n";
-
-	cout << endl;
-
 }
 
-
-vector<pair <double, double>> TagExaminer::populate(double min, double max, double center, double wid)
+void TagExaminer::determineRange()
 {
+	columns.resize(9);  // resize top level vector
+	for (int i = 0; i < tags.size(); i++) {
+		double x = tags[i].getPositionX();
 
-	vector <pair < double, double >> nums;
-	pair <double, double> apair;
-	int count = 1;
-	int incr = 0;
-	double start = center + (wid / 2);
-
-	//cout << "-----------------------------------\n";
-
-	while ((start > min)) {
-		if (count % 2 != 0) {
-			apair.first = start;
-			start = start - wid;
-			apair.second = start;
-			if (apair.first > apair.second) {
-				double temp = apair.first;
-				apair.first = apair.second;
-				apair.second = temp;
-			}
-			nums.push_back(apair);
-			numRanges++;
-			incr++;
+		if (x <= -0.209 && x >= -.269) {
+			columns[0].push_back(tags[i]);
 		}
-		count++;
+		else if (x <= -.148 && x >= -.208) {
+			columns[1].push_back(tags[i]);
+		}
+		else if (x <= -0.087 && x >= -0.147) {
+			columns[2].push_back(tags[i]);
+		}
+		else if (x <= -0.026 && x >= -0.086) {
+			columns[3].push_back(tags[i]);
+		}
+		else if (x >= -.025 && x <= 0.025) {
+			columns[4].push_back(tags[i]);
+		}
+		else if (x >= 0.026 && x <= 0.086) {
+			columns[5].push_back(tags[i]);
+		}
+		else if (x >= 0.087 && x <= 0.147) {
+			columns[6].push_back(tags[i]);
+		}
+		else if (x >= 0.148 && x <= 0.208) {
+			columns[7].push_back(tags[i]);
+		}
+		else if (x >= 0.209 && x <= .269) {
+			columns[8].push_back(tags[i]);
+		}
+		else {
+			cout << "No range for tag at index " << i << endl;
+			//cout << i << "," << x << "\n";
+		}
 	}
+	cout << "Tags organized into ranges" << endl;
+	//Now sort all the vector<Tags>
+	//cout << columns[0][0].getPositionX();
 
-	apair.first = 0;
-	apair.second = 0;
-	count = 1;
-	start = center + (wid / 2);
-	while ((start < max)) {
-		if (count % 2 != 0) {
-			apair.first = start;
-			start = start + wid;
-			apair.second = start;
-
-			if (apair.first > apair.second) {
-				double temp = apair.first;
-				apair.first = apair.second;
-				apair.second = temp;
-			}
-			nums.push_back(apair);
-
-			numRanges++;
-			incr++;
-		}
-		count++;
-	}
-	nums = sortVec(nums);
-	//vectorOut(nums);
-
-	//cout << "Ranges: " << numRanges << endl;
-	//cout << "-----------------------------------\n\n";
-
-	return nums;
-}
-
-void TagExaminer::getMinMax(vector<Tag> column)
-{
-	this->min = column[0].getPositionX();
-	this->max = column[0].getPositionX();
-
-	for (int i = 0; i < column.size(); i++) {
-		if (column[i].getPositionX() > max) {
-			max = column[i].getPositionX();
-		}
-		if (column[i].getPositionX() < min) {
-			min = column[i].getPositionX();
-		}
+	for (int i = 0; i < 9; i++) {
+		columns[i] = sortColumn(columns[i]);
 	}
 }
 
-
-void TagExaminer::split(vector <pair < double, double>> overall)
+vector<Tag> TagExaminer::sortColumn(vector<Tag> arr)
 {
+	int n = arr.size();
 
-	for (int i = 0; i < sortedTags.size(); i++) {//Loop through tags
-		vector <Tag> w;
-		ranges.push_back(w);
-		for (int j = 0; j < overall.size(); j++) {//Loop through pairs
+	for (int i = 0; i < n; ++i)
+	{
+		for (int j = 0; j < n - i - 1; ++j)
+		{
+			double x = arr[j].getPositionX(), y = arr[j].getPositionY(), z = arr[j].getPositionZ();
+			double x2 = arr[j + 1].getPositionX(), y2 = arr[j + 1].getPositionY(), z2 = arr[j + 1].getPositionZ();
 
-			if (sortedTags[i].getPositionX() >= overall[j].first && sortedTags[i].getPositionX() <= overall[j].second) {
+			double distance1 = sqrt(x*x + y*y + z*z);
+			double distance2 = sqrt(x2*x2 + y2*y2 + z2*z2);
 
-				ranges.at(j).push_back(sortedTags[i]);
-				//cout << "Matched Tag XPos:" << sortedTags[i].getPositionX() << " Into Range " << j << ". Range total: " << ranges.at(j).size() << endl;
-				//cout << "Matched into range " << ranges.at(j).size() - 1 << " position " << j << endl;
-
-				holding.push_back(make_tuple(ranges.at(j).size() - 1, j, sortedTags[i]));
-
-				if (ranges.at(j).size() > largestRange) {
-					largestRange = ranges.at(j).size();
-				}
+			if (distance1 > distance2)
+			{
+				Tag swap = arr[j];
+				arr[j] = arr[j + 1];
+				arr[j + 1] = swap;
 			}
 		}
+
 	}
+
 }
 
 void TagExaminer::graph()
 {
-	holding = sortTuple(holding);
-	int z = 0;
-	for (int i = 0; i < 9; i++) {
-		//cout << "[" << (std::get<1>(holding[i])) << " " << (std::get<0>(holding[i])) << "]\t";
-
-		if (get<0>(holding[i]) > z) {
-			z = get<0>(holding[i]);
-			cout << endl;
-		}
-
-		cout << (std::get<2>(holding[i])).getPositionX() << "\t|\t"; //Almost works
-	}
-	cout << endl << endl << endl;
-}
-
-void TagExaminer::vectorOut(vector<Tag> column)
-{
-	//cout << "\n\n-----------------------------------\n\n";
-	for (Tag t : column) {
-		cout << "Tag: " << t.getPositionX() << ", " << t.getPositionY() << ", " << t.getPositionZ() << endl;
-	}
-//	cout << "\n\n-----------------------------------\n\n";
-}
-
-void TagExaminer::vectorOut(vector<pair<double, double>> pairlist)
-{
-	//cout << "\n\n-----------------------------------\n\n";
-	for (pair<double, double> p : pairlist) {
-		cout << "(" << p.first << ", " << p.second << ")" << endl;
-	}
-	//cout << "\n\n-----------------------------------\n\n";
-}
-
-
-
-vector<Tag> TagExaminer::sortVec(vector<Tag> column)
-{
-	//sort tags based on x position value(least to greatest)
-	for (int i = 0; i < column.size() - 1; i++) {
-		for (int j = 0; j < column.size() - i - 1; j++) {
-			if (column[j].getPositionX() > column[j + 1].getPositionX()) {
-				std::swap(column[j], column[j + 1]);
-			}
+	for (int i = 0; i < columns.size(); i++){
+		cout << "Column " << i << ": " << endl;
+		for (int j = 0; j < columns.at(i).size(); j++) {
+			cout << "\t>#" << (j + 1) << ": " << columns.at(i)[j].getPositionX() << endl;
 		}
 	}
-	//the sorted tags by X value
-	this->sortedTags = column;
-	return column;
-}
-
-vector<tuple<int, int, Tag>> TagExaminer::sortTuple(vector<tuple<int, int, Tag>> tup)
-{
-	//sort tags based on x position value(least to greatest)
-	for (int i = 0; i < tup.size() - 1; i++) {
-		for (int j = 0; j < tup.size() - i - 1; j++) {
-			if (std::get<0>(tup[j]) > std::get<0>(tup[j + 1])) {
-				std::swap(tup[j], tup[j + 1]);
-			}
-		}
-	}
-	//the sorted tags by X value
-	return tup;
-}
-
-//sort the pairs to make proper ranges
-vector<pair<double, double>> TagExaminer::sortVec(vector<pair<double, double>> p)
-{
-	//sort tags based on x position value(least to greatest)
-	for (int i = 0; i < p.size() - 1; i++) {
-		for (int j = 0; j < p.size() - i - 1; j++) {
-			if (p[j].first > p[j + 1].first) {
-				std::swap(p[j], p[j + 1]);
-			}
-		}
-	}
-	return p;
 }
