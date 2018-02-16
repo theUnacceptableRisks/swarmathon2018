@@ -81,8 +81,8 @@ float hoursTime = 0;
 
 float drift_tolerance = 0.5; // meters
 
-double examinerCenter;
-int examinerColumns;
+TagExaminer tagexaminer = TagExaminer();
+
 
 std_msgs::String msg;
 
@@ -378,7 +378,6 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
     std::stringstream ss;
 
     inputs.tags.clear();
-
     if (message->detections.size() > 0)
     {
 
@@ -400,12 +399,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
                                                                   tagPose.pose.orientation.z,
                                                                   tagPose.pose.orientation.w ) );
             inputs.tags.push_back( loc );
-            ss << "X: " << loc.getPositionX() << std::endl;
-//            TagExaminer tagexaminer = TagExaminer( inputs.tags, examinerColumns, examinerCenter );
-//            cout << loc << std::endl;
         }
-        tag_output.data = ss.str();
-        tag_x.publish( tag_output );
     }
 }
 
