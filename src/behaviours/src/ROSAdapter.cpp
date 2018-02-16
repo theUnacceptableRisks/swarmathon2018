@@ -81,8 +81,8 @@ float hoursTime = 0;
 
 float drift_tolerance = 0.5; // meters
 
-double examinerCenter;
-int examinerColumns;
+TagExaminer tagexaminer = TagExaminer();
+
 
 std_msgs::String msg;
 
@@ -373,7 +373,6 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
 //    if(currentMode == 0 || currentMode == 1)
   //      return;
     inputs.tags.clear();
-
     if (message->detections.size() > 0)
     {
 
