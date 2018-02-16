@@ -18,24 +18,52 @@ extern int numberOfRovers;
 class ReturnInit : public State
 {
     public:
-        ReturnInit() : State( "return_init" ), setup_complete(false) {}
+        double k = .1;
+        double compX = 0;
+        double compY = 0;
+   
+
+        ReturnInit(IOTable *io) : State( "return_init" ), setup_complete(false) {}
         virtual void action()
         {
             ReturnMachine *ssm = dynamic_cast<ReturnMachine *> (owner);
             if( ssm )
             {
+                compX = ssm->inputs->odom_accel_gps.x;
+                compY = ssm->inputs->odom_accel_gps.y;
                 SimpleWaypoint *waypoint = 0;
                 SimpleParams params;
-                double x = 0;
-                double y = 0;
-
-                params.skid_steer_threshold = 0.15;
+                //WaypointUtilities::DrivingParams location;
                 
-                    params.goal_x = 0;
-                    params.goal_y = 0;
+                //double distanceFromHome = hypot(*location.current_x, *location.current_y);
+                //double unitX = *location.current_x / distanceFromHome;
+                //double unitY = *location.current_y / distanceFromHome;
+
+               double distanceFromHome = hypot(compX, compY);
+                compX/=distanceFromHome;
+                compY/=distanceFromHome;     
+                
+                params.skid_steer_threshold = 0.15;
+                double dot = 0;
+                double x = 0, y = 0;
+                for (double i = 0; i < 30; i+=0.5){
+                    x = i * cos(i);
+                    y = i * sin(i);
+
+                    dot = -1*(x*compX + y*compY)/(hypot(x-compX,y-compY));
+                    dot += 1.3;
+                    dot /= 2;
+                   
+                    params.goal_x = x * dot * k;
+                    params.goal_y = y * dot * k;
+
+
                     cout << "x: " << params.goal_x << " | y: " << params.goal_y << endl;
+
+
                     waypoint = new SimpleWaypoint( ssm->inputs, params );
-                    ssm->waypoints.push_back( (Waypoint *)waypoint );
+                    ssm->waypoints.push_back( (Waypoint *)waypoint ); 
+                }                
                 
 
                 setup_complete = true;

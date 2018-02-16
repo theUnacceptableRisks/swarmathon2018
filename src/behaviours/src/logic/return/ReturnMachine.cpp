@@ -4,7 +4,7 @@
 
 ReturnMachine::ReturnMachine( IOTable *io ) : SubMachine( io )
 {
-    ReturnInit *init = new ReturnInit();
+    ReturnInit *init = new ReturnInit(io);
     ReturnDrive *drive = new ReturnDrive();
 
     addState( init->getIdentifier(), (State *)init );

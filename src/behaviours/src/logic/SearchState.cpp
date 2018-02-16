@@ -19,7 +19,7 @@ std::string SearchState::transition()
     LogicMachine *lm = dynamic_cast<LogicMachine *> (owner);
     if( lm )
     {
-        if( TagUtilities::hasTag( &lm->inputs->tags, 0 ) )
+        //if( TagUtilities::hasTag( &lm->inputs->tags, 0 ) )
             transition_to = "pickup_state";
     }
     return transition_to;
