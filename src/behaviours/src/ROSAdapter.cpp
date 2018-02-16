@@ -108,7 +108,7 @@ struct roverInfo {
     float sonar_right;
     float sonar_center;
     string state;
-    int numberOfCubes;
+    int number_of_cubes;
 };
 vector<roverInfo> infoVector;
 
@@ -185,14 +185,6 @@ void setupSubscribers( ros::NodeHandle &ros_handle, string published_name )
     map_subscriber = ros_handle.subscribe((published_name + "/odom/ekf"), 10, odomAccelAndGPSHandler);
     rover_id_subscriber = ros_handle.subscribe("/roverID", 10, roverIDHandler);
     rover_info_subscriber = ros_handle.subscribe("/roverInfo", 10, roverInfoHandler);
-
-    //Sonar Stuff
-    message_filters::Subscriber<sensor_msgs::Range> sonar_left_subscriber(ros_handle, (published_name + "/sonarLeft"), 10);
-    message_filters::Subscriber<sensor_msgs::Range> sonar_center_subscriber(ros_handle, (published_name + "/sonarCenter"), 10);
-    message_filters::Subscriber<sensor_msgs::Range> sonar_right_subscriber(ros_handle, (published_name + "/sonarRight"), 10);
-    typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Range, sensor_msgs::Range, sensor_msgs::Range> sonarSyncPolicy;
-    message_filters::Synchronizer<sonarSyncPolicy> sonarSync(sonarSyncPolicy(10), sonar_left_subscriber, sonar_center_subscriber, sonar_right_subscriber);
-    sonarSync.registerCallback(boost::bind(&sonarHandler, _1, _2, _3));
 }
 
 /**************
@@ -296,6 +288,15 @@ int main(int argc, char **argv)
     info_log_publisher.publish(msg);
     timerStartTime = time(0);
 
+    //Sonar Stuff
+    message_filters::Subscriber<sensor_msgs::Range> sonar_left_subscriber(ros_handle, (published_name + "/sonarLeft"), 10);
+    message_filters::Subscriber<sensor_msgs::Range> sonar_center_subscriber(ros_handle, (published_name + "/sonarCenter"), 10);
+    message_filters::Subscriber<sensor_msgs::Range> sonar_right_subscriber(ros_handle, (published_name + "/sonarRight"), 10);
+    typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Range, sensor_msgs::Range, sensor_msgs::Range> sonarSyncPolicy;
+    message_filters::Synchronizer<sonarSyncPolicy> sonarSync(sonarSyncPolicy(10), sonar_left_subscriber, sonar_center_subscriber, sonar_right_subscriber);
+    sonarSync.registerCallback(boost::bind(&sonarHandler, _1, _2, _3));
+
+
     swarmie_msgs::OliverMessage ollie;
     ollie.id = roverID;
     ollie.name = roverName;
@@ -306,9 +307,7 @@ int main(int argc, char **argv)
     ollie.sonar_center = inputs.us_center;
     ollie.state = logic_machine.getCurrentIdentifier();
     ollie.number_of_cubes = inputs.tags.size();
-    for(int i = 0; i < 100; i++){
-        rover_info_publisher.publish(ollie);
-    }
+    rover_info_publisher.publish(ollie);
     
     ros::spin();
 
@@ -427,12 +426,43 @@ void sendGripperPosition( Gripper::Position pos )
 }
 
 void roverInfoHandler(const swarmie_msgs::OliverMessage& message){
-    cout << message.id << endl;
-    cout << message.name << endl;
-    cout << message.number_of_cubes << endl;
-    cout << message.x << endl;
-    cout << message.y << endl;
-    cout << message.state << endl;
+    cout << "rover id: " << message.id << endl;
+    cout << "rover name: " << message.name << endl;
+    cout << "number of cubes: " << message.number_of_cubes << endl;
+    cout << "rover x: " << message.x << endl;
+    cout << "rover y: " << message.y << endl;
+    cout << "rover state: " << message.state << endl;
+    cout << "sonar left: " << message.sonar_left << endl;
+    cout << "sonar right: " << message.sonar_right << endl;
+    cout << "sonar center: " << message.sonar_center << endl;
+
+
+    roverInfo messageInfo;
+    messageInfo.id = message.id;
+    messageInfo.name = message.name;
+    messageInfo.number_of_cubes = message.number_of_cubes;
+    messageInfo.x = message.x;
+    messageInfo.y = message.y;
+    messageInfo.state = message.state;
+    messageInfo.sonar_left = message.sonar_left;
+    messageInfo.sonar_right = message.sonar_right;
+    messageInfo.sonar_center = message.sonar_center;
+
+    for(int i = 0; i < )
+    swarmie_msgs::OliverMessage ollie;
+    ollie.id = roverID;
+    ollie.name = roverName;
+    ollie.x = inputs.odom_accel_gps.x;
+    ollie.y = inputs.odom_accel_gps.y;
+    ollie.sonar_left = inputs.us_left;
+    ollie.sonar_right = inputs.us_right;
+    ollie.sonar_center = inputs.us_center;
+    ollie.state = logic_machine.getCurrentIdentifier();
+    ollie.number_of_cubes = inputs.tags.size();
+    rover_info_publisher.publish(ollie);
+
+   // cout << "------------" << roverID << "-------------" << endl;
+
 }
 
 void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& message)
@@ -481,6 +511,8 @@ void sonarHandler(const sensor_msgs::Range::ConstPtr& sonar_left, const sensor_m
     inputs.us_left = sonar_left->range;
     inputs.us_right = sonar_right->range;
     inputs.us_center = sonar_center->range;
+
+    cout << "----------" << sonar_center->range << "------------" << endl;
 }
 
 void odomHandler(const nav_msgs::Odometry::ConstPtr& message)
