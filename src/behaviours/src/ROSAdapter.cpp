@@ -38,9 +38,11 @@
 #include "logic/SearchState.h"
 #include "logic/PickUpState.h"
 #include "Gripper.h"
+#include "MotorController.h"
 
 /***************
- *Tag Examiner*/
+ *Tag Examiner *
+ ***************/
 
 #include "TagExaminer.h"
 

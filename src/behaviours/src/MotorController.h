@@ -25,6 +25,7 @@ typedef enum
 class MotorController
 {
     public:
+        MotorController() : min_motor_output(0) {}
         MotorController( int mmo ) : min_motor_output(mmo) {}
         std::tuple<int,int> generateLinearOutput( MotorParams params );
         std::tuple<int,int> generateRotationalOutput( MotorParams params );
