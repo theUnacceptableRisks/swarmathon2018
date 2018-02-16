@@ -397,7 +397,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
             inputs.tags.push_back( loc );
             cout << loc << std::endl;
         }
-        TagExaminer tagexaminer = TagExaminer( inputs.tags, examinerColumns, examinerCenter );
+//        TagExaminer tagexaminer = TagExaminer( inputs.tags, examinerColumns, examinerCenter );
     }
 }
 
