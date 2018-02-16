@@ -17,8 +17,7 @@ std::tuple<int,int> MotorController::generateLinearOutput( MotorParams params )
     else
     {
         constant = calcKonstant( params.dist_max_output, params.dist_deccel_point );
-        std::cout << "Constant: " << constant << std::endl;
-        vel_output = getOutput( dist_error, constant );
+	        vel_output = getOutput( dist_error, constant );
     }
 
     if( vel_output > 0 )
@@ -62,12 +61,33 @@ std::tuple<int,int> MotorController::generateRotationalOutput( MotorParams param
 
 std::tuple<int,int> MotorController::generateSkidOutput( MotorParams params )
 {
-    int vel_output = 0;
-    int yaw_output = 0;
+    std::tuple<int,int> linear_output;
+    std::tuple<int,int> rotational_output;
     int left_output = 0;
     int right_output = 0;
-    double dist_error = params.dist_current - params.dist_goal;
-    double yaw_error = params.yaw_current - params.yaw_goal;
+
+    linear_output = this->generateLinearOutput( params );
+    rotational_output = this->generateRotationalOutput( params );
+
+    left_output = std::get<0>( rotational_output );
+    right_output = std::get<1>( rotational_output );
+
+    /* remove the min values from the rotational stuff */
+
+    if( left_output < 0 )
+        left_output += this->min_motor_output;
+    else
+        left_output -= this->min_motor_output;
+
+    if( right_output < 0 )
+        right_output += this->min_motor_output;
+    else
+        right_output -= this->min_motor_output;
+
+
+    /* these can always be addition because backwards skid is unlikely to happen, and if it does, it should sort itself out */
+    left_output += std::get<0>( linear_output );
+    right_output += std::get<1>( linear_output );
 
     return std::make_tuple ( left_output, right_output );
 }

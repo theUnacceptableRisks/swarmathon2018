@@ -28,6 +28,7 @@ add_executable(
   src/ROSAdapter.cpp
   src/PID.cpp
   src/Gripper.cpp
+  src/MotorController.cpp
   src/TagUtilities.cpp
   src/state_machine/Error.cpp
   src/waypoints/Waypoint.cpp
