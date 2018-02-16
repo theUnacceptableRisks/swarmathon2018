@@ -41,6 +41,7 @@
 #include "logic/PickUpState.h"
 #include "logic/ReturnState.h"
 #include "Gripper.h"
+#include "TagUtilities.h"
 
 // To handle shutdown signals so the node quits
 // properly in response to "rosnode kill"
@@ -109,6 +110,7 @@ struct roverInfo {
     float sonar_center;
     string state;
     int number_of_cubes;
+    int number_of_base_tags;
 };
 vector<roverInfo> infoVector;
 
@@ -306,7 +308,8 @@ int main(int argc, char **argv)
     ollie.sonar_right = inputs.us_right;
     ollie.sonar_center = inputs.us_center;
     ollie.state = logic_machine.getCurrentIdentifier();
-    ollie.number_of_cubes = inputs.tags.size();
+    ollie.number_of_cubes = TagUtilities::numberOfTags(&inputs.tags, 0);
+    ollie.number_of_base_tags = TagUtilities::numberOfTags(&inputs.tags, 256);
     rover_info_publisher.publish(ollie);
     
     ros::spin();
@@ -426,21 +429,12 @@ void sendGripperPosition( Gripper::Position pos )
 }
 
 void roverInfoHandler(const swarmie_msgs::OliverMessage& message){
-    cout << "rover id: " << message.id << endl;
-    cout << "rover name: " << message.name << endl;
-    cout << "number of cubes: " << message.number_of_cubes << endl;
-    cout << "rover x: " << message.x << endl;
-    cout << "rover y: " << message.y << endl;
-    cout << "rover state: " << message.state << endl;
-    cout << "sonar left: " << message.sonar_left << endl;
-    cout << "sonar right: " << message.sonar_right << endl;
-    cout << "sonar center: " << message.sonar_center << endl;
-
 
     roverInfo messageInfo;
     messageInfo.id = message.id;
     messageInfo.name = message.name;
     messageInfo.number_of_cubes = message.number_of_cubes;
+    messageInfo.number_of_base_tags = message.number_of_base_tags;
     messageInfo.x = message.x;
     messageInfo.y = message.y;
     messageInfo.state = message.state;
@@ -448,7 +442,28 @@ void roverInfoHandler(const swarmie_msgs::OliverMessage& message){
     messageInfo.sonar_right = message.sonar_right;
     messageInfo.sonar_center = message.sonar_center;
 
-    for(int i = 0; i < )
+    bool roverExists = false;
+    for(int i = 0; i < infoVector.size(); i++){
+        if(message.id == roverID && roverID == infoVector.at(i).id){
+            infoVector.at(i) = messageInfo;
+            roverExists == true;
+        }
+        cout << "name: " << infoVector.at(i).name << endl;
+        cout << "id: " << infoVector.at(i).id << endl;
+        cout << "state: " << infoVector.at(i).state << endl;
+        cout << "sonar left: " << infoVector.at(i).sonar_left << endl;
+        cout << "sonar center: " << infoVector.at(i).sonar_center << endl;
+        cout << "sonar right:" << infoVector.at(i).sonar_right << endl;
+        cout << "x" << infoVector.at(i).x << endl;
+        cout << "y" << infoVector.at(i).y << endl;
+        cout << "numCubes" << infoVector.at(i).number_of_cubes << endl;
+        cout << "numBaseTags" << infoVector.at(i).number_of_base_tags << endl;
+    }
+    if(!roverExists){
+        infoVector.push_back(messageInfo);
+    }
+
+
     swarmie_msgs::OliverMessage ollie;
     ollie.id = roverID;
     ollie.name = roverName;
@@ -458,10 +473,10 @@ void roverInfoHandler(const swarmie_msgs::OliverMessage& message){
     ollie.sonar_right = inputs.us_right;
     ollie.sonar_center = inputs.us_center;
     ollie.state = logic_machine.getCurrentIdentifier();
-    ollie.number_of_cubes = inputs.tags.size();
+    ollie.number_of_cubes = TagUtilities::numberOfTags(&inputs.tags, 0);
+    ollie.number_of_base_tags = TagUtilities::numberOfTags(&inputs.tags, 256);
     rover_info_publisher.publish(ollie);
 
-   // cout << "------------" << roverID << "-------------" << endl;
 
 }
 

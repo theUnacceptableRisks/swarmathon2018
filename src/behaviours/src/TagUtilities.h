@@ -7,7 +7,7 @@
 namespace TagUtilities
 {
     bool hasTag( std::vector<Tag> *tags, int id );
-
+    int numberOfTags(std::vector<Tag> *tags, int id);
     //pids specific to tag info
     
 };
