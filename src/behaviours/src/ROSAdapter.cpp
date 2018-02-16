@@ -22,6 +22,7 @@
 #include <apriltags_ros/AprilTagDetectionArray.h>
 #include <std_msgs/Float32MultiArray.h>
 #include "swarmie_msgs/Waypoint.h"
+#include "swarmie_msgs/OliverMessage.h"
 
 // Include Controllers
 #include <vector>
@@ -98,6 +99,19 @@ int roverID = 0;
 int numberOfRovers = 1;
 string roverName = "";
 
+struct roverInfo {
+    int id;
+    string name;
+    float x;
+    float y;
+    float sonar_left;
+    float sonar_right;
+    float sonar_center;
+    string state;
+    int numberOfCubes;
+};
+vector<roverInfo> infoVector;
+
 /****************************
  * END ALPHABET GLOBAL SOUP *
  ****************************/
@@ -114,6 +128,7 @@ ros::Publisher info_log_publisher;
 ros::Publisher drive_control_publish;
 ros::Publisher heartbeat_publisher;
 ros::Publisher rover_id_publisher;
+ros::Publisher rover_info_publisher;
 
 void setupPublishers( ros::NodeHandle &ros_handle, string published_name )
 {
@@ -125,6 +140,7 @@ void setupPublishers( ros::NodeHandle &ros_handle, string published_name )
     drive_control_publish = ros_handle.advertise<geometry_msgs::Twist>((published_name + "/driveControl"), 10);
     heartbeat_publisher = ros_handle.advertise<std_msgs::String>((published_name + "/behaviour/heartbeat"), 1, true);
     rover_id_publisher = ros_handle.advertise<std_msgs::String>(("roverID"), 1, true);
+    rover_info_publisher = ros_handle.advertise<swarmie_msgs::OliverMessage>(("roverInfo"), 1, true);
 
     //Publish name to roverID topic
     roverName = published_name;
@@ -143,6 +159,7 @@ ros::Subscriber raw_odom_subscriber;
 ros::Subscriber odometry_subscriber;
 ros::Subscriber map_subscriber;
 ros::Subscriber rover_id_subscriber;
+ros::Subscriber rover_info_subscriber;
 
 /******************************************
  * ROS Callback Functions for Subscribers *
@@ -156,6 +173,7 @@ void odomAccelAndGPSHandler(const nav_msgs::Odometry::ConstPtr& message);
 void manualWaypointHandler(const swarmie_msgs::Waypoint& message);
 void sonarHandler(const sensor_msgs::Range::ConstPtr& sonarLeft, const sensor_msgs::Range::ConstPtr& sonarCenter, const sensor_msgs::Range::ConstPtr& sonarRight);
 void roverIDHandler(const std_msgs::String::ConstPtr& message);
+void roverInfoHandler(const swarmie_msgs::OliverMessage& message);
 
 void setupSubscribers( ros::NodeHandle &ros_handle, string published_name )
 {
@@ -166,6 +184,7 @@ void setupSubscribers( ros::NodeHandle &ros_handle, string published_name )
     odometry_subscriber = ros_handle.subscribe((published_name + "/odom/filtered"), 10, odomAndAccelHandler);
     map_subscriber = ros_handle.subscribe((published_name + "/odom/ekf"), 10, odomAccelAndGPSHandler);
     rover_id_subscriber = ros_handle.subscribe("/roverID", 10, roverIDHandler);
+    rover_info_subscriber = ros_handle.subscribe("/roverInfo", 10, roverInfoHandler);
 
     //Sonar Stuff
     message_filters::Subscriber<sensor_msgs::Range> sonar_left_subscriber(ros_handle, (published_name + "/sonarLeft"), 10);
@@ -276,6 +295,20 @@ int main(int argc, char **argv)
     msg.data = ss.str();
     info_log_publisher.publish(msg);
     timerStartTime = time(0);
+
+    swarmie_msgs::OliverMessage ollie;
+    ollie.id = roverID;
+    ollie.name = roverName;
+    ollie.x = inputs.odom_accel_gps.x;
+    ollie.y = inputs.odom_accel_gps.y;
+    ollie.sonar_left = inputs.us_left;
+    ollie.sonar_right = inputs.us_right;
+    ollie.sonar_center = inputs.us_center;
+    ollie.state = logic_machine.getCurrentIdentifier();
+    ollie.number_of_cubes = inputs.tags.size();
+    for(int i = 0; i < 100; i++){
+        rover_info_publisher.publish(ollie);
+    }
     
     ros::spin();
 
@@ -391,7 +424,16 @@ void sendGripperPosition( Gripper::Position pos )
             break;
         }
     }
- }
+}
+
+void roverInfoHandler(const swarmie_msgs::OliverMessage& message){
+    cout << message.id << endl;
+    cout << message.name << endl;
+    cout << message.number_of_cubes << endl;
+    cout << message.x << endl;
+    cout << message.y << endl;
+    cout << message.state << endl;
+}
 
 void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& message)
 {

@@ -1,3 +1,0 @@
-#Contains a string message and the sender's ID
-uint8 id
-string message
