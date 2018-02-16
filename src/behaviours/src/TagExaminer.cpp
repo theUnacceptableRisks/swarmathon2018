@@ -17,9 +17,16 @@ TagExaminer::~TagExaminer()
 
 void TagExaminer::loadTags(vector<Tag> fromTagHandler)
 {
-	tags = fromTagHandler;
-	determineRange();
-	graph();
+	cout << loops << endl;
+	if(loops > 10) {
+	  tags = fromTagHandler;
+	  determineRange();
+	  graph();
+	  loops = 0;
+	}else{
+	  loops++;
+	}
+
 }
 
 void TagExaminer::determineRange()
@@ -99,8 +106,16 @@ void TagExaminer::graph()
 {
 	for (int i = 0; i < columns.size(); i++){
 		cout << "Column " << i << ": " << endl;
-		for (int j = 0; j < columns.at(i).size(); j++) {
-			cout << "\t>#" << (j + 1) << ": " << columns.at(i)[j].getPositionX() << endl;
-		}
+		//for (int j = 0; j < columns.at(i).size(); j++) {
+			//cout << "\t>#" << (j + 1) << ": " << columns.at(i)[j].getPositionX() << endl;
+			cout << "STUFFF" << endl;
+		//}
 	}
+    clear();
+}
+
+void TagExaminer::clear(){
+	tags.clear();
+	columns.clear();
+	//ranges.clear();
 }

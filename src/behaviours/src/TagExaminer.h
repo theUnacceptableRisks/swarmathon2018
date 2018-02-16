@@ -11,14 +11,14 @@ class TagExaminer
 public:
 	TagExaminer();
 	~TagExaminer();
-
+        int loops = 0;
 	vector<Tag> tags;
 	vector<vector<Tag>> columns;
 	vector< pair<double, double>> ranges;
 
+	vector<Tag> sortColumn (vector<Tag>);
 	void loadTags(vector<Tag>);
 	void determineRange();
-	vector<Tag> sortColumn (vector<Tag>);
 	void graph();
 	void clear();
 
@@ -29,6 +29,7 @@ private:
 	const double center = 0;
 	const double colMin = -.3;
 	const double colMax = .3;
+
 };
 
 
