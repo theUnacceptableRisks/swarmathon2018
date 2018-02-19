@@ -212,6 +212,7 @@ PickUpState pickup_state( &iotable );
 
 void setupLogicMachine()
 {
+    inputs.controller = MotorController( 1 );
     /* add States */
     logic_machine.addState( search_state.getIdentifier(), dynamic_cast<State *>(&search_state) );
     logic_machine.addState( pickup_state.getIdentifier(), dynamic_cast<State *>(&pickup_state) );

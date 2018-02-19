@@ -6,6 +6,15 @@
 
 //SimpleWaypointStates seperate .cpp/.h
 
+typedef enum
+{
+    SIMPLE_INIT,
+    SIMPLE_ROTATE,
+    SIMPLE_SKID,
+    SIMPLE_FINAL_APPROACH,
+    SIMPLE_ARRIVED
+} SWState;
+
 typedef struct simple_params
 {
     double skid_steer_threshold = 0.4;
@@ -18,18 +27,19 @@ typedef struct simple_params
 
 class SimpleWaypoint : public Waypoint
 {
-    friend class SimpleWaypointState;
-    friend class SimpleWaypointRotate;
-    friend class SimpleWaypointSkid;
-    friend class SimpleWaypointFinalApproach;
-    friend class SimpleWaypointArrived;
     public:
-        SimpleWaypoint( LogicInputs *i, SimpleParams sp );
+        SimpleWaypoint( LogicInputs *i, SimpleParams sp ) : Waypoint( i ), simple_params(sp), internal_state(SIMPLE_INIT) {}
+        virtual void run();
     private:
+        SWState internalTransition();
+        void internalAction();
+        void forceTransition( SWState transition_to );
+
         SimpleParams simple_params;
-        WaypointUtilities::DrivingParams driving_params;
-        WaypointUtilities::DrivingParams secondary_driving_params;
-        double approach_vel;
+        SWState internal_state;
+
+
+
  };
 
 #endif
