@@ -1,4 +1,5 @@
 #include "MotorController.h"
+#include  <angles/angles.h>
 #include <iostream>
 
 std::tuple<int,int> MotorController::generateLinearOutput( MotorParams params )
@@ -20,7 +21,7 @@ std::tuple<int,int> MotorController::generateLinearOutput( MotorParams params )
 	        vel_output = getOutput( dist_error, constant );
     }
 
-    if( vel_output > 0 )
+    if( vel_output >= 0 )
         vel_output += this->min_motor_output;
     else
         vel_output -= this->min_motor_output;
@@ -34,7 +35,15 @@ std::tuple<int,int> MotorController::generateRotationalOutput( MotorParams param
     int left_output = 0;
     int right_output = 0;
     double constant = 0.0;
-    double yaw_error = params.yaw_current - params.yaw_goal;
+    double yaw_error = 0.0;
+
+    if( params.yaw_in_radians )
+    {
+        yaw_error = angles::shortest_angular_distance( params.yaw_current, params.yaw_goal );
+        yaw_error *= -1;
+    }
+    else
+        yaw_error = params.yaw_current - params.yaw_goal;
 
     if( fabs( yaw_error ) > params.yaw_deccel_point )
         yaw_output = params.yaw_max_output;

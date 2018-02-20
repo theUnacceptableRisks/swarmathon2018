@@ -14,6 +14,7 @@ typedef struct motor_params
     double yaw_deccel_point = 0.0;
     double yaw_current = 0.0;
     double yaw_goal = 0.0;
+    bool yaw_in_radians = false;
     int yaw_max_output = 0;
 } MotorParams;
 
