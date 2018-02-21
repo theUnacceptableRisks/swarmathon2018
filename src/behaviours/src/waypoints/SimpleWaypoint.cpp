@@ -1,69 +1,85 @@
 #include "SimpleWaypoint.h"
-#include "SimpleWaypointStates.h"
+#include <math.h>
 
-SimpleWaypoint::SimpleWaypoint( LogicInputs *i, SimpleParams sp ) : Waypoint( i ), simple_params(sp)
+void SimpleWaypoint::run()
 {
-    //inputs are automatically handled above
-    //outputs are automatically built into the inherited class
-    //states
-    addState( "simple_init", new SimpleWaypointInit() );
-    addState( "simple_rotate", new SimpleWaypointRotate() );
-    addState( "simple_skid", new SimpleWaypointSkid() );
-    addState( "simple_final_approach", new SimpleWaypointFinalApproach() );
-    addState( "simple_arrived", new SimpleWaypointArrived() );
+    forceTransition( internalTransition() );
+    internalAction();
+}
 
-    //driving params
-    driving_params.goal_x = simple_params.goal_x;
-    driving_params.goal_y = simple_params.goal_y;
-    driving_params.current_x = &inputs->odom_accel.x;
-    driving_params.current_y = &inputs->odom_accel.y;
-    driving_params.current_theta = &inputs->odom_accel.theta;
-    driving_params.current_linear_vel = &inputs->linear_vel_odom_accel;
-    driving_params.current_angular_vel = &inputs->angular_vel_odom_accel;
+SWState SimpleWaypoint::internalTransition()
+{
+    SWState transition_to = internal_state;
 
-    //secondary driving params (used for arrival)
-    secondary_driving_params.current_x = &inputs->raw_odom.x;
-    secondary_driving_params.current_y = &inputs->raw_odom.y;
+    float angular_correction = WaypointUtilities::getAngularCorrectionNeeded( this->driving_params );
+    float distance_to_waypoint = WaypointUtilities::getDistance( this->driving_params );
 
+    if( fabs( distance_to_waypoint ) < this->simple_params.arrived_threshold )
+        transition_to = SIMPLE_ARRIVED;
+    else
+    {
+        if( fabs( angular_correction ) > this->simple_params.skid_steer_threshold )
+            transition_to = SIMPLE_ROTATE;
+        else
+            transition_to = SIMPLE_SKID;
+    }
 
-    //pids | gotta build these like this or it acts weird
-    pids.vel_pid = PID();
-    pids.yaw_pid = PID();
+    return transition_to;
+}
 
-    PIDConfig vel_config;
-    vel_config.Kp = 60; //proportional constant
-    vel_config.Ki = 0; //integral constant
-    vel_config.Kd = 0; //derivative constant
-    vel_config.satUpper = 255; //upper limit for PID output
-    vel_config.satLower = -255; //lower limit for PID output
-    vel_config.antiWindup = vel_config.satUpper; //prevent integral from acruing error untill proportional out$
-    vel_config.errorHistLength = 4; //how many time steps to average error over
-    vel_config.alwaysIntegral = true; //should the integral alway be on or only when there is error
-    vel_config.resetOnSetpoint = true; //reset the integral and error history whent he setpoint changes
-    vel_config.feedForwardMultiplier = 0; //gives 127 pwm at 0.4 commandedspeed  ORIG:320
-    vel_config.integralDeadZone = 0.01; //set the integral dead zone, prevented integral from growing or s$
-    vel_config.integralErrorHistoryLength = 10000; //how many time ticks should error history should be st$
-    vel_config.integralMax = vel_config.satUpper/2; //what is the limit of the integral output for the PID
-    vel_config.derivativeAlpha = 0.7; //dead code not used
+void SimpleWaypoint::internalAction()
+{
+    switch( internal_state )
+    {
+        default: break;
+        case SIMPLE_ARRIVED:
+            this->has_arrived = true;
+            setOutputLeftPWM( 0 );
+            setOutputRightPWM( 0 );
+            break;
+        case SIMPLE_ROTATE:
+        {
+            MotorParams m_params;
+            std::tuple<int,int> output;
 
-    PIDConfig yaw_config;
-    yaw_config.Kp = 60;
-    yaw_config.Ki = 0;
-    yaw_config.Kd = 0;
-    yaw_config.satUpper = 255;
-    yaw_config.satLower = -255;
-    yaw_config.antiWindup = yaw_config.satUpper/6;
-    yaw_config.errorHistLength = 4;
-    yaw_config.alwaysIntegral = false;
-    yaw_config.resetOnSetpoint = true;
-    yaw_config.feedForwardMultiplier = 0;
-    yaw_config.integralDeadZone = 0.01;
-    yaw_config.integralErrorHistoryLength = 10000;
-    yaw_config.integralMax = yaw_config.satUpper/3;
-    yaw_config.derivativeAlpha = 0.7;
+            m_params.yaw_deccel_point = M_PI_2;
+            m_params.yaw_current = *this->driving_params.current_theta;
+            m_params.yaw_goal = WaypointUtilities::getGoalTheta( this->driving_params );
+            m_params.yaw_in_radians = true;
+            m_params.yaw_max_output = 30;
 
+            output = this->inputs->controller.generateRotationalOutput( m_params );
 
-    pids.vel_pid.SetConfiguration( vel_config );
-    pids.yaw_pid.SetConfiguration( yaw_config );
+            setOutputLeftPWM( std::get<0>( output ) );
+            setOutputRightPWM( std::get<1>( output ) );
+            break;
+        }
+        case SIMPLE_SKID:
+        {
+            MotorParams m_params;
+            std::tuple<int,int> output;
 
+            m_params.dist_deccel_point = 0.2;
+            m_params.dist_current = WaypointUtilities::getDistance( this->driving_params );
+            m_params.dist_goal = 0.0;
+            m_params.dist_max_output = 30;
+
+            m_params.yaw_deccel_point = M_PI_2;
+            m_params.yaw_current = *this->driving_params.current_theta;
+            m_params.yaw_goal = WaypointUtilities::getGoalTheta( this->driving_params );
+            m_params.yaw_in_radians = true;
+            m_params.yaw_max_output = 30;
+
+            output = this->inputs->controller.generateSkidOutput( m_params );
+
+            setOutputLeftPWM( std::get<0>( output ) );
+            setOutputRightPWM( std::get<1>( output ) );
+            break;
+        }
+    }
+}
+
+void SimpleWaypoint::forceTransition( SWState transition_to )
+{
+    internal_state = transition_to;
 }

@@ -77,7 +77,7 @@ void PickUpState::internalAction()
         case PICKUP_INIT:
             if( TagUtilities::hasTag( &inputs->tags, 0 ) )
             {
-                approach = new ApproachTagWaypoint( inputs, 0, TagUtilities::getDistance( inputs->tags.back() ) );
+                approach = new ApproachTagWaypoint( inputs, 0, 0.2 );
                 outputs->current_waypoint = approach;
             }
             else
