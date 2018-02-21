@@ -16,9 +16,10 @@ public:
 	vector<vector<Tag>> columns;
 	vector< pair<double, double>> ranges;
 
-	vector<Tag> sortColumn (vector<Tag>&);
 	void loadTags(vector<Tag>);
 	void determineRange();
+	void sortColumn(vector<Tag> &);
+
 	void graph();
 	void clear();
 
@@ -31,7 +32,3 @@ private:
 	const double colMax = .3;
 
 };
-
-
-
-
