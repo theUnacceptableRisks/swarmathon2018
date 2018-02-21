@@ -102,4 +102,12 @@ void TagExaminer::graph()
 			cout << "\t>#" << (j + 1) << ": " << columns.at(i)[j].getPositionX() << endl;
 		}
 	}
+    clear();
+}
+
+void TagExaminer::clear(){
+	tags.clear();
+	for( int i = 0; i < columns.size(); i++ )
+		columns[i].clear();
+	//ranges.clear();
 }

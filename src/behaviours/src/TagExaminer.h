@@ -18,7 +18,8 @@ public:
 
 	void loadTags(vector<Tag>);
 	void determineRange();
-	void TagExaminer::sortColumn(vector<Tag> &);
+	void sortColumn(vector<Tag> &);
+
 	void graph();
 	void clear();
 
@@ -28,6 +29,6 @@ private:
 	const double colWidth = .06;
 	const double center = 0;
 	const double colMin = -.3;
-	const double colMax = .3;	
-};
+	const double colMax = .3;
 
+};

@@ -39,6 +39,11 @@
 #include "logic/PickUpState.h"
 #include "Gripper.h"
 
+/***************
+ *Tag Examiner*/
+
+#include "TagExaminer.h"
+
 // To handle shutdown signals so the node quits
 // properly in response to "rosnode kill"
 #include <ros/ros.h>
@@ -75,6 +80,9 @@ float minutesTime = 0;
 float hoursTime = 0;
 
 float drift_tolerance = 0.5; // meters
+
+TagExaminer tagexaminer = TagExaminer();
+
 
 std_msgs::String msg;
 
@@ -365,7 +373,6 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
 //    if(currentMode == 0 || currentMode == 1)
   //      return;
     inputs.tags.clear();
-
     if (message->detections.size() > 0)
     {
 
@@ -389,6 +396,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
             inputs.tags.push_back( loc );
             cout << loc << std::endl;
         }
+//        TagExaminer tagexaminer = TagExaminer( inputs.tags, examinerColumns, examinerCenter );
     }
 }
 
