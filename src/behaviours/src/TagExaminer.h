@@ -11,12 +11,12 @@ class TagExaminer
 public:
 	TagExaminer();
 	~TagExaminer();
-        int loops = 0;
+
 	vector<Tag> tags;
 	vector<vector<Tag>> columns;
 	vector< pair<double, double>> ranges;
 
-	vector<Tag> sortColumn (vector<Tag>);
+	vector<Tag> sortColumn (vector<Tag>&);
 	void loadTags(vector<Tag>);
 	void determineRange();
 	void graph();
