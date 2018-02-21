@@ -18,7 +18,7 @@ std::tuple<int,int> MotorController::generateLinearOutput( MotorParams params )
     else
     {
         constant = calcKonstant( params.dist_max_output, params.dist_deccel_point );
-	        vel_output = getOutput( dist_error, constant );
+        vel_output = getOutput( dist_error, constant );
     }
 
     if( vel_output >= 0 )
