@@ -19,7 +19,6 @@ void TagExaminer::loadTags(vector<Tag> fromTagHandler)
 {
     tags = fromTagHandler;
     determineRange();
-    graph();
 }
 
 void TagExaminer::determineRange()
@@ -55,14 +54,7 @@ void TagExaminer::determineRange()
 		else if (x >= 0.209 && x <= .269) {
 			columns[8].push_back(tags[i]);
 		}
-		else {
-			cout << "No range for tag at index " << i << endl;
-			//cout << i << "," << x << "\n";
-		}
 	}
-	cout << "Tags organized into ranges" << endl;
-	//Now sort all the vector<Tags>
-	//cout << columns[0][0].getPositionX();
 	for (int i = 0; i < 9; i++) {
 		sortColumn(columns[i]);
 	}
@@ -107,5 +99,4 @@ void TagExaminer::clear(){
 	tags.clear();
         for( int i = 0; i < columns.size(); i++ )
             columns[i].clear();
-	//ranges.clear();
 }
