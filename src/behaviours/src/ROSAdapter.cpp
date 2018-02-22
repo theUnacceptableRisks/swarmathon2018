@@ -38,6 +38,13 @@
 #include "logic/SearchState.h"
 #include "logic/PickUpState.h"
 #include "Gripper.h"
+#include "MotorController.h"
+
+/***************
+ *Tag Examiner *
+ ***************/
+
+#include "TagExaminer.h"
 
 // To handle shutdown signals so the node quits
 // properly in response to "rosnode kill"
@@ -75,6 +82,9 @@ float minutesTime = 0;
 float hoursTime = 0;
 
 float drift_tolerance = 0.5; // meters
+
+TagExaminer tagexaminer = TagExaminer();
+
 
 std_msgs::String msg;
 
@@ -202,6 +212,7 @@ PickUpState pickup_state( &iotable );
 
 void setupLogicMachine()
 {
+    inputs.controller = MotorController( 1 );
     /* add States */
     logic_machine.addState( search_state.getIdentifier(), dynamic_cast<State *>(&search_state) );
     logic_machine.addState( pickup_state.getIdentifier(), dynamic_cast<State *>(&pickup_state) );
@@ -370,7 +381,6 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
 //    if(currentMode == 0 || currentMode == 1)
   //      return;
     inputs.tags.clear();
-
     if (message->detections.size() > 0)
     {
 
@@ -392,8 +402,9 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
                                                                   tagPose.pose.orientation.z,
                                                                   tagPose.pose.orientation.w ) );
             inputs.tags.push_back( loc );
-            cout << loc << std::endl;
+//	            cout << loc << std::endl;
         }
+        tagexaminer.loadTags( inputs.tags );
     }
 }
 

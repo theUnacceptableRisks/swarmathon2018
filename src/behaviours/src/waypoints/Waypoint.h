@@ -1,10 +1,10 @@
 #ifndef waypoint_h
 #define waypoint_h
 
+#include <tuple>
 #include "WaypointUtilities.h"
 #include "../state_machine/StateMachine.h"
 #include "../logic/LogicTypes.h"
-#include <tuple>
 
 class Waypoint : public StateMachine
 {

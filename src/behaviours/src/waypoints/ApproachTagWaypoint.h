@@ -17,10 +17,10 @@
 class ApproachTagWaypoint : public Waypoint
 {
     public:
-        ApproachTagWaypoint( LogicInputs *i, int dt, double distance );
+        ApproachTagWaypoint( LogicInputs *i, int dt, double dd ) : Waypoint( i ), desired_tag_id(dt), desired_distance(dd) {}
         virtual void run();
     private:
-        double prev_dist_to_tag;
+        double desired_distance;
         int desired_tag_id;
 };
 

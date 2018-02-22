@@ -21,3 +21,8 @@ bool TagUtilities::hasTag( std::vector<Tag> *tags, int id )
     }
     return can_see;
 }
+
+double TagUtilities::angleToTag( Tag tag )
+{
+    return 0.0;
+}
