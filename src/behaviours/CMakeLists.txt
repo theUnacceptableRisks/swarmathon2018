@@ -35,6 +35,7 @@ add_executable(
   src/waypoints/WaypointUtilities.cpp
   src/waypoints/SimpleWaypoint.cpp
   src/waypoints/ApproachTagWaypoint.cpp
+  src/waypoints/LinearWaypoint.cpp
   src/logic/LogicMachine.cpp
   src/logic/SubMachine.cpp
   src/logic/SearchState.cpp

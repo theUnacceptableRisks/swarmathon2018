@@ -5,8 +5,8 @@ void LinearWaypoint::run()
     std::tuple<int,int> output;
     double current_distance = WaypointUtilities::getDistance( this->d_params );
 
-    if( current_distance > l_params.distance )
-        this->has_arrived = false;
+    if( current_distance >= l_params.distance )
+        this->has_arrived = true;
 
     if( this->has_arrived == false )
     {

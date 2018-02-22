@@ -17,10 +17,10 @@ void ApproachTagWaypoint::run()
             {
                 MotorParams m_params;
 
-                m_params.dist_deccel_point = 0.18;
+                m_params.dist_deccel_point = 0.05;
                 m_params.dist_current = current_distance;
                 m_params.dist_goal = this->desired_distance;
-                m_params.dist_max_output = 5;
+                m_params.dist_max_output = 10;
 
                 m_params.yaw_deccel_point = .1;
                 m_params.yaw_current = current_tag.getPositionX();
