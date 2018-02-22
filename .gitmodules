@@ -7,7 +7,7 @@
 	branch = kinetic-master
 [submodule "src/usb_cam"]
 	path = src/usb_cam
-	url = https://github.com/bosch-ros-pkg/usb_cam.git
+	url = https://github.com/dtcc-swarmathon/usb_cam
 [submodule "src/behaviours/src/state_machine"]
 	path = src/behaviours/src/state_machine
 	url = https://github.com/m241dan/state_machine
