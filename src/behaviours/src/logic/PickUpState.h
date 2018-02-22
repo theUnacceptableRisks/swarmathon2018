@@ -3,15 +3,17 @@
 
 #include "../state_machine/State.h"
 #include "../waypoints/ApproachTagWaypoint.h"
+#include "../waypoints/LinearWaypoint.h"
 #include "LogicTypes.h"
 
 #define MAX_ATTEMPTS 20
+#define CLOSE_TIME .25
 
 typedef enum
 {
     PICKUP_INIT,
     PICKUP_APPROACH,
-    PICKUP_CLAW_DOWN,
+    PICKUP_FINAL_APPROACH,
     PICKUP_CLAW_CLOSE,
     PICKUP_CLAW_UP,
     PICKUP_CONFIRM,
@@ -35,7 +37,10 @@ class PickUpState : public State
         void forceTransition( PUState transition_to );
 
         ApproachTagWaypoint *approach;
-        //short dist waypoint
+        LinearWaypoint *linear;
+
+        double timer;
+
         LogicInputs *inputs;
         LogicOutputs *outputs;
         PUState internal_state;

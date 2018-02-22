@@ -5,7 +5,7 @@
 #include <geometry_msgs/Pose2D.h>
 #include "../Tag.h"
 #include "../Gripper.h"
-
+#include "../MotorController.h"
 class Waypoint;
 
 typedef struct logic_inputs
@@ -22,6 +22,7 @@ typedef struct logic_inputs
     double			angular_vel_odom_accel = 0.0;
     double			angular_vel_odom_accel_gps = 0.0;
     ros::Time			time;
+    MotorController		controller;
 } LogicInputs;
 
 typedef struct logic_outputs

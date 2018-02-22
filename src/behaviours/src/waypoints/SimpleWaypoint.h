@@ -2,14 +2,21 @@
 #define simplewaypoint_h
 
 #include "Waypoint.h"
-#include "../PID.h"
 
 //SimpleWaypointStates seperate .cpp/.h
+
+typedef enum
+{
+    SIMPLE_INIT,
+    SIMPLE_ROTATE,
+    SIMPLE_SKID,
+    SIMPLE_ARRIVED
+} SWState;
 
 typedef struct simple_params
 {
     double skid_steer_threshold = 0.4;
-    double final_approach_threshold = 0.2;
+    double arrived_threshold = 0.05;
     double max_vel = 40;
     double goal_x = 0;
     double goal_y = 0;
@@ -18,18 +25,28 @@ typedef struct simple_params
 
 class SimpleWaypoint : public Waypoint
 {
-    friend class SimpleWaypointState;
-    friend class SimpleWaypointRotate;
-    friend class SimpleWaypointSkid;
-    friend class SimpleWaypointFinalApproach;
-    friend class SimpleWaypointArrived;
     public:
-        SimpleWaypoint( LogicInputs *i, SimpleParams sp );
+        SimpleWaypoint( LogicInputs *i, SimpleParams sp ) : Waypoint( i ), simple_params(sp), internal_state(SIMPLE_INIT)
+        {
+            driving_params.goal_x = simple_params.goal_x;
+            driving_params.goal_y = simple_params.goal_y;
+            driving_params.current_x = &inputs->odom_accel.x;
+            driving_params.current_y = &inputs->odom_accel.y;
+            driving_params.current_theta = &inputs->odom_accel.theta;
+
+        }
+        virtual void run();
     private:
-        SimpleParams simple_params;
+        SWState internalTransition();
+        void internalAction();
+        void forceTransition( SWState transition_to );
+
         WaypointUtilities::DrivingParams driving_params;
-        WaypointUtilities::DrivingParams secondary_driving_params;
-        double approach_vel;
+        SimpleParams simple_params;
+        SWState internal_state;
+
+
+
  };
 
 #endif

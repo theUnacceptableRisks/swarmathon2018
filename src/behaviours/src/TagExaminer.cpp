@@ -17,16 +17,8 @@ TagExaminer::~TagExaminer()
 
 void TagExaminer::loadTags(vector<Tag> fromTagHandler)
 {
-	cout << loops << endl;
-	if(loops > 10) {
-	  tags = fromTagHandler;
-	  determineRange();
-	  graph();
-	  loops = 0;
-	}else{
-	  loops++;
-	}
-
+    tags = fromTagHandler;
+    determineRange();
 }
 
 void TagExaminer::determineRange()
@@ -62,22 +54,15 @@ void TagExaminer::determineRange()
 		else if (x >= 0.209 && x <= .269) {
 			columns[8].push_back(tags[i]);
 		}
-		else {
-			cout << "No range for tag at index " << i << endl;
-			//cout << i << "," << x << "\n";
-		}
 	}
-	cout << "Tags organized into ranges" << endl;
-	//Now sort all the vector<Tags>
-	//cout << columns[0][0].getPositionX();
-
 	for (int i = 0; i < 9; i++) {
-		columns[i] = sortColumn(columns[i]);
+		sortColumn(columns[i]);
 	}
 }
 
-vector<Tag> TagExaminer::sortColumn(vector<Tag> arr)
+void TagExaminer::sortColumn(vector<Tag> &arr)
 {
+
 	int n = arr.size();
 
 	for (int i = 0; i < n; ++i)
@@ -92,30 +77,26 @@ vector<Tag> TagExaminer::sortColumn(vector<Tag> arr)
 
 			if (distance1 > distance2)
 			{
-				Tag swap = arr[j];
-				arr[j] = arr[j + 1];
-				arr[j + 1] = swap;
+                                swap( arr[j], arr[j+1] );
 			}
 		}
 
 	}
-
 }
 
 void TagExaminer::graph()
 {
 	for (int i = 0; i < columns.size(); i++){
 		cout << "Column " << i << ": " << endl;
-		//for (int j = 0; j < columns.at(i).size(); j++) {
-			//cout << "\t>#" << (j + 1) << ": " << columns.at(i)[j].getPositionX() << endl;
-			cout << "STUFFF" << endl;
-		//}
+		for (int j = 0; j < columns.at(i).size(); j++) {
+			cout << "\t>#" << (j + 1) << ": " << columns.at(i)[j].getPositionX() << endl;
+		}
 	}
     clear();
 }
 
 void TagExaminer::clear(){
 	tags.clear();
-	columns.clear();
-	//ranges.clear();
+        for( int i = 0; i < columns.size(); i++ )
+            columns[i].clear();
 }

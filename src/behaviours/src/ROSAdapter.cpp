@@ -38,9 +38,11 @@
 #include "logic/SearchState.h"
 #include "logic/PickUpState.h"
 #include "Gripper.h"
+#include "MotorController.h"
 
 /***************
- *Tag Examiner*/
+ *Tag Examiner *
+ ***************/
 
 #include "TagExaminer.h"
 
@@ -212,6 +214,7 @@ PickUpState pickup_state( &iotable );
 
 void setupLogicMachine()
 {
+    inputs.controller = MotorController( 1 );
     /* add States */
     logic_machine.addState( search_state.getIdentifier(), dynamic_cast<State *>(&search_state) );
     logic_machine.addState( pickup_state.getIdentifier(), dynamic_cast<State *>(&pickup_state) );
@@ -400,6 +403,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
                                                                   tagPose.pose.orientation.w ) );
             inputs.tags.push_back( loc );
         }
+        tagexaminer.loadTags( inputs.tags );
     }
 }
 
