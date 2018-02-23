@@ -15,7 +15,8 @@ public:
 	enum Turns{
 		LEFT,
 		RIGHT,
-		CORNER
+		CORNER,
+		NONE
 	};
 
 	vector<Tag> tags;
