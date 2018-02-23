@@ -1,5 +1,5 @@
 #include "TagExaminer.h"
-#include <utility>      // std::pair, std::make_pair
+#include <stdlib.h>     /* abs */
 
 using namespace std;
 
@@ -97,38 +97,26 @@ TagExaminer::Turns TagExaminer::determineTurning()
 	Tag left, right;
 
 	//First, find the left most column.
-	for (int i = 0; i < columns[i].size(); i++) {
-		if (columns[i].size() > 0) {
-			left = columns.at(i)[0];
-			//cout << left;
-			break;
-		}
-	}
 
-	//Find the right most column.
-	for (int j = columns.size() - 1; j >= 0; j--) {
-		if (columns[j].size() > 0) {
-			right = columns.at(j)[0];
-			//cout << right;
-			break;
-		}
-	}
 	double lx = left.getPositionX(), ly = left.getPositionY(), lz = left.getPositionZ();
 	double rx = right.getPositionX(), ry = right.getPositionY(), rz = right.getPositionZ();
 	//Should I have to worry about absolute values?
 	double ldist = sqrt(lx * lx + ly * ly + lz * lz);
 	double rdist = sqrt(rx * rx + ry * ry + rz * rz);
 
-	//FIND OUT VALUE THIS IS, FIRSTLY
-	//DISTANCE FAR AWAY
-	if (ldist > rdist) {
+	if (abs(abs(ldist) - abs(rdist)) <= margin) {
+		cout << "CORNER" << endl;
+		return CORNER;
+	}
+	else if (abs(ldist) > abs(rdist)) {
+		cout << "RIGHT" << endl;
+		return RIGHT;
+	}
+	else {
 		cout << "LEFT" << endl;
 		return LEFT;
 	}
-	else {
-		cout << "TURN RIGHT" << endl;
-		return RIGHT;
-	}
+
 } 
 
 void TagExaminer::graph()
