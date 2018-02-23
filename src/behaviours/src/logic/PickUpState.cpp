@@ -79,14 +79,14 @@ PUState PickUpState::internalTransition()
             }
             break;
         case PICKUP_CLAW_CLOSE:
-            if( ( this->inputs->time.toSec() - this->timer ) >= 0.75 )
+            if( ( this->inputs->time.toSec() - this->timer ) >= 01.25 )
             {
                 transition_to = PICKUP_CLAW_UP;
                 this->timer = this->inputs->time.toSec();
             }
             break;
         case PICKUP_CLAW_UP:
-            if( ( this->inputs->time.toSec() - this->timer ) >= 0.75 )
+            if( ( this->inputs->time.toSec() - this->timer ) >= 1.25 )
             {
                 transition_to = PICKUP_CONFIRM;
             }
@@ -107,7 +107,7 @@ void PickUpState::internalAction()
         case PICKUP_INIT:
             if( TagUtilities::hasTag( &inputs->tags, 0 ) )
             {
-                approach = new ApproachTagWaypoint( inputs, 0, 0.2 );
+                approach = new ApproachTagWaypoint( inputs, 0, 0.25 );
                 outputs->current_waypoint = approach;
             }
             else

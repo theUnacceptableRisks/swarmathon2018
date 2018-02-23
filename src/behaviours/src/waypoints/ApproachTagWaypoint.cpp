@@ -22,10 +22,10 @@ void ApproachTagWaypoint::run()
                 m_params.dist_goal = this->desired_distance;
                 m_params.dist_max_output = 10;
 
-                m_params.yaw_deccel_point = .1;
+                m_params.yaw_deccel_point = 0.1;
                 m_params.yaw_current = current_tag.getPositionX();
-                m_params.yaw_goal = 0.0;
-                m_params.yaw_max_output = 10;
+                m_params.yaw_goal = 0.023;
+                m_params.yaw_max_output = 60;
 
                 leftAndRight = inputs->controller.generateSkidOutput( m_params );
 

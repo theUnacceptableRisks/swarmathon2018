@@ -42,11 +42,11 @@ void SimpleWaypoint::internalAction()
             MotorParams m_params;
             std::tuple<int,int> output;
 
-            m_params.yaw_deccel_point = M_PI_2;
+            m_params.yaw_deccel_point = M_PI/6;
             m_params.yaw_current = *this->driving_params.current_theta;
             m_params.yaw_goal = WaypointUtilities::getGoalTheta( this->driving_params );
             m_params.yaw_in_radians = true;
-            m_params.yaw_max_output = 30;
+            m_params.yaw_max_output = 60;
 
             output = this->inputs->controller.generateRotationalOutput( m_params );
 
@@ -62,13 +62,13 @@ void SimpleWaypoint::internalAction()
             m_params.dist_deccel_point = 0.2;
             m_params.dist_current = WaypointUtilities::getDistance( this->driving_params );
             m_params.dist_goal = 0.0;
-            m_params.dist_max_output = 30;
+            m_params.dist_max_output = 60;
 
-            m_params.yaw_deccel_point = M_PI_2;
+            m_params.yaw_deccel_point = M_PI/6;
             m_params.yaw_current = *this->driving_params.current_theta;
             m_params.yaw_goal = WaypointUtilities::getGoalTheta( this->driving_params );
             m_params.yaw_in_radians = true;
-            m_params.yaw_max_output = 30;
+            m_params.yaw_max_output = 120;
 
             output = this->inputs->controller.generateSkidOutput( m_params );
 
