@@ -17,18 +17,29 @@ void ApproachTagWaypoint::run()
             {
                 MotorParams m_params;
 
-                m_params.dist_deccel_point = this->t_params.dist_deccel;
-                m_params.dist_current = current_distance;
-                m_params.dist_goal = this->t_params.dist_goal;
-                m_params.dist_max_output = this->t_params.dist_max_output;
+                if( fabs( current_tag.getPositionX() ) < 0.05 )
+                {
+                    m_params.yaw_deccel_point = this->t_params.yaw_deccel;
+                    m_params.yaw_current = current_tag.getPositionX();
+                    m_params.yaw_goal = this->t_params.yaw_goal;
+                    m_params.yaw_max_output = this->t_params.yaw_max_output;
 
-                m_params.yaw_deccel_point = this->t_params.yaw_deccel;
-                m_params.yaw_current = current_tag.getPositionX();
-                m_params.yaw_goal = this->t_params.yaw_goal;
-                m_params.yaw_max_output = this->t_params.yaw_max_output;
+                    leftAndRight = inputs->controller.generateRotationalOutput( m_params );
+                }
+                else
+                {
+                    m_params.dist_deccel_point = this->t_params.dist_deccel;
+                    m_params.dist_current = current_distance;
+                    m_params.dist_goal = this->t_params.dist_goal;
+                    m_params.dist_max_output = this->t_params.dist_max_output;
 
-                leftAndRight = inputs->controller.generateSkidOutput( m_params );
+                    m_params.yaw_deccel_point = this->t_params.yaw_deccel;
+                    m_params.yaw_current = current_tag.getPositionX();
+                    m_params.yaw_goal = this->t_params.yaw_goal;
+                    m_params.yaw_max_output = this->t_params.yaw_max_output;
 
+                    leftAndRight = inputs->controller.generateSkidOutput( m_params );
+                }
                 setOutputLeftPWM( std::get<0>( leftAndRight ) );
                 setOutputRightPWM( std::get<1>( leftAndRight ) );
 
