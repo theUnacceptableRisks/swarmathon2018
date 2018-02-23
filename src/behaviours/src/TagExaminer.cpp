@@ -93,8 +93,12 @@ TagExaminer::Turns TagExaminer::determineTurning()
 {
 	//Compare the left most and right most tag to draw a "line"
 	//to see which direction it needs to go to.
-
-	Tag left, right;
+	if (!(columns[3].size() > 0) && !(columns[5].size() > 0)) {
+		cout << "PROBLEMO" << endl;
+		return;
+	}
+	Tag left = columns[3][0], right = columns[5][0];
+	cout << "GOOD" << endl;
 
 	//First, find the left most column.
 
