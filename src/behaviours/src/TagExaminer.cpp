@@ -83,7 +83,7 @@ void TagExaminer::sortColumn(vector<Tag> &arr)
 
 			if (distance1 > distance2)
 			{
-                swap( arr[j], arr[j+1] );
+	                  swap( arr[j], arr[j+1] );
 			}
 		}
 	}
@@ -108,7 +108,9 @@ TagExaminer::Turns TagExaminer::determineTurning()
 	//Should I have to worry about absolute values?
 	double ldist = sqrt(lx * lx + ly * ly + lz * lz);
 	double rdist = sqrt(rx * rx + ry * ry + rz * rz);
-
+	
+	cout << ldist  << " - " << rdist << endl;
+	
 	if (abs(abs(ldist) - abs(rdist)) <= margin) {
 		cout << "CORNER" << endl;
 		return CORNER;
