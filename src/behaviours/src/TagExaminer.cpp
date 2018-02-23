@@ -94,7 +94,7 @@ TagExaminer::Turns TagExaminer::determineTurning()
 	//Compare the left most and right most tag to draw a "line"
 	//to see which direction it needs to go to.
 
-	Tag left, right;
+	Tag left = columns[3][0], right = columns[5][0];
 
 	//First, find the left most column.
 
