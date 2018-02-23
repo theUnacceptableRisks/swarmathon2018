@@ -117,6 +117,7 @@ ros::Publisher wrist_angle_publish;
 ros::Publisher info_log_publisher;
 ros::Publisher drive_control_publish;
 ros::Publisher heartbeat_publisher;
+ros::Publisher tag_x;
 
 void setupPublishers( ros::NodeHandle &ros_handle, string published_name )
 {
@@ -127,6 +128,7 @@ void setupPublishers( ros::NodeHandle &ros_handle, string published_name )
     info_log_publisher = ros_handle.advertise<std_msgs::String>("/infoLog", 1, true);
     drive_control_publish = ros_handle.advertise<geometry_msgs::Twist>((published_name + "/driveControl"), 10);
     heartbeat_publisher = ros_handle.advertise<std_msgs::String>((published_name + "/behaviour/heartbeat"), 1, true);
+    tag_x = ros_handle.advertise<std_msgs::String>((published_name + "/tag_x"), 1, true );
 }
 
 /*******************
@@ -375,6 +377,9 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
     // This is to make sure autonomous behaviours are not triggered while the rover is in manual mode.
 //    if(currentMode == 0 || currentMode == 1)
   //      return;
+    std_msgs::String tag_output;
+    std::stringstream ss;
+
     inputs.tags.clear();
     if (message->detections.size() > 0)
     {
@@ -397,7 +402,6 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
                                                                   tagPose.pose.orientation.z,
                                                                   tagPose.pose.orientation.w ) );
             inputs.tags.push_back( loc );
-//	            cout << loc << std::endl;
         }
         tagexaminer.loadTags( inputs.tags );
     }

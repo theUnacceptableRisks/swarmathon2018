@@ -12,6 +12,13 @@ public:
 	TagExaminer();
 	~TagExaminer();
 
+	enum Turns{
+		LEFT,
+		RIGHT,
+		CORNER,
+		NONE
+	};
+
 	vector<Tag> tags;
 	vector<vector<Tag>> columns;
 	vector< pair<double, double>> ranges;
@@ -19,11 +26,11 @@ public:
 	void loadTags(vector<Tag>);
 	void determineRange();
 	void sortColumn(vector<Tag> &);
-
+	Turns determineTurning();
 	void graph();
 	void clear();
 
-
+	const double margin = 0.05;
 
 private:
 	const double colWidth = .06;
