@@ -2,13 +2,16 @@
 #include <utility>      // std::pair, std::make_pair
 
 using namespace std;
+
 TagExaminer::TagExaminer()
 {
-	//Todo: Either make a algorithm to get all ranges
-	//Or manually place them all inside a vector pair and then
-	//redo determineRange Func
-	//ranges[0].first = -0.269;
-	//ranges[0].second = -0.209;
+	//todo: 
+	/*
+
+	Make a detection function to say if 
+	home base tags are aligned/straight
+	
+	*/
 }
 
 TagExaminer::~TagExaminer()
@@ -19,10 +22,14 @@ void TagExaminer::loadTags(vector<Tag> fromTagHandler)
 {
     tags = fromTagHandler;
     determineRange();
+	//graph();
+	//determineTurning();
+	clear();
 }
 
 void TagExaminer::determineRange()
 {
+	//TODO: Resize these and eventually have a loop instead of 50 ifs.
 	columns.resize(9);  // resize top level vector
 	for (int i = 0; i < tags.size(); i++) {
 		double x = tags[i].getPositionX();
@@ -62,7 +69,6 @@ void TagExaminer::determineRange()
 
 void TagExaminer::sortColumn(vector<Tag> &arr)
 {
-
 	int n = arr.size();
 
 	for (int i = 0; i < n; ++i)
@@ -77,22 +83,62 @@ void TagExaminer::sortColumn(vector<Tag> &arr)
 
 			if (distance1 > distance2)
 			{
-                                swap( arr[j], arr[j+1] );
+                swap( arr[j], arr[j+1] );
 			}
 		}
-
 	}
 }
+
+TagExaminer::Turns TagExaminer::determineTurning()
+{
+	//Compare the left most and right most tag to draw a "line"
+	//to see which direction it needs to go to.
+
+	Tag left, right;
+
+	//First, find the left most column.
+	for (int i = 0; i < columns[i].size(); i++) {
+		if (columns[i].size() > 0) {
+			left = columns.at(i)[0];
+			//cout << left;
+			break;
+		}
+	}
+
+	//Find the right most column.
+	for (int j = columns.size() - 1; j >= 0; j--) {
+		if (columns[j].size() > 0) {
+			right = columns.at(j)[0];
+			//cout << right;
+			break;
+		}
+	}
+	double lx = left.getPositionX(), ly = left.getPositionY(), lz = left.getPositionZ();
+	double rx = right.getPositionX(), ry = right.getPositionY(), rz = right.getPositionZ();
+	//Should I have to worry about absolute values?
+	double ldist = sqrt(lx * lx + ly * ly + lz * lz);
+	double rdist = sqrt(rx * rx + ry * ry + rz * rz);
+
+	//FIND OUT VALUE THIS IS, FIRSTLY
+	//DISTANCE FAR AWAY
+	if (ldist > rdist) {
+		cout << "LEFT" << endl;
+		return LEFT;
+	}
+	else {
+		cout << "TURN RIGHT" << endl;
+		return RIGHT;
+	}
+} 
 
 void TagExaminer::graph()
 {
 	for (int i = 0; i < columns.size(); i++){
-		cout << "Column " << i << ": " << endl;
+		cout << "Column " << i << ": (" << columns[i].size() << ")" << endl;
 		for (int j = 0; j < columns.at(i).size(); j++) {
 			cout << "\t>#" << (j + 1) << ": " << columns.at(i)[j].getPositionX() << endl;
 		}
 	}
-    clear();
 }
 
 void TagExaminer::clear(){
