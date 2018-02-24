@@ -36,7 +36,7 @@ std::string PickUpState::transition()
 PUState PickUpState::internalTransition()
 {
     PUState transition_to = internal_state;
-
+    std::cout << "Current State: " << transition_to << std::endl;
     switch( internal_state )
     {
         case PICKUP_INIT:
@@ -62,15 +62,6 @@ PUState PickUpState::internalTransition()
                 this->approach = 0;
 
                 transition_to = PICKUP_FINAL_APPROACH;
-                /* on Enter */
-                LinearParams l_params;
-
-                l_params.distance = 0.11;
-                l_params.deccel_point = 0;
-                l_params.max_vel = 5;
-
-                this->linear = new LinearWaypoint( this->inputs, l_params );
-                this->outputs->current_waypoint = this->linear;
             }
             else if( attempts > MAX_ATTEMPTS )
                 transition_to = PICKUP_FAIL;
@@ -103,26 +94,11 @@ PUState PickUpState::internalTransition()
             }
             break;
         case PICKUP_CONFIRM:
-            if( ( this->inputs->time.toSec() - this->timer ) >= CONFIRM_TIME )
+            if( cube_secured )
+                transition_to = PICKUP_COMPLETE;
+            else if( ( this->inputs->time.toSec() - this->timer ) >= CONFIRM_TIME )
             {
-                if( cube_secured )
-                    transition_to = PICKUP_COMPLETE;
-                else
-                {
-                    transition_to = PICKUP_FAIL;
-                    /* on Enter */
-                    this->num_tries++;
-
-                    LinearParams l_params;
-
-                    l_params.distance = .1;
-                    l_params.deccel_point = 0.05;
-                    l_params.max_vel = 10;
-                    l_params.reverse = true;
-
-                    this->linear = new LinearWaypoint( this->inputs, l_params );
-                    this->outputs->current_waypoint = this->linear;
-                }
+                transition_to = PICKUP_FAIL;
             }
         case PICKUP_HOVER_CLOSE:
         case PICKUP_COMPLETE:
@@ -151,9 +127,9 @@ void PickUpState::internalAction()
                 t_params.dist_goal = 0.24;
                 t_params.dist_max_output = 10;
 
-                t_params.yaw_deccel = 0.15;
+                t_params.yaw_deccel = 0.10;
                 t_params.yaw_goal = 0.0;
-                t_params.yaw_max_output = 80;
+                t_params.yaw_max_output = (80/3);
 
                 t_params.type = CLOSEST;
 
@@ -198,6 +174,8 @@ void PickUpState::internalAction()
             outputs->gripper_position = Gripper::HOVER_CLOSED;
             break;
         case PICKUP_COMPLETE:
+            outputs->gripper_position = Gripper::HOVER_CLOSED;
+            std::cout << "PickUp Complete!" << std::endl;
             break;
         case PICKUP_FAIL:
             outputs->gripper_position = Gripper::DOWN_OPEN;
@@ -208,5 +186,48 @@ void PickUpState::internalAction()
 
 void PickUpState::forceTransition( PUState transition_to )
 {
+    /* onExit bits */
+    switch( internal_state )
+    {
+        default: break;
+    }
+
+    /* transition */
     internal_state = transition_to;
+
+    /* onEnter bits */
+    switch( internal_state )
+    {
+        default: break;
+        case PICKUP_FINAL_APPROACH:
+        {
+            /* on Enter */
+            LinearParams l_params;
+
+            l_params.distance = 0.11;
+            l_params.deccel_point = 0;
+            l_params.max_vel = 5;
+
+            this->linear = new LinearWaypoint( this->inputs, l_params );
+            this->outputs->current_waypoint = this->linear;
+            break;
+        }
+        case PICKUP_FAIL:
+        {
+            /* on Enter */
+            this->num_tries++;
+
+            LinearParams l_params;
+
+            l_params.distance = .1;
+            l_params.deccel_point = 0.05;
+            l_params.max_vel = 10;
+            l_params.reverse = true;
+
+            this->linear = new LinearWaypoint( this->inputs, l_params );
+            this->outputs->current_waypoint = this->linear;
+            break;
+        }
+
+    }
 }
