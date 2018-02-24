@@ -3,7 +3,7 @@
 void LinearWaypoint::run()
 {
     std::tuple<int,int> output;
-    double current_distance = WaypointUtilities::getDistance( this->d_params );
+    double current_distance = fabs( this->original_x - this->inputs->raw_odom.x );
 
     if( current_distance >= l_params.distance )
         this->has_arrived = true;
@@ -14,6 +14,8 @@ void LinearWaypoint::run()
 
         m_params.dist_deccel_point = l_params.deccel_point;
         m_params.dist_current = l_params.distance - current_distance;
+        if( this->l_params.reverse )
+            m_params.dist_current *= -1;
         m_params.dist_goal = 0;
         m_params.dist_max_output = l_params.max_vel;
 

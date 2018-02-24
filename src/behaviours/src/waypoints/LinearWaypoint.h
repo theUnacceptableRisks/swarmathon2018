@@ -8,23 +8,17 @@ typedef struct linear_params
     double distance;
     double deccel_point;
     int max_vel;
+    bool reverse = false;
 } LinearParams;
 
 class LinearWaypoint : public Waypoint
 {
     public:
-        LinearWaypoint( LogicInputs *i, LinearParams lp ) : Waypoint( i ), l_params(lp)
-        {
-            d_params.goal_x = i->raw_odom.x;
-            d_params.goal_y = 0;
-            d_params.current_x = &i->raw_odom.x;
-            d_params.current_y = &d_params.goal_y;
-        }
+        LinearWaypoint( LogicInputs *i, LinearParams lp ) : Waypoint( i ), l_params(lp), original_x(i->raw_odom.x) {}
         virtual void run();
     private:
-        WaypointUtilities::DrivingParams d_params;
         LinearParams l_params;
-        double distance;
+        double original_x;
 };
 
 #endif
