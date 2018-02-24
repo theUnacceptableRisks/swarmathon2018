@@ -16,9 +16,9 @@ class LinearWaypoint : public Waypoint
         LinearWaypoint( LogicInputs *i, LinearParams lp ) : Waypoint( i ), l_params(lp)
         {
             d_params.goal_x = i->raw_odom.x;
-            d_params.goal_y = i->raw_odom.y;
+            d_params.goal_y = 0;
             d_params.current_x = &i->raw_odom.x;
-            d_params.current_y = &i->raw_odom.y;
+            d_params.current_y = &d_params.goal_y;
         }
         virtual void run();
     private:
