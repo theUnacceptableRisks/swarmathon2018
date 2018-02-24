@@ -22,6 +22,13 @@ class SearchInit : public State
                 double y = 0;
 
                 params.skid_steer_threshold = M_PI/6;
+                params.arrived_threshold = 0.05;
+
+                params.dist_max_output = 60;
+                params.dist_deccel = 0.2;
+                params.yaw_max_output = 80;
+                params.yaw_deccel = M_PI/12;
+
                 for( double n = 1.0; n < 10; n += 1.0 )
                 {
                     y += n * pow( (-1.0), ( n + 1.0 ) );

@@ -107,7 +107,21 @@ void PickUpState::internalAction()
         case PICKUP_INIT:
             if( TagUtilities::hasTag( &inputs->tags, 0 ) )
             {
-                approach = new ApproachTagWaypoint( inputs, 0, 0.25 );
+                TagParams t_params;
+
+                t_params.desired_tag = 0;
+
+                t_params.dist_deccel = 0.05;
+                t_params.dist_goal = 0.24;
+                t_params.dist_max_output = 10;
+
+                t_params.yaw_deccel = 0.15;
+                t_params.yaw_goal = 0.0;
+                t_params.yaw_max_output = 80;
+
+                t_params.type = CLOSEST;
+
+                approach = new ApproachTagWaypoint( inputs, t_params );
                 outputs->current_waypoint = approach;
             }
             else

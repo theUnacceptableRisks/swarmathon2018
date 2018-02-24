@@ -405,8 +405,9 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
             inputs.tags.push_back( loc );
         }
      //   cout << "Distance: " << TagUtilities::getDistance( inputs.tags.back() ) << std::endl;
-        tagexaminer.loadTags( inputs.tags );
-	tagexaminer.determineTurning();
+     //   tagexaminer.loadTags( inputs.tags );
+//	tagexaminer.determineTurning();
+        cout << "X: " << inputs.tags.back().getPositionX() << std::endl;
     }
 }
 
@@ -485,7 +486,7 @@ void joyCmdHandler(const sensor_msgs::Joy::ConstPtr& message)
         else if(right < -max_motor_cmd)
             right = -max_motor_cmd;
 
-        sendDriveCommand(20, 160);
+        sendDriveCommand(left, right);
     }
 }
 

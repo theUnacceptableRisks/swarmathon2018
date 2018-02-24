@@ -16,10 +16,18 @@ typedef enum
 typedef struct simple_params
 {
     double skid_steer_threshold = M_PI/6;
-    double arrived_threshold = 0.1;
-    double max_vel = 40;
+    double arrived_threshold = 0.05;
+
     double goal_x = 0;
     double goal_y = 0;
+
+    int dist_max_output = 60;
+    double dist_deccel = 0.2;
+    double dist_goal = 0.0;
+
+    int yaw_max_output = 80;
+    double yaw_deccel = M_PI/6;
+    double yaw_goal = 0.0;
 } SimpleParams;
 
 
@@ -30,9 +38,9 @@ class SimpleWaypoint : public Waypoint
         {
             driving_params.goal_x = simple_params.goal_x;
             driving_params.goal_y = simple_params.goal_y;
-            driving_params.current_x = &inputs->odom_accel.x;
-            driving_params.current_y = &inputs->odom_accel.y;
-            driving_params.current_theta = &inputs->odom_accel.theta;
+            driving_params.current_x = &inputs->odom_accel_gps.x;
+            driving_params.current_y = &inputs->odom_accel_gps.y;
+            driving_params.current_theta = &inputs->odom_accel_gps.theta;
 
         }
         virtual void run();
