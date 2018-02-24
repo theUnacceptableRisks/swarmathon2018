@@ -146,16 +146,12 @@ void PickUpState::internalAction()
             break;
         case PICKUP_APPROACH:
             outputs->gripper_position = Gripper::DOWN_OPEN;
-            if( !TagUtilities::hasTag( &inputs->tags, 0 ) )
-                this->attempts++;
-            else
+            if( TagUtilities::hasTag( &inputs->tags, 0 ) )
                 this->attempts = 0;
+            else
+                this->attempts++;
             break;
         case PICKUP_FINAL_APPROACH:
-            if( !TagUtilities::hasTag( &inputs->tags, 0 ) )
-                this->attempts++;
-            else
-                this->attempts = 0;
             outputs->gripper_position = Gripper::DOWN_OPEN;
             break;
         case PICKUP_CLAW_CLOSE:
@@ -186,48 +182,53 @@ void PickUpState::internalAction()
 
 void PickUpState::forceTransition( PUState transition_to )
 {
-    /* onExit bits */
-    switch( internal_state )
-    {
-        default: break;
-    }
+    PUState prev_state = internal_state;
 
     /* transition */
     internal_state = transition_to;
 
-    /* onEnter bits */
-    switch( internal_state )
+    if( internal_state != prev_state )
     {
-        default: break;
-        case PICKUP_FINAL_APPROACH:
+
+        /* onExit bits */
+        switch( prev_state )
         {
-            /* on Enter */
-            LinearParams l_params;
-
-            l_params.distance = 0.11;
-            l_params.deccel_point = 0;
-            l_params.max_vel = 5;
-
-            this->linear = new LinearWaypoint( this->inputs, l_params );
-            this->outputs->current_waypoint = this->linear;
-            break;
-        }
-        case PICKUP_FAIL:
-        {
-            /* on Enter */
-            this->num_tries++;
-
-            LinearParams l_params;
-
-            l_params.distance = .1;
-            l_params.deccel_point = 0.05;
-            l_params.max_vel = 10;
-            l_params.reverse = true;
-
-            this->linear = new LinearWaypoint( this->inputs, l_params );
-            this->outputs->current_waypoint = this->linear;
-            break;
+            default: break;
         }
 
+        /* onEnter bits */
+        switch( internal_state )
+        {
+            default: break;
+            case PICKUP_FINAL_APPROACH:
+            {
+                /* on Enter */
+                LinearParams l_params;
+
+                l_params.distance = 0.11;
+                l_params.deccel_point = 0;
+                l_params.max_vel = 5;
+
+                this->linear = new LinearWaypoint( this->inputs, l_params );
+                this->outputs->current_waypoint = this->linear;
+                break;
+            }
+            case PICKUP_FAIL:
+            {
+                /* on Enter */
+                this->num_tries++;
+
+                LinearParams l_params;
+
+                l_params.distance = .1;
+                l_params.deccel_point = 0.05;
+                l_params.max_vel = 10;
+                l_params.reverse = true;
+
+                this->linear = new LinearWaypoint( this->inputs, l_params );
+                this->outputs->current_waypoint = this->linear;
+                break;
+            }
+        }
     }
 }
