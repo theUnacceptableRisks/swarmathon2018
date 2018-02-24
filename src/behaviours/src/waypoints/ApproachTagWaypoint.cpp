@@ -17,7 +17,7 @@ void ApproachTagWaypoint::run()
             {
                 MotorParams m_params;
 
-                if( fabs( current_tag.getPositionX() ) < 0.05 )
+                if( fabs( current_tag.getPositionX() ) > 0.05 )
                 {
                     m_params.yaw_deccel_point = this->t_params.yaw_deccel;
                     m_params.yaw_current = current_tag.getPositionX();
