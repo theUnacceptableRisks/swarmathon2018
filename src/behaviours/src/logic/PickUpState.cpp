@@ -14,6 +14,9 @@ void PickUpState::action()
 void PickUpState::onEnter()
 {
     forceTransition( PICKUP_INIT );
+    num_tries = 0;
+    attempts = 0;
+    cube_secured = false;
 }
 
 void PickUpState::onExit()
@@ -43,10 +46,13 @@ PUState PickUpState::internalTransition()
             }
             else
             {
-                if( attempts > MAX_ATTEMPTS )
+                if( this->attempts > MAX_ATTEMPTS )
                     transition_to = PICKUP_FAIL;
 
             }
+            break;
+        case PICKUP_FAILED_INIT:
+            //complete do nothing state
             break;
         case PICKUP_APPROACH:
             if( approach && approach->hasArrived() )
@@ -63,9 +69,11 @@ PUState PickUpState::internalTransition()
                 l_params.deccel_point = 0;
                 l_params.max_vel = 5;
 
-                this->linear = new LinearWaypoint( inputs, l_params );
-                outputs->current_waypoint = linear;
+                this->linear = new LinearWaypoint( this->inputs, l_params );
+                this->outputs->current_waypoint = this->linear;
             }
+            else if( attempts > MAX_ATTEMPTS )
+                transition_to = PICKUP_FAIL;
             break;
         case PICKUP_FINAL_APPROACH:
             if( linear && linear->hasArrived() )
@@ -77,24 +85,52 @@ PUState PickUpState::internalTransition()
                 transition_to = PICKUP_CLAW_CLOSE;
                 this->timer = this->inputs->time.toSec();
             }
+            else if( this->attempts > MAX_ATTEMPTS )
+                transition_to = PICKUP_FAIL;
             break;
         case PICKUP_CLAW_CLOSE:
-            if( ( this->inputs->time.toSec() - this->timer ) >= 01.25 )
+            if( ( this->inputs->time.toSec() - this->timer ) >= CLOSE_TIME )
             {
                 transition_to = PICKUP_CLAW_UP;
                 this->timer = this->inputs->time.toSec();
             }
             break;
         case PICKUP_CLAW_UP:
-            if( ( this->inputs->time.toSec() - this->timer ) >= 1.25 )
+            if( ( this->inputs->time.toSec() - this->timer ) >= UP_TIME )
             {
                 transition_to = PICKUP_CONFIRM;
+                this->timer = this->inputs->time.toSec();
             }
             break;
         case PICKUP_CONFIRM:
+            if( ( this->inputs->time.toSec() - this->timer ) >= CONFIRM_TIME )
+            {
+                if( cube_secured )
+                    transition_to = PICKUP_COMPLETE;
+                else
+                {
+                    transition_to = PICKUP_FAIL;
+                    /* on Enter */
+                    this->num_tries++;
+
+                    LinearParams l_params;
+
+                    l_params.distance = .1;
+                    l_params.deccel_point = 0.05;
+                    l_params.max_vel = 10;
+                    l_params.reverse = true;
+
+                    this->linear = new LinearWaypoint( this->inputs, l_params );
+                    this->outputs->current_waypoint = this->linear;
+                }
+            }
         case PICKUP_HOVER_CLOSE:
         case PICKUP_COMPLETE:
         case PICKUP_FAIL:
+            if( linear && linear->hasArrived() )
+            {
+                transition_to = PICKUP_INIT;
+            }
             break;
     }
     return transition_to;
@@ -126,15 +162,24 @@ void PickUpState::internalAction()
             }
             else
             {
-                attempts++;
+                this->attempts++;
             }
             break;
+        case PICKUP_FAILED_INIT:
+            //complete do nothing state
+            break;
         case PICKUP_APPROACH:
-            std::cout << "approaching" << std::endl;
             outputs->gripper_position = Gripper::DOWN_OPEN;
-            //does nothing for now
+            if( !TagUtilities::hasTag( &inputs->tags, 0 ) )
+                this->attempts++;
+            else
+                this->attempts = 0;
             break;
         case PICKUP_FINAL_APPROACH:
+            if( !TagUtilities::hasTag( &inputs->tags, 0 ) )
+                this->attempts++;
+            else
+                this->attempts = 0;
             outputs->gripper_position = Gripper::DOWN_OPEN;
             break;
         case PICKUP_CLAW_CLOSE:
@@ -144,9 +189,18 @@ void PickUpState::internalAction()
             outputs->gripper_position = Gripper::UP_CLOSED;
             break;
         case PICKUP_CONFIRM:
+            if( this->inputs->us_center < 0.13 )
+                cube_secured = true;
+            else if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && TagUtilities::getDistance( this->inputs->tags.back() ) < 0.15 )
+                cube_secured = true;
+            break;
         case PICKUP_HOVER_CLOSE:
+            outputs->gripper_position = Gripper::HOVER_CLOSED;
+            break;
         case PICKUP_COMPLETE:
+            break;
         case PICKUP_FAIL:
+            outputs->gripper_position = Gripper::DOWN_OPEN;
             break;
 
     }

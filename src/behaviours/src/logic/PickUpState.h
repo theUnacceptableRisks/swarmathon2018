@@ -7,11 +7,14 @@
 #include "LogicTypes.h"
 
 #define MAX_ATTEMPTS 20
-#define CLOSE_TIME .25
+#define CLOSE_TIME 1.25
+#define UP_TIME 1.25
+#define CONFIRM_TIME 2.00
 
 typedef enum
 {
     PICKUP_INIT,
+    PICKUP_FAILED_INIT,
     PICKUP_APPROACH,
     PICKUP_FINAL_APPROACH,
     PICKUP_CLAW_CLOSE,
@@ -45,6 +48,8 @@ class PickUpState : public State
         LogicOutputs *outputs;
         PUState internal_state;
         int attempts;
+        int num_tries;
+        bool cube_secured;
 };
 
 #endif
