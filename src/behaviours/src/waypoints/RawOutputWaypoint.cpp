@@ -2,7 +2,7 @@
 
 void RawOutputWaypoint::run()
 {
-    std::tuple<int,int> leftAndRight = std::make_tuple<int,int>( 0, 0 );
+    std::tuple<int,int> leftAndRight = std::make_tuple( 0, 0 );
 
     if( !this->has_arrived )
     {
@@ -10,10 +10,10 @@ void RawOutputWaypoint::run()
             this->has_arrived = true;
         else
         {
-            leftAndRight = std::make_tuple<int,int>( this->r_params.left_output, this->r_params.right_output );
+            leftAndRight = std::make_tuple( this->r_params.left_output, this->r_params.right_output );
         }
     }
 
-    setOutputLeftPWM( std::get<0>( leftAndRight );
-    setOutputRightPWM( std::get<1>( leftAndRight );
+    setOutputLeftPWM( std::get<0>( leftAndRight ) );
+    setOutputRightPWM( std::get<1>( leftAndRight ) );
 }

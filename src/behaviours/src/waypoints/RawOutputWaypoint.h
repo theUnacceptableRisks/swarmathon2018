@@ -13,11 +13,11 @@ typedef struct rawoutputparams
 class RawOutputWaypoint : public Waypoint
 {
     public:
-        RawOutputWaypoint( LogicInputs *i, RawOutputParams rop ) : Waypoint( i ), r_params(rop), start_time(i->time.toSecs()) {}
+        RawOutputWaypoint( LogicInputs *i, RawOutputParams rop ) : Waypoint( i ), r_params(rop), start_time(i->time.toSec()) {}
         virtual void run();
     private:
         RawOutputParams r_params;
         double start_time;
-}
+};
 
 #endif
