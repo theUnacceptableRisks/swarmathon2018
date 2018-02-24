@@ -1,13 +1,23 @@
 #ifndef rawoutputwaypoint_h
 #define rawoutputwaypoint_h
 
+#include "Waypoint.h"
+
 typedef struct rawoutputparams
 {
     int left_output;
     int right_output;
     double duration;
-} RawOutParams;
+} RawOutputParams;
 
-class RawOutputWaypoint :
+class RawOutputWaypoint : public Waypoint
+{
+    public:
+        RawOutputWaypoint( LogicInputs *i, RawOutputParams rop ) : Waypoint( i ), r_params(rop), start_time(i->time.toSecs()) {}
+        virtual void run();
+    private:
+        RawOutputParams r_params;
+        double start_time;
+}
 
 #endif
