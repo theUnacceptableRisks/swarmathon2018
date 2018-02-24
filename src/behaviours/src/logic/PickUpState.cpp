@@ -115,7 +115,7 @@ void PickUpState::internalAction()
                 t_params.dist_goal = 0.24;
                 t_params.dist_max_output = 10;
 
-                t_params.yaw_deccel = 0.20;
+                t_params.yaw_deccel = 0.15;
                 t_params.yaw_goal = 0.0;
                 t_params.yaw_max_output = 80;
 
