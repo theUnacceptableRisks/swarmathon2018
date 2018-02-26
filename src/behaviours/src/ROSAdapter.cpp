@@ -382,6 +382,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
     std::stringstream ss;
 
     inputs.tags.clear();
+    tagexaminer.clear();
     if (message->detections.size() > 0)
     {
 
@@ -405,9 +406,9 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
             inputs.tags.push_back( loc );
         }
      //   cout << "Distance: " << TagUtilities::getDistance( inputs.tags.back() ) << std::endl;
-     //   tagexaminer.loadTags( inputs.tags );
-//	tagexaminer.determineTurning();
-        cout << "X: " << inputs.tags.back().getPositionX() << std::endl;
+        tagexaminer.loadTags( inputs.tags );
+	    tagexaminer.determineTurning();
+ 	//cout << "X: " << inputs.tags.back().getPositionX() << std::endl;
     }
 }
 

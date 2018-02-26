@@ -15,8 +15,8 @@ public:
 	enum Turns{
 		LEFT,
 		RIGHT,
-		CORNER,
-		NONE
+		STRAIGHT,
+		OTHER
 	};
 
 	vector<Tag> tags;
@@ -30,8 +30,9 @@ public:
 	void graph();
 	void clear();
 
-	const double margin = 0.05;
-
+    //
+	const double margin = 0.017;
+    //
 private:
 	const double colWidth = .06;
 	const double center = 0;
