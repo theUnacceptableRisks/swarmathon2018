@@ -95,13 +95,23 @@ PUState PickUpState::internalTransition()
             break;
         case PICKUP_CONFIRM:
             if( cube_secured )
+            {
                 transition_to = PICKUP_COMPLETE;
+                this->timer = this->inputs->time.toSec();
+            }
             else if( ( this->inputs->time.toSec() - this->timer ) >= CONFIRM_TIME )
             {
                 transition_to = PICKUP_FAIL;
             }
         case PICKUP_HOVER_CLOSE:
         case PICKUP_COMPLETE:
+            if( ( this->inputs->time.toSec() - this->timer ) >= 1.5 )
+            {
+                transition_to = PICKUP_FAIL;
+                this->cube_secured = false;
+                this->num_tries = 0;
+            }
+            break;
         case PICKUP_FAIL:
             if( linear && linear->hasArrived() )
             {
@@ -220,7 +230,7 @@ void PickUpState::forceTransition( PUState transition_to )
 
                 LinearParams l_params;
 
-                l_params.distance = .1;
+                l_params.distance = .2;
                 l_params.deccel_point = 0.05;
                 l_params.max_vel = 10;
                 l_params.reverse = true;
