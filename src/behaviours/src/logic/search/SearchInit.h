@@ -16,32 +16,41 @@ class SearchInit : public State
             SearchMachine *ssm = dynamic_cast<SearchMachine *> (owner);
             if( ssm )
             {
+             compX = ssm->inputs->odom_accel_gps.x;
+                compY = ssm->inputs->odom_accel_gps.y;
                 SimpleWaypoint *waypoint = 0;
                 SimpleParams params;
-                double x = 0;
-                double y = 0;
+                //WaypointUtilities::DrivingParams location;
+                
+                //double distanceFromHome = hypot(*location.current_x, *location.current_y);
+                //double unitX = *location.current_x / distanceFromHome;
+                //double unitY = *location.current_y / distanceFromHome;
 
-                params.skid_steer_threshold = M_PI/6;
-                params.arrived_threshold = 0.05;
+               double distanceFromHome = hypot(compX, compY);
+                compX/=distanceFromHome;
+                compY/=distanceFromHome;     
+                
+                params.skid_steer_threshold = 0.15;
+                double dot = 0;
+                double x = 0, y = 0;
+                for (double i = 0; i < 30; i+=0.5){
+                    x = i * cos(i);
+                    y = i * sin(i);
 
-                params.dist_max_output = 60;
-                params.dist_deccel = 0.2;
-                params.yaw_max_output = 80;
-                params.yaw_deccel = M_PI/12;
+                    dot = -1*(x*compX + y*compY)/(hypot(x-compX,y-compY));
+                    dot += 1.3;
+                    dot /= 2;
+                   
+                    params.goal_x = x * dot * k;
+                    params.goal_y = y * dot * k;
 
-                for( double n = 1.0; n < 10; n += 1.0 )
-                {
-                    y += n * pow( (-1.0), ( n + 1.0 ) );
-                    params.goal_x = x;
-                    params.goal_y = y;
+
+                    cout << "x: " << params.goal_x << " | y: " << params.goal_y << endl;
+
+
                     waypoint = new SimpleWaypoint( ssm->inputs, params );
-                    ssm->waypoints.push_back( (Waypoint *)waypoint );
-
-                    x += ( n + 1.0 ) * pow( (-1.0), ( n + 1.0 ) );
-                    params.goal_x = x;
-                    params.goal_y = y;
-                    waypoint = new SimpleWaypoint( ssm->inputs, params );
-                    ssm->waypoints.push_back( (Waypoint *)waypoint );
+                    ssm->waypoints.push_back( (Waypoint *)waypoint ); 
+                }              
                 }
                 setup_complete = true;
             }
