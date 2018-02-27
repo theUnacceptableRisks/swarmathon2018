@@ -10,13 +10,17 @@
 class SearchInit : public State
 {
     public:
+ 	double k = .5;
+        double compX = 0;
+        double compY = 0;
+
         SearchInit() : State( "search_init" ), setup_complete(false) {}
         virtual void action()
         {
             SearchMachine *ssm = dynamic_cast<SearchMachine *> (owner);
             if( ssm )
             {
-             compX = ssm->inputs->odom_accel_gps.x;
+             	compX = ssm->inputs->odom_accel_gps.x;
                 compY = ssm->inputs->odom_accel_gps.y;
                 SimpleWaypoint *waypoint = 0;
                 SimpleParams params;
@@ -40,7 +44,7 @@ class SearchInit : public State
                     dot = -1*(x*compX + y*compY)/(hypot(x-compX,y-compY));
                     dot += 1.3;
                     dot /= 2;
-                   
+
                     params.goal_x = x * dot * k;
                     params.goal_y = y * dot * k;
 
@@ -50,7 +54,6 @@ class SearchInit : public State
 
                     waypoint = new SimpleWaypoint( ssm->inputs, params );
                     ssm->waypoints.push_back( (Waypoint *)waypoint ); 
-                }              
                 }
                 setup_complete = true;
             }
