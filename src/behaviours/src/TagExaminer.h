@@ -31,7 +31,7 @@ public:
 	void clear();
 
     //
-	const double margin = 0.017;
+	const double margin = 0.008;
     //
 private:
 	const double colWidth = .06;
