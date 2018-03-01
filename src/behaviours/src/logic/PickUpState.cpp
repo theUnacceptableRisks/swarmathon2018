@@ -11,7 +11,7 @@ void PickUpState::action()
     internalAction();
 }
 
-void PickUpState::onEnter()
+void PickUpState::onEnter( std::string prev_state )
 {
     forceTransition( PICKUP_INIT );
     num_tries = 0;
@@ -19,7 +19,7 @@ void PickUpState::onEnter()
     cube_secured = false;
 }
 
-void PickUpState::onExit()
+void PickUpState::onExit( std::string next_state )
 {
 
 }
