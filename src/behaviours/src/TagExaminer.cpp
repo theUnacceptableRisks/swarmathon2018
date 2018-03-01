@@ -88,7 +88,7 @@ void TagExaminer::sortColumn(vector<Tag> &arr)
 
 			if (distance1 > distance2)
 			{
-                swap( arr[j], arr[j+1] );
+                            swap( arr[j], arr[j+1] );
 			}
 		}
 	}
