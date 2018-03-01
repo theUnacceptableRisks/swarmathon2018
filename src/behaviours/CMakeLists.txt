@@ -38,10 +38,8 @@ add_executable(
   src/waypoints/LinearWaypoint.cpp
   src/waypoints/RawOutputWaypoint.cpp
   src/logic/LogicMachine.cpp
-  src/logic/SubMachine.cpp
   src/logic/SearchState.cpp
   src/logic/PickUpState.cpp
-  src/logic/search/SearchMachine.cpp
   src/TagExaminer.cpp
 )
 
