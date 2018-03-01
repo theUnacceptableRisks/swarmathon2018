@@ -10,7 +10,7 @@
 class SearchInit : public State
 {
     public:
- 	double k = .5;
+ 	double k = .4;
         double compX = 0;
         double compY = 0;
 
@@ -34,7 +34,8 @@ class SearchInit : public State
                 compX/=distanceFromHome;
                 compY/=distanceFromHome;     
                 
-                params.skid_steer_threshold = 0.15;
+                params.arrived_threshold = 0.5;
+                params.skid_steer_threshold = M_PI/12;
                 double dot = 0;
                 double x = 0, y = 0;
                 for (double i = 0; i < 30; i+=0.5){
