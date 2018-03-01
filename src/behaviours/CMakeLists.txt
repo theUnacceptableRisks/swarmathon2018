@@ -40,6 +40,7 @@ add_executable(
   src/logic/LogicMachine.cpp
   src/logic/SearchState.cpp
   src/logic/PickUpState.cpp
+  src/logic/FindHomeState.cpp
   src/TagExaminer.cpp
 )
 
