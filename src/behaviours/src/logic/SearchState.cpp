@@ -23,12 +23,9 @@ std::string SearchState::transition()
 {
     std::string transition_to = getIdentifier();
 
-    LogicMachine *lm = dynamic_cast<LogicMachine *> (owner);
-    if( lm )
-    {
-        if( TagUtilities::hasTag( &lm->inputs->tags, 0 ) )
-            transition_to = "pickup_state";
-    }
+    if( TagUtilities::hasTag( &this->inputs->tags, 0 ) )
+        transition_to = "pickup_state";
+
     return transition_to;
 }
 
@@ -64,7 +61,7 @@ void SearchState::internalAction()
             double x = 0.0;
             double y = 0.0;
             /* the constant bits of the params, tuning parts */
-            params.skid_steer_threshold = M_PI/6;
+            params.skid_steer_threshold = M_PI/12;
             params.arrived_threshold = 0.05;
 
             params.dist_max_output = 60;
@@ -86,6 +83,7 @@ void SearchState::internalAction()
                 waypoint = new SimpleWaypoint( this->inputs, params );
                 this->waypoints.push_back( dynamic_cast<Waypoint*>( waypoint ) );
             }
+            this->outputs->current_waypoint = waypoints.front();
             break;
         }
         case SEARCHSTATE_DRIVE:
