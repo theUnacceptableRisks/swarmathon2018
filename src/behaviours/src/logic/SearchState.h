@@ -3,7 +3,8 @@
 
 #include "../state_machine/State.h"
 #include "LogicMachine.h"
-#include "search/SearchMachine.h"
+
+#define SEARCH_SIZE 20.0
 
 typedef enum
 {
