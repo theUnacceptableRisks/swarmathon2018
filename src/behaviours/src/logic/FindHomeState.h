@@ -1,6 +1,9 @@
 #ifndef findhome_h
 #define findhome_h
 
+#include "../state_machine/State.h"
+#include "LogicMachine.h"
+
 #define GROWTH_CONSTANT 0.5
 
 typedef enum

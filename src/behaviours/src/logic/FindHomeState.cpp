@@ -1,4 +1,6 @@
-#include "FindHome.h"
+#include "FindHomeState.h"
+#include "../TagUtilities.h"
+#include "../waypoints/SimpleWaypoint.h"
 
 void FindHomeState::action()
 {
@@ -54,7 +56,7 @@ FHState FindHomeState::internalTransition()
             break;
         case FINDHOME_LOST:
             if( this->waypoints.size() == 0 )
-                transition_to FINDHOME_INIT;
+                transition_to = FINDHOME_INIT;
             break;
         case FINDHOME_COMPLETE:
             break;
@@ -104,7 +106,7 @@ void FindHomeState::internalAction()
     }
 }
 
-void forceTransition( FHState transition_to )
+void FindHomeState::forceTransition( FHState transition_to )
 {
     FHState prev_state = internal_state;
 
@@ -146,7 +148,7 @@ void forceTransition( FHState transition_to )
                     x = i * cos(i);
                     y = i * sin(i);
 
-                    dot = (-1)*(x*compX + y*compY)/hypot(x-compX,y-compY));
+                    dot = (-1)*(x*compX + y*compY)/(hypot(x-compX,y-compY));
                     dot += 1.3;
                     dot /= 2;
 
