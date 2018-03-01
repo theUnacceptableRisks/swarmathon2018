@@ -30,8 +30,8 @@ class PickUpState : public State
     public:
         PickUpState( IOTable *io ) : State( "pickup_state" ), internal_state(PICKUP_INIT), inputs(io->inputs), outputs(io->outputs) {}
         virtual void action( void );
-        virtual void onEnter();
-        virtual void onExit();
+        virtual void onEnter( std::string prev_state );
+        virtual void onExit( std::string next_state );
         virtual std::string transition();
 
     private:
