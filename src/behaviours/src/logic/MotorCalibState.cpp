@@ -14,7 +14,7 @@ void MotorCalibState::onEnter( std::string prev_state )
 
 void MotorCalibState::onExit( std::string next_state )
 {
-    this->inputs->calibration->min_motor = this->current_PWM;
+    this->inputs->calibration.motor_min = this->current_PWM;
     this->inputs->controller.changeMotorMin( this->current_PWM );
     std::cout << "Current Calibration: " << this->current_PWM << std::endl;
 }
