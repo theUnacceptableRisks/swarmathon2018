@@ -21,12 +21,34 @@ void PickUpState::onEnter( std::string prev_state )
 
 void PickUpState::onExit( std::string next_state )
 {
+    if( this->approach )
+    {
+        delete this->approach;
+        this->approach = 0;
+    }
 
+    if( this->linear )
+    {
+        delete this->linear;
+        this->linear = 0;
+    }
 }
 
 std::string PickUpState::transition()
 {
     std::string transition_to = getIdentifier();
+
+    switch( internal_state )
+    {
+        case PICKUP_COMPLETE:
+            if( ( this->inputs->time.toSec() - this->timer ) >= 1.5 )
+                transition_to = "findhome_state";
+            break;
+        case PICKUP_COMPLETE_FAILURE:
+            transition_to = "search_state";
+            break;
+    }
+
     return transition_to;
 }
 
@@ -47,11 +69,10 @@ PUState PickUpState::internalTransition()
             else
             {
                 if( this->attempts > MAX_ATTEMPTS )
-                    transition_to = PICKUP_FAIL;
-
+                    transition_to = PICKUP_COMPLETE_FAILURE;
             }
             break;
-        case PICKUP_FAILED_INIT:
+        case PICKUP_COMPLETE_FAILURE:
             //complete do nothing state
             break;
         case PICKUP_APPROACH:
@@ -64,7 +85,9 @@ PUState PickUpState::internalTransition()
                 transition_to = PICKUP_FINAL_APPROACH;
             }
             else if( attempts > MAX_ATTEMPTS )
-                transition_to = PICKUP_FAIL;
+            {
+                transition_to = PICKUP_COMPLETE_FAILURE;
+            }
             break;
         case PICKUP_FINAL_APPROACH:
             if( linear && linear->hasArrived() )
@@ -76,8 +99,6 @@ PUState PickUpState::internalTransition()
                 transition_to = PICKUP_CLAW_CLOSE;
                 this->timer = this->inputs->time.toSec();
             }
-            else if( this->attempts > MAX_ATTEMPTS )
-                transition_to = PICKUP_FAIL;
             break;
         case PICKUP_CLAW_CLOSE:
             if( ( this->inputs->time.toSec() - this->timer ) >= CLOSE_TIME )
@@ -103,14 +124,7 @@ PUState PickUpState::internalTransition()
             {
                 transition_to = PICKUP_FAIL;
             }
-        case PICKUP_HOVER_CLOSE:
         case PICKUP_COMPLETE:
-            if( ( this->inputs->time.toSec() - this->timer ) >= 1.5 )
-            {
-                transition_to = PICKUP_FAIL;
-                this->cube_secured = false;
-                this->num_tries = 0;
-            }
             break;
         case PICKUP_FAIL:
             if( linear && linear->hasArrived() )
@@ -151,7 +165,7 @@ void PickUpState::internalAction()
                 this->attempts++;
             }
             break;
-        case PICKUP_FAILED_INIT:
+        case PICKUP_COMPLETE_FAILURE:
             //complete do nothing state
             break;
         case PICKUP_APPROACH:
@@ -176,12 +190,8 @@ void PickUpState::internalAction()
             else if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && TagUtilities::getDistance( this->inputs->tags.back() ) < 0.15 )
                 cube_secured = true;
             break;
-        case PICKUP_HOVER_CLOSE:
-            outputs->gripper_position = Gripper::HOVER_CLOSED;
-            break;
         case PICKUP_COMPLETE:
             outputs->gripper_position = Gripper::HOVER_CLOSED;
-            std::cout << "PickUp Complete!" << std::endl;
             break;
         case PICKUP_FAIL:
             outputs->gripper_position = Gripper::DOWN_OPEN;

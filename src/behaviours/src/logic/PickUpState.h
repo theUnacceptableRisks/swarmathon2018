@@ -7,6 +7,7 @@
 #include "LogicTypes.h"
 
 #define MAX_ATTEMPTS 20
+#define MAX_TRIES 4
 #define CLOSE_TIME 1.25
 #define UP_TIME 1.25
 #define CONFIRM_TIME 2.00
@@ -14,7 +15,7 @@
 typedef enum
 {
     PICKUP_INIT,
-    PICKUP_FAILED_INIT,
+    PICKUP_COMPLETE_FAILURE,
     PICKUP_APPROACH,
     PICKUP_FINAL_APPROACH,
     PICKUP_CLAW_CLOSE,
