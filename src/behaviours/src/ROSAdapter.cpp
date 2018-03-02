@@ -38,6 +38,7 @@
 #include "logic/SearchState.h"
 #include "logic/PickUpState.h"
 #include "logic/FindHomeState.h"
+#include "logic/MotorCalibState.h"
 #include "Gripper.h"
 #include "MotorController.h"
 #include "TagUtilities.h"
@@ -214,11 +215,13 @@ LogicMachine logic_machine( &iotable );
     SearchState search_state( &iotable );
     PickUpState pickup_state( &iotable );
     FindHomeState findhome_state( &iotable );
+    MotorCalibState motorcalib_state( &iotable );
 
 void setupLogicMachine()
 {
     inputs.controller = MotorController( inputs.calibration.motor_min );
     /* add States */
+    logic_machine.addState( motorcalib_state.getIdentifier(), dynamic_cast<State *>(&motorcalib_state) );
     logic_machine.addState( search_state.getIdentifier(), dynamic_cast<State *>(&search_state) );
     logic_machine.addState( pickup_state.getIdentifier(), dynamic_cast<State *>(&pickup_state) );
     logic_machine.addState( findhome_state.getIdentifier(), dynamic_cast<State *>(&findhome_state) );
