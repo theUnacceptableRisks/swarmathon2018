@@ -42,7 +42,7 @@ MCState MotorCalibState::internalTransition()
         }
         case MOTORCALIB_DRIVE:
         {
-            if( waypoint && waypoint.hasArrived() )
+            if( waypoint && waypoint->hasArrived() )
                 transition_to = MOTORCALIB_CHECK;
             break;
         }
@@ -83,7 +83,7 @@ void MotorCalibState::internalAction()
 
 }
 
-void forceTransition( MCState transition_to )
+void MotorCalibState::forceTransition( MCState transition_to )
 {
     MCState prev_state = internal_state;
 
