@@ -18,7 +18,7 @@ typedef enum
 class FindHomeState : public State
 {
     public:
-        FindHomeState( IOTable *io ) : State( "findhome_state" ), internal_state(FINDHOME_INIT) {}
+        FindHomeState( IOTable *io ) : State( "findhome_state" ), inputs(io->inputs), outputs(io->outputs), internal_state(FINDHOME_INIT) {}
         virtual void action( void );
         virtual void onEnter( std::string prev_state );
         virtual void onExit( std::string next_state );
