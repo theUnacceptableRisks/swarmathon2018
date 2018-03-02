@@ -5,7 +5,7 @@
 #include "../waypoints/RawOutputWaypoint.h"
 #include "LogicMachine.h"
 
-#define MIN_DISTANCE 0.02
+#define MIN_DISTANCE 0.01
 
 typedef enum
 {

@@ -109,7 +109,7 @@ void MotorCalibState::forceTransition( MCState transition_to )
 
                 this->current_PWM++;
                 params.left_output = this->current_PWM;
-                params.right_output = this->current_PWM;
+                params.right_output = (-1)*this->current_PWM;
                 params.duration = 1.0;
 
                 if( this->waypoint )
