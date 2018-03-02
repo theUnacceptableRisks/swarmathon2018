@@ -16,7 +16,8 @@ public:
 		LEFT,
 		RIGHT,
 		STRAIGHT,
-		OTHER
+		SUCCESS,
+		FAIL
 	};
 
 	vector<Tag> tags;
@@ -29,9 +30,11 @@ public:
 	Turns determineTurning();
 	void graph();
 	void clear();
+	double distToTag(Tag);
 
     //
 	const double margin = 0.008;
+	const double minDist = 0.20;
     //
 private:
 	const double colWidth = .06;

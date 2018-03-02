@@ -88,7 +88,7 @@ void TagExaminer::sortColumn(vector<Tag> &arr)
 
 			if (distance1 > distance2)
 			{
-                            swap( arr[j], arr[j+1] );
+                swap( arr[j], arr[j+1] );
 			}
 		}
 	}
@@ -103,69 +103,82 @@ void TagExaminer::sortColumn(vector<Tag> &arr)
  */
 TagExaminer::Turns TagExaminer::determineTurning()
 {
-    //First determine if these columns have something in them.
-	//If the rover sees only a tag in column 3, and not 5, then it should
-    //Go in that direction.
-
-    if(columns[3].size() > 0 && columns[5].size() == 0) {
-        cout << "LEFT" << endl;
-        return LEFT;
+    if(distToTag(columns[4][0]) < minDist){
+        cout << "SUCCESS" << endl;
+        return SUCCESS;
     }
-    //Then the opposite, if there's a tag at 5 and not 3
-   else  if(columns[5].size() > 0 && columns[3].size() == 0) {
-        cout << "RIGHT" << endl;
-        return RIGHT;
-    }
-    // If both have tags,
-    else if(columns[3].size() > 0 && columns[5].size() > 0) {
-        Tag left = columns[3][0], right = columns[5][0];
-        //Distances from the rover to the closest rover in that column
 
-        double ldist = sqrt(pow(left.getPositionX(),2) + pow(left.getPositionY(),2) + pow(left.getPositionZ(),2));
-        double rdist = sqrt(pow(right.getPositionX(),2) + pow(right.getPositionY(),2) + pow(right.getPositionZ(),2));
-
-        if((ldist - rdist) > (-1 * margin) && (ldist - rdist) < (margin)) {
-            cout << "STRAIGHT: ";
-            cout << ldist - rdist << endl;
-            return STRAIGHT;
-        }
-        else if(ldist > rdist) {
-            cout << "RIGHT" << endl;
-            return RIGHT;
-        }
-        else {
-            cout << "LEFT" << endl;
-            return LEFT;
-        }
-
-    }
-    else {
-        cout << "Other: ";
-        //A tag not in 3//5 has been found.
-        //Let's turn towards that tag.
-
-        //Find the column that has the tag
-        int tagCol;
+    if(columns[3].size() == 0 && columns[4].size() == 0 && columns[5].size() == 0) {
+        int foundTagIndex = -1;
         for(int i = 0; i < columns.size(); i ++) {
+            if(i ==  3 || i == 4 || i == 5){
+                continue;
+            }
+
             if(columns[i].size() > 0) {
-                tagCol = i;
+                foundTagIndex = i;
                 break;
             }
         }
 
-        //Now that we have that,
-        if(tagCol == 4 || tagCol == 3 || tagCol == 5) {
-            //it's near the middle
-            cout << "STRAIGHT" << endl;
-            return STRAIGHT;
-        }
-        else if(tagCol < 4) {
+        if(foundTagIndex > 4) {
+            cout << "RIGHT" << endl;
+            return RIGHT;
+        }else if (foundTagIndex < 4){
             cout << "LEFT" << endl;
             return LEFT;
         }
-        else{
-            cout << "RIGHT" << endl;
+        else {
+            cout << "FAIL" << endl;
+            return FAIL;
+        }
+    }
+
+    //Find a long col
+    int longColIndex = -1;
+    for(int i = 0; i < columns.size(); i ++) {
+        if(columns[i].size() > 3) {
+            longColIndex = i;
+            break;
+        }
+    }
+
+    if(longColIndex == -1) {
+        cout << "FAIL" << endl;
+        return FAIL;
+    }else{
+        //Is there also a short line
+        int shortColIndex = -1;
+        for(int i = 0; i < columns.size(); i++) {
+            if(columns[i].size() < 3) {
+                shortColIndex = i;
+                break;
+            }
+        }
+
+        if(shortColIndex == -1) {
+            cout << "FAIL" << endl;
+        }else{
+            if(longColIndex < shortColIndex) {
+                cout << "RIGHT" << endl;
+                return RIGHT;
+            }else{
+                cout << "LEFT" << endl;
+                return LEFT;
+            }
+        }
+    }
+
+
+    if((columns[3].size() > 0 || columns[3].size() > 0 || columns[3].size() > 0) && (longColIndex == -1)){
+        if(abs(abs(distToTag(columns[3][0])) - abs(distToTag(columns[5][0]))) < margin){
+            cout << "STRAIGHT";
+            return STRAIGHT;
+        }
+        else if(distToTag(columns[3][0]) > distToTag(columns[5][0])){
             return RIGHT;
+        }else{
+            return LEFT;
         }
     }
 }
@@ -184,4 +197,8 @@ void TagExaminer::clear(){
 	tags.clear();
         for( int i = 0; i < columns.size(); i++ )
             columns[i].clear();
+}
+
+double TagExaminer::distToTag(Tag x) {
+    return sqrt(x.getPositionX() * x.getPositionX() + x.getPositionY() * x.getPositionY() + x.getPositionZ() * x.getPositionZ());
 }
