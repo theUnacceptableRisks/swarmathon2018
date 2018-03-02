@@ -31,6 +31,7 @@ class MotorController
         std::tuple<int,int> generateLinearOutput( MotorParams params );
         std::tuple<int,int> generateRotationalOutput( MotorParams params );
         std::tuple<int,int> generateSkidOutput( MotorParams params );
+        void changeMotorMin( int new_min );
     private:
         double calcKonstant( int max, double deccel );
         int getOutput( double error, double konstant );

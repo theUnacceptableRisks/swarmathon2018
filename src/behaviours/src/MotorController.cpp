@@ -110,3 +110,8 @@ int MotorController::getOutput( double error, double konstant )
 {
     return (int)( error * konstant );
 }
+
+void MotorController::changeMotorMin( int new_min )
+{
+    min_motor_output = new_min;
+}
