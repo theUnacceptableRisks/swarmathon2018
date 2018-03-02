@@ -107,8 +107,9 @@ void MotorCalibState::forceTransition( MCState transition_to )
             {
                 RawOutputParams params;
 
-                params.left_output = ++this->current_PWM;
-                params.right_output = ++this->current_PWM;
+                this->current_PWM++;
+                params.left_output = this->current_PWM;
+                params.right_output = this->current_PWM;
                 params.duration = 1.0;
 
                 if( this->waypoint )
