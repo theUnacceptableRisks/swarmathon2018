@@ -11,7 +11,8 @@ void SearchState::action()
 
 void SearchState::onEnter( std::string prev_state )
 {
-    outputs->current_waypoint = waypoints.front();
+    if( waypoints.size() > 0 )
+        outputs->current_waypoint = waypoints.front();
 }
 
 void SearchState::onExit( std::string next_state )
