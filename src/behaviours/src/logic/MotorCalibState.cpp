@@ -111,7 +111,13 @@ void MotorCalibState::forceTransition( MCState transition_to )
                 params.right_output = ++this->current_PWM;
                 params.duration = 1.0;
 
+                if( this->waypoint )
+                {
+                    delete this->waypoint;
+                    this->waypoint = 0;
+                }
                 this->waypoint = new RawOutputWaypoint( this->inputs, params );
+                this->outputs->current_waypoint = dynamic_cast<Waypoint*>( this->waypoint );
 
                 prev_x = this->inputs->raw_odom.x;
                 break;
