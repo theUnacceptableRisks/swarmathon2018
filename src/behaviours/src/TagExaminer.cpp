@@ -103,84 +103,85 @@ void TagExaminer::sortColumn(vector<Tag> &arr)
  */
 TagExaminer::Turns TagExaminer::determineTurning()
 {
-    if(distToTag(columns[4][0]) < minDist){
-        cout << "SUCCESS" << endl;
-        return SUCCESS;
-    }
+    //If it can only see that one tag, go towards that tag
+    TagExaminer::Turns neverHot = NONE;
 
-    if(columns[3].size() == 0 && columns[4].size() == 0 && columns[5].size() == 0) {
-        int foundTagIndex = -1;
-        for(int i = 0; i < columns.size(); i ++) {
-            if(i ==  3 || i == 4 || i == 5){
-                continue;
-            }
+    //No tags in the 3 and 5 col found
+    int found = -1;
 
-            if(columns[i].size() > 0) {
-                foundTagIndex = i;
-                break;
+    cout << "1" << endl;
+
+    if(columns[3].size() == 0 && columns[5].size() == 0) {
+        for (int i = 0; i < columns.size(); i++) {
+            if (columns[i].size() > 0) {
+                found = i;
             }
         }
 
-        if(foundTagIndex > 4) {
-            cout << "RIGHT" << endl;
-            return RIGHT;
-        }else if (foundTagIndex < 4){
-            cout << "LEFT" << endl;
-            return LEFT;
+        if (found < 4) {
+            neverHot = LEFT;
+        } else if (found > 4) {
+            neverHot = RIGHT;
+        } else {
+            neverHot = STRAIGHT;
+        }
+    }
+    else if(columns[3].size() == 0 && columns[5].size() != 0) {
+        neverHot = RIGHT;
+    }
+    else if(columns[3].size() != 0 && columns[5].size() == 0){
+        neverHot == LEFT;
+    }
+    else{
+        double ldist, rdist;
+
+        ldist = distToTag(columns[3][0]);
+        rdist = distToTag(columns[5][0]);
+
+        if(abs(ldist - rdist) < margin && abs(rdist - ldist) < margin){
+            neverHot = STRAIGHT;
+        }
+        else if(ldist < rdist) {
+            neverHot = LEFT;
         }
         else {
-            cout << "FAIL" << endl;
-            return FAIL;
+            neverHot = RIGHT;
         }
+        cout << "2" << getDirection(neverHot) << endl;
     }
 
-    //Find a long col
-    int longColIndex = -1;
-    for(int i = 0; i < columns.size(); i ++) {
-        if(columns[i].size() > 3) {
-            longColIndex = i;
-            break;
-        }
-    }
-
-    if(longColIndex == -1) {
-        cout << "FAIL" << endl;
-        return FAIL;
-    }else{
-        //Is there also a short line
-        int shortColIndex = -1;
-        for(int i = 0; i < columns.size(); i++) {
-            if(columns[i].size() < 3) {
-                shortColIndex = i;
-                break;
+    if(neverHot == STRAIGHT) {
+        cout << "3" << endl;
+        int maxTags = 0, maxTagIndex = 0;
+        for (int i = 0; i < columns.size(); i++) {
+            if (columns[i].size() > 0 && i != 3 && i != 5) {
+                if(columns[i].size() > maxTags) {
+                    maxTags = columns[i].size();
+                    maxTagIndex = i;
+                }
             }
         }
-
-        if(shortColIndex == -1) {
-            cout << "FAIL" << endl;
-        }else{
-            if(longColIndex < shortColIndex) {
-                cout << "RIGHT" << endl;
-                return RIGHT;
-            }else{
-                cout << "LEFT" << endl;
-                return LEFT;
+        if(maxTags > 4) {
+            if (maxTagIndex > 4) {
+                neverHot = RIGHT_CORNER;
+            } else {
+                neverHot = LEFT_CORNER;
             }
         }
     }
 
-
-    if((columns[3].size() > 0 || columns[3].size() > 0 || columns[3].size() > 0) && (longColIndex == -1)){
-        if(abs(abs(distToTag(columns[3][0])) - abs(distToTag(columns[5][0]))) < margin){
-            cout << "STRAIGHT";
-            return STRAIGHT;
-        }
-        else if(distToTag(columns[3][0]) > distToTag(columns[5][0])){
-            return RIGHT;
-        }else{
-            return LEFT;
-        }
+    if(neverHot == NONE) {
+        cout << "4";
+        for(int i = 0; i < columns.size(); i ++) {
+           if(columns[i].size() > 0) {
+               neverHot = (i < 4) ? LEFT : RIGHT;
+               break;
+           }
+       }
     }
+
+    cout << getDirection(neverHot) << endl;
+    return neverHot;
 }
 
 void TagExaminer::graph()

@@ -403,11 +403,12 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
                                                                   tagPose.pose.orientation.y,
                                                                   tagPose.pose.orientation.z,
                                                                   tagPose.pose.orientation.w ) );
+            //cout << loc << std::endl;
             inputs.tags.push_back( loc );
         }
      //   cout << "Distance: " << TagUtilities::getDistance( inputs.tags.back() ) << std::endl;
         tagexaminer.loadTags( inputs.tags );
-	    tagexaminer.determineTurning();
+        tagexaminer.determineTurning();
  	//cout << "X: " << inputs.tags.back().getPositionX() << std::endl;
     }
 }
