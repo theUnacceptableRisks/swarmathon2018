@@ -8,6 +8,7 @@ void MotorCalibState::action( )
 
 void MotorCalibState::onEnter( std::string prev_state )
 {
+    this->current_PWM = 0;
     forceTransition( MOTORCALIB_INIT );
 }
 
@@ -34,10 +35,22 @@ MCState MotorCalibState::internalTransition()
     {
         default: break;
         case MOTORCALIB_INIT:
+        {
+            if( current_PWM != 0 )
+                transition_to = MOTORCALIB_DRIVE;
             break;
+        }
         case MOTORCALIB_DRIVE:
+        {
+            if( waypoint && waypoint.hasArrived() )
+                transition_to = MOTORCALIB_CHECK;
             break;
+        }
         case MOTORCALIB_CHECK:
+            if( found_optimal )
+                transition_to = MOTORCALIB_COMPLETE;
+            else
+                transition_to = MOTORCALIB_DRIVE;
             break;
         case MOTORCALIB_COMPLETE:
             break;
@@ -52,11 +65,18 @@ void MotorCalibState::internalAction()
     {
         default: break;
         case MOTORCALIB_INIT:
+            this->current_PWM = this->inputs->calibration.motor_min;
             break;
         case MOTORCALIB_DRIVE:
             break;
         case MOTORCALIB_CHECK:
+        {
+            if( fabs( this->inputs->raw_odom.x - this->prev_x ) > MIN_DISTANCE )
+                found_optimal = true;
+            else
+                found_optimal = false;
             break;
+        }
         case MOTORCALIB_COMPLETE:
             break;
     }
@@ -65,7 +85,37 @@ void MotorCalibState::internalAction()
 
 void forceTransition( MCState transition_to )
 {
+    MCState prev_state = internal_state;
 
+    internal_state = transition_to;
+
+    if( internal_state != prev_state )
+    {
+        /* onExit bits */
+        switch( prev_state )
+        {
+            default: break;
+        }
+
+        /* onEnter bits */
+        switch( internal_state )
+        {
+            default: break;
+            case MOTORCALIB_DRIVE:
+            {
+                RawOutputParams params;
+
+                params.left_output = ++this->current_PWM;
+                params.right_output = ++this->current_PWM;
+                params.duration = 1.0;
+
+                this->waypoint = new RawOutputWaypoint( this->inputs, params );
+
+                prev_x = this->inputs->raw_odom.x;
+                break;
+            }
+        }
+    }
 }
 
 

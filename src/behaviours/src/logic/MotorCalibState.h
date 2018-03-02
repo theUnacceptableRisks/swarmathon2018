@@ -5,6 +5,8 @@
 #include "../waypoints/RawOutputWaypoint.h"
 #include "LogicMachine.h"
 
+#define MIN_DISTANCE 0.1
+
 typedef enum
 {
     MOTORCALIB_INIT,
@@ -16,7 +18,7 @@ typedef enum
 class MotorCalibState : public State
 {
     public:
-        MotorCalibState( IOTable *io ) : State( "motorcalib_state" ), inputs(io->inputs), outputs(io->outputs), internal_state(MOTORCALIB_INIT) {}
+        MotorCalibState( IOTable *io ) : State( "motorcalib_state" ), inputs(io->inputs), outputs(io->outputs), internal_state(MOTORCALIB_INIT), current_PWM(0), found_optimal(false) {}
         virtual void action( void );
         virtual void onEnter( std::string prev_state );
         virtual void onExit( std::string, next_state );
@@ -31,6 +33,8 @@ class MotorCalibState : public State
         LogicOutputs *outputs;
         MCState internal_state;
 
+        double prev_x;
+        bool found_optimal;
         int current_PWM;
 };
 
