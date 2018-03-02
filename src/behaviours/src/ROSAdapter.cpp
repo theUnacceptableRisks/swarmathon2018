@@ -37,6 +37,7 @@
 #include "logic/LogicMachine.h"
 #include "logic/SearchState.h"
 #include "logic/PickUpState.h"
+#include "logic/FindHomeState.h"
 #include "Gripper.h"
 #include "MotorController.h"
 #include "TagUtilities.h"
@@ -210,8 +211,9 @@ IOTable iotable = { &inputs, &outputs };
  * Logic State Machine *
  ***********************/
 LogicMachine logic_machine( &iotable );
-SearchState search_state( &iotable );
-PickUpState pickup_state( &iotable );
+    SearchState search_state( &iotable );
+    PickUpState pickup_state( &iotable );
+    FindHomeState findhome_state( &iotable );
 
 void setupLogicMachine()
 {
@@ -219,6 +221,7 @@ void setupLogicMachine()
     /* add States */
     logic_machine.addState( search_state.getIdentifier(), dynamic_cast<State *>(&search_state) );
     logic_machine.addState( pickup_state.getIdentifier(), dynamic_cast<State *>(&pickup_state) );
+    logic_machine.addState( findhome_state.getIdentifier(), dynamic_cast<State *>(&findhome_state) );
     return;
 }
 
@@ -382,7 +385,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
     std::stringstream ss;
 
     inputs.tags.clear();
-    tagexaminer.clear();
+    //tagexaminer.clear();
     if (message->detections.size() > 0)
     {
 
@@ -406,8 +409,8 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
             inputs.tags.push_back( loc );
         }
      //   cout << "Distance: " << TagUtilities::getDistance( inputs.tags.back() ) << std::endl;
-        tagexaminer.loadTags( inputs.tags );
-	    tagexaminer.determineTurning();
+        //tagexaminer.loadTags( inputs.tags );
+	    //tagexaminer.determineTurning();
  	//cout << "X: " << inputs.tags.back().getPositionX() << std::endl;
     }
 }
