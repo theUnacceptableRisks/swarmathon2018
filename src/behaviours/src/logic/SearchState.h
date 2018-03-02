@@ -15,7 +15,7 @@ typedef enum
 class SearchState : public State
 {
     public:
-        SearchState( IOTable *io ) : State( "search_state" ), internal_state( SEARCHSTATE_INIT ) {}
+        SearchState( IOTable *io ) : State( "search_state" ), inputs(io->inputs), outputs(io->outputs), internal_state( SEARCHSTATE_INIT ) {}
         virtual void action( void );
         virtual void onEnter( std::string prev_state );
         virtual void onExit( std::string next_state );
