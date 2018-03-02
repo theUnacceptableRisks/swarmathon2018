@@ -64,7 +64,7 @@ echo $(realpath ..)/camera_info/head_camera.yaml
 
 echo "rosrun behaviours"
 # nohup > logs/$HOSTNAME"_behaviours_log.txt" 
-rosrun behaviours behaviours &
+rosrun --prefix 'gdb -ex run --args' behaviours behaviours &
 echo "rosrun obstacle_detection"
 nohup rosrun obstacle_detection obstacle &
 echo "rosrun diagnostics"
