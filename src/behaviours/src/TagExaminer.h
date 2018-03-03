@@ -50,6 +50,7 @@ public:
     }
 
     //
+    const double distanceMargin =.05;
 	const double margin = 0.008;
 	const double minDist = 0.25;
 	const double maxDist = .25;

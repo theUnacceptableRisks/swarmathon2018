@@ -156,13 +156,33 @@ TagExaminer::Turns TagExaminer::determineTurning()
         //If long cols in the 3||4||5 row, determine
         //which side, left or right, has short col tags
 
+        //Check furthest distance in 2 4 6
+        double left = distToTag(columns[1][columns[1].size() - 1]);
         double a = distToTag(columns[3][columns[3].size() - 1]);
         double b = distToTag(columns[4][columns[4].size() - 1]);
         double c = distToTag(columns[5][columns[5].size() - 1]);
+        double right = distToTag(columns[7][columns[7].size() - 1]);
 
-        if(abs(a - b) < margin && abs(b - c) < margin){
+        cout << left << "," << a << "," << b << "," << c << "," << right << endl;
+        if(abs(a - b) < distanceMargin && abs(b - a) < distanceMargin
+                && abs(b - c) < distanceMargin && abs(c - b) < distanceMargin){
+            neverHot == SUCCESS;
+            cout << "\nWORD\n" << endl;
 
+        }else if(abs(a - b) < distanceMargin && abs(b - a) < distanceMargin) {
+            if(columns[0].size() == 0) {
+                cout << "\nRIGHT\n" << endl;
+                neverHot == RIGHT_CORNER;
+            }
+            if(columns[8].size() == 0) {
+                cout << "\nLEFT\n" << endl;
+                neverHot == LEFT_CORNER;
+            }
+
+        }else{
+            cout << "\nOTHER\n" << endl;
         }
+
     }
 
     if(neverHot == NONE) {
