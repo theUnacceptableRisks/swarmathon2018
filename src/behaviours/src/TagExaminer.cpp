@@ -147,26 +147,21 @@ TagExaminer::Turns TagExaminer::determineTurning()
         else {
             neverHot = RIGHT;
         }
-        cout << "2" << getDirection(neverHot) << endl;
+        cout << "2\n" << getDirection(neverHot) << endl;
     }
 
     if(neverHot == STRAIGHT) {
         cout << "3" << endl;
-        int maxTags = 0, maxTagIndex = 0;
-        for (int i = 0; i < columns.size(); i++) {
-            if (columns[i].size() > 0 && i != 3 && i != 5) {
-                if(columns[i].size() > maxTags) {
-                    maxTags = columns[i].size();
-                    maxTagIndex = i;
-                }
-            }
-        }
-        if(maxTags > 4) {
-            if (maxTagIndex > 4) {
-                neverHot = RIGHT_CORNER;
-            } else {
-                neverHot = LEFT_CORNER;
-            }
+        //Determine corner
+        //If long cols in the 3||4||5 row, determine
+        //which side, left or right, has short col tags
+
+        double a = distToTag(columns[3][columns[3].size() - 1]);
+        double b = distToTag(columns[4][columns[4].size() - 1]);
+        double c = distToTag(columns[5][columns[5].size() - 1]);
+
+        if(abs(a - b) < margin && abs(b - c) < margin){
+
         }
     }
 
@@ -179,8 +174,9 @@ TagExaminer::Turns TagExaminer::determineTurning()
            }
        }
     }
+    cout << "Dist: " << distToTag(columns[4][0]) << endl;
+    cout << "non - " << getDirection(neverHot) << endl;
 
-    cout << getDirection(neverHot) << endl;
     return neverHot;
 }
 

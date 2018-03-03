@@ -51,7 +51,8 @@ public:
 
     //
 	const double margin = 0.008;
-	const double minDist = 0.20;
+	const double minDist = 0.25;
+	const double maxDist = .25;
     //
 private:
 	const double colWidth = .06;
