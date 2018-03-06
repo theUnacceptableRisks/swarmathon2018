@@ -248,7 +248,7 @@ void PickUpState::forceTransition( PUState transition_to )
             {
                 LinearParams l_params;
 
-                l_params.distance = 0.0035;
+                l_params.distance = 0.0045;
                 l_params.deccel_point = 0;
                 l_params.max_vel = 4;
                 l_params.reverse = true;
