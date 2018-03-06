@@ -8,6 +8,7 @@ void RotationalCalibState::action( )
 
 void RotationalCalibState::onEnter( std::string prev_state )
 {
+    this->prev_x = this->inputs->raw_odom.x;
     this->current_PWM = 0;
     forceTransition( ROTATIONALCALIB_INIT );
 }
