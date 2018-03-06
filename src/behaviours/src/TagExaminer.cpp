@@ -103,84 +103,84 @@ void TagExaminer::sortColumn(vector<Tag> &arr)
  */
 TagExaminer::Turns TagExaminer::determineTurning()
 {
-    if(distToTag(columns[4][0]) < minDist){
-        cout << "SUCCESS" << endl;
-        return SUCCESS;
-    }
 
-    if(columns[3].size() == 0 && columns[4].size() == 0 && columns[5].size() == 0) {
-        int foundTagIndex = -1;
-        for(int i = 0; i < columns.size(); i ++) {
-            if(i ==  3 || i == 4 || i == 5){
-                continue;
-            }
+    TagExaminer::Turns turn;
 
-            if(columns[i].size() > 0) {
-                foundTagIndex = i;
-                break;
-            }
+    //cout << "A" << endl;
+
+    if(columns[3].size() > 0 && columns[4].size() > 0 && columns[5].size() > 0) {
+
+        if(isClose(columns[3][0], columns[5][0], margin)) {
+            cout << "STRAIGHT" << endl;
+            turn = STRAIGHT;
         }
-
-        if(foundTagIndex > 4) {
-            cout << "RIGHT" << endl;
-            return RIGHT;
-        }else if (foundTagIndex < 4){
+        else if(getDist(columns[3][0]) < getDist(columns[5][0])) {
             cout << "LEFT" << endl;
-            return LEFT;
+            turn = LEFT;
+        } else{
+            cout << "RIGHT" << endl;
+            turn = RIGHT;
         }
-        else {
-            cout << "FAIL" << endl;
-            return FAIL;
+    }
+    else{
+        if(turn != STRAIGHT) {
+            cout << "AY" << endl;
+            for (int i = 0; i < columns.size(); i++) {
+                if (columns[i].size() > 0) {
+                    if (i > 5) {
+                        cout << "RIGHT" << endl;
+                        turn = RIGHT;
+                    }
+                    else if (i < 4) {
+                        cout << "LEFT" << endl;
+                        turn = LEFT;
+                    } else {
+                        cout << "STRAIGHT" << endl;
+                        turn = STRAIGHT;
+                    }
+                    break;
+                }
+            }
         }
     }
 
-    //Find a long col
-    int longColIndex = -1;
-    for(int i = 0; i < columns.size(); i ++) {
-        if(columns[i].size() > 3) {
-            longColIndex = i;
-            break;
-        }
-    }
+    //cout << "DIST: " << getDist(columns[4][0]) << endl;
 
-    if(longColIndex == -1) {
-        cout << "FAIL" << endl;
-        return FAIL;
-    }else{
-        //Is there also a short line
-        int shortColIndex = -1;
+    if(turn == STRAIGHT) {
+        //if it close by
+
+        //Find where the long col is if there is one.
+        int firstLong = -1;
+
         for(int i = 0; i < columns.size(); i++) {
-            if(columns[i].size() < 3) {
-                shortColIndex = i;
-                break;
+            if(columns[i].size() > 1) {
+                int maxTag = columns[i].size() - 1;
+
+                if(abs(getDist(columns[i][0]) - getDist(columns[i][maxTag])) > .1) {
+                    cout << i << "We have a corner" << endl;
+                    firstLong = i;
+
+                    cout << "LOL " <<  firstLong << endl;
+                    if(firstLong < 4) {
+                        cout << "LEFT CORNER" << endl;
+                    }else{
+                        cout << "RIGHT CORNER" << endl;
+                    }
+                    break;
+                }
             }
         }
 
-        if(shortColIndex == -1) {
-            cout << "FAIL" << endl;
-        }else{
-            if(longColIndex < shortColIndex) {
-                cout << "RIGHT" << endl;
-                return RIGHT;
-            }else{
-                cout << "LEFT" << endl;
-                return LEFT;
-            }
+    }
+    //if the first and last tag in a col are more than margin away, then it's a long column
+
+    if(columns[4].size() > 0) {
+        if (getDist(columns[4][0]) < minDist && turn == STRAIGHT) {
+            cout << "SUCCESS" << endl;
+            turn = SUCCESS;
         }
     }
 
-
-    if((columns[3].size() > 0 || columns[3].size() > 0 || columns[3].size() > 0) && (longColIndex == -1)){
-        if(abs(abs(distToTag(columns[3][0])) - abs(distToTag(columns[5][0]))) < margin){
-            cout << "STRAIGHT";
-            return STRAIGHT;
-        }
-        else if(distToTag(columns[3][0]) > distToTag(columns[5][0])){
-            return RIGHT;
-        }else{
-            return LEFT;
-        }
-    }
 }
 
 void TagExaminer::graph()
@@ -199,6 +199,17 @@ void TagExaminer::clear(){
             columns[i].clear();
 }
 
-double TagExaminer::distToTag(Tag x) {
+double TagExaminer::getDist(Tag x) {
     return sqrt(x.getPositionX() * x.getPositionX() + x.getPositionY() * x.getPositionY() + x.getPositionZ() * x.getPositionZ());
+}
+
+bool TagExaminer::isClose(Tag x, Tag y, double m) {
+    if((abs(getDist(x) - getDist(y)) < m) &&
+            (abs(getDist(y) - getDist(x))) < m) {
+
+        return true;
+
+    }
+
+    return false;
 }
