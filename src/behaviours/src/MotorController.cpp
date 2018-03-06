@@ -49,7 +49,7 @@ std::tuple<int,int> MotorController::generateRotationalOutput( MotorParams param
         yaw_output = params.yaw_max_output;
     else
     {
-        constant = calcKonstant( params.yaw_max_output, params.rotatonal_yaw_deccel_point );
+        constant = calcKonstant( params.yaw_max_output, params.yaw_deccel_point );
         yaw_output = getOutput( fabs( yaw_error ), constant );
     }
 
