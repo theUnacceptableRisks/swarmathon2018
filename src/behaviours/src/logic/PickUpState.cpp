@@ -185,9 +185,9 @@ void PickUpState::internalAction()
             outputs->gripper_position = Gripper::UP_CLOSED;
             break;
         case PICKUP_CONFIRM:
-            if( this->inputs->us_center < 0.13 )
-                cube_secured = true;
-            else if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && TagUtilities::getDistance( this->inputs->tags.back() ) < 0.15 )
+  //          if( this->inputs->us_center < 0.13 )
+    //            cube_secured = true;
+            if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && TagUtilities::getDistance( this->inputs->tags.back() ) < 0.15 )
                 cube_secured = true;
             break;
         case PICKUP_COMPLETE:
