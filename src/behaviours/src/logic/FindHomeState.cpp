@@ -175,6 +175,7 @@ void FindHomeState::forceTransition( FHState transition_to )
                     waypoint = new SimpleWaypoint( this->inputs, params );
                     this->waypoints.push_back( (Waypoint *)waypoint );
                 }
+                this->outputs->current_waypoint = waypoints.front();
                 break;
             }
             case FINDHOME_COMPLETE:
