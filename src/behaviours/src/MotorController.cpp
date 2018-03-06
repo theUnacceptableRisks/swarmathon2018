@@ -22,9 +22,9 @@ std::tuple<int,int> MotorController::generateLinearOutput( MotorParams params )
     }
 
     if( vel_output >= 0 )
-        vel_output += this->min_motor_output;
+        vel_output += this->min_motor_output + LINEAR_BUMP;
     else
-        vel_output -= this->min_motor_output;
+        vel_output -= this->min_motor_output + LINEAR_BUMP;
 
     return std::make_tuple ( vel_output, vel_output );
 }
@@ -55,13 +55,13 @@ std::tuple<int,int> MotorController::generateRotationalOutput( MotorParams param
 
     if( yaw_error <= 0 )
     {
-       left_output = (-1)*( yaw_output + this->min_rot_output );
-       right_output = yaw_output + this->min_rot_output;
+       left_output = (-1)*( yaw_output + this->min_rot_output + ROTATION_BUMP );
+       right_output = yaw_output + this->min_rot_output + ROTATION_BUMP;
     }
     else
     {
-       left_output = yaw_output + this->min_rot_output;
-       right_output = (-1)*( yaw_output + this->min_rot_output );
+       left_output = yaw_output + this->min_rot_output + ROTATION_BUMP;
+       right_output = (-1)*( yaw_output + this->min_rot_output + ROTATION_BUMP );
     }
 
 

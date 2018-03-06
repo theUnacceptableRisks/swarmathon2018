@@ -25,7 +25,9 @@ typedef enum
 } DriveType;
 
 /* skid steering needs just a little extra */
-#define SKID_BUMP 3
+#define SKID_BUMP 4
+#define LINEAR_BUMP 1
+#define ROTATION_BUMP 2
 
 class MotorController
 {
