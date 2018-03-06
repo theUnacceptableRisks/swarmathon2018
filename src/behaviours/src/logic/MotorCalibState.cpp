@@ -24,7 +24,7 @@ std::string MotorCalibState::transition()
     std::string transition_to = getIdentifier();
 
     if( internal_state == MOTORCALIB_COMPLETE )
-        transition_to = "search_state";
+        transition_to = "rotationalcalib_state";
 
     return transition_to;
 }
