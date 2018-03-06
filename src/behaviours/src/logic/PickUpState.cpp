@@ -225,7 +225,7 @@ void PickUpState::forceTransition( PUState transition_to )
                 /* on Enter */
                 LinearParams l_params;
 
-                l_params.distance = 0.11;
+                l_params.distance = 0.09;
                 l_params.deccel_point = 0;
                 l_params.max_vel = 5;
 
