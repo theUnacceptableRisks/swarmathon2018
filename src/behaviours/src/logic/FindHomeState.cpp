@@ -96,8 +96,18 @@ void FindHomeState::internalAction()
             break;
         }
         case FINDHOME_GOHOME:
-            break;
         case FINDHOME_LOST:
+            /* both states should cycle through the waypoints */
+            if( waypoints.size() > 0 )
+            {
+                Waypoint *waypoint = waypoints.front();
+                if( waypoint && waypoint->hasArrived() )
+                {
+                    delete waypoints.front();
+                    waypoints.erase( waypoints.begin() );
+                }
+                break;
+            }
             break;
         case FINDHOME_COMPLETE:
             break;
