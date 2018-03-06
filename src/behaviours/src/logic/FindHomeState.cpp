@@ -4,11 +4,8 @@
 
 void FindHomeState::action()
 {
-    std::cout << "preForceTransition State: " << internal_state << std::endl;
     forceTransition( internalTransition() );
-    std::cout << "postForceTransition State: " << internal_state << std::endl;
     internalAction();
-    std::cout << "postInternalAction State: " << internal_state << std::endl;
 }
 
 void FindHomeState::onEnter( std::string prev_state )

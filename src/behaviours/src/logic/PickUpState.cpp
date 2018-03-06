@@ -96,16 +96,6 @@ PUState PickUpState::internalTransition()
                 delete this->linear;
                 this->linear = 0;
 
-                transition_to = PICKUP_BACKUP;
-            }
-            break;
-        case PICKUP_BACKUP:
-            if( backup && backup->hasArrived() )
-            {
-                outputs->current_waypoint = 0;
-                delete this->backup;
-                this->backup = 0;
-
                 transition_to = PICKUP_CLAW_CLOSE;
                 this->timer = this->inputs->time.toSec();
             }
@@ -186,7 +176,6 @@ void PickUpState::internalAction()
                 this->attempts++;
             break;
         case PICKUP_FINAL_APPROACH:
-        case PICKUP_BACKUP:
             outputs->gripper_position = Gripper::DOWN_OPEN;
             break;
         case PICKUP_CLAW_CLOSE:
@@ -242,19 +231,6 @@ void PickUpState::forceTransition( PUState transition_to )
 
                 this->linear = new LinearWaypoint( this->inputs, l_params );
                 this->outputs->current_waypoint = this->linear;
-                break;
-            }
-            case PICKUP_BACKUP:
-            {
-                LinearParams l_params;
-
-                l_params.distance = 0.0045;
-                l_params.deccel_point = 0;
-                l_params.max_vel = 4;
-                l_params.reverse = true;
-
-                this->backup = new LinearWaypoint( this->inputs, l_params );
-                this->outputs->current_waypoint = this->backup;
                 break;
             }
             case PICKUP_FAIL:
