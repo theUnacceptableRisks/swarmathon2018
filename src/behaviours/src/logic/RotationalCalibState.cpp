@@ -73,7 +73,7 @@ void RotationalCalibState::internalAction()
             break;
         case ROTATIONALCALIB_CHECK:
         {
-            if( fabs( this->inputs->raw_odom.x - this->prev_x ) > MIN_DISTANCE )
+            if( fabs( this->inputs->raw_odom.x - this->prev_x ) > MIN_ROT_DISTANCE )
                 found_optimal = true;
             else
                 found_optimal = false;
@@ -110,7 +110,7 @@ void RotationalCalibState::forceTransition( RCState transition_to )
                 this->current_PWM++;
                 params.left_output = (-1)*this->current_PWM;
                 params.right_output = this->current_PWM;
-                params.duration = CALIB_DRIVE_DURATION;
+                params.duration = CALIB_ROT_DURATION;
 
                 if( this->waypoint )
                 {
