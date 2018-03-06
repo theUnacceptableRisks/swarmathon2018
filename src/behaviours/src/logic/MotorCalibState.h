@@ -5,7 +5,8 @@
 #include "../waypoints/RawOutputWaypoint.h"
 #include "LogicMachine.h"
 
-#define MIN_DISTANCE 0.005
+#define MIN_DISTANCE 0.01
+#define CALIB_DRIVE_DURATION 1
 
 typedef enum
 {
