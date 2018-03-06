@@ -109,6 +109,7 @@ PUState PickUpState::internalTransition()
                 transition_to = PICKUP_CLAW_CLOSE;
                 this->timer = this->inputs->time.toSec();
             }
+            break;
         case PICKUP_CLAW_CLOSE:
             if( ( this->inputs->time.toSec() - this->timer ) >= CLOSE_TIME )
             {
@@ -247,7 +248,7 @@ void PickUpState::forceTransition( PUState transition_to )
             {
                 LinearParams l_params;
 
-                l_params.distance = 0.05;
+                l_params.distance = 0.02;
                 l_params.deccel_point = 0;
                 l_params.max_vel = 5;
                 l_params.reverse = true;
