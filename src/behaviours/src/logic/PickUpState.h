@@ -18,6 +18,7 @@ typedef enum
     PICKUP_COMPLETE_FAILURE,
     PICKUP_APPROACH,
     PICKUP_FINAL_APPROACH,
+    PICKUP_BACKUP,
     PICKUP_CLAW_CLOSE,
     PICKUP_CLAW_UP,
     PICKUP_CONFIRM,
@@ -42,6 +43,7 @@ class PickUpState : public State
 
         ApproachTagWaypoint *approach;
         LinearWaypoint *linear;
+        LinearWaypoint *backup;
 
         double timer;
 
