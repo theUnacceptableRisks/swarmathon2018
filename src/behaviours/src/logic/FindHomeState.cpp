@@ -108,6 +108,10 @@ void FindHomeState::internalAction()
                 {
                     delete waypoints.front();
                     waypoints.erase( waypoints.begin() );
+                    if( waypoints.size() > 0 )
+                        this->outputs->current_waypoint = waypoints.front();
+                    else
+                        this->outputs->current_waypoint = 0;
                 }
                 break;
             }
@@ -180,6 +184,7 @@ void FindHomeState::forceTransition( FHState transition_to )
                     delete waypoints.front();
                     waypoints.erase( waypoints.begin() );
                 }
+                this->outputs->current_waypoint = 0;
                 break;
             }
         }
