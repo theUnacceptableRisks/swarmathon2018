@@ -49,19 +49,19 @@ std::tuple<int,int> MotorController::generateRotationalOutput( MotorParams param
         yaw_output = params.yaw_max_output;
     else
     {
-        constant = calcKonstant( params.yaw_max_output, params.yaw_deccel_point );
+        constant = calcKonstant( params.yaw_max_output, params.rotatonal_yaw_deccel_point );
         yaw_output = getOutput( fabs( yaw_error ), constant );
     }
 
     if( yaw_error <= 0 )
     {
-       left_output = (-1)*( yaw_output + this->min_motor_output );
-       right_output = yaw_output + this->min_motor_output;
+       left_output = (-1)*( yaw_output + this->min_rot_output );
+       right_output = yaw_output + this->min_rot_output;
     }
     else
     {
-       left_output = yaw_output + this->min_motor_output;
-       right_output = (-1)*( yaw_output + this->min_motor_output );
+       left_output = yaw_output + this->min_rot_output;
+       right_output = (-1)*( yaw_output + this->min_rot_output );
     }
 
 
@@ -84,14 +84,14 @@ std::tuple<int,int> MotorController::generateSkidOutput( MotorParams params )
     /* remove the min values from the rotational stuff */
 
     if( left_output < 0 )
-        left_output += this->min_motor_output;
+        left_output += this->min_rot_output;
     else
-        left_output -= this->min_motor_output;
+        left_output -= this->min_rot_output;
 
     if( right_output < 0 )
-        right_output += this->min_motor_output;
+        right_output += this->min_rot_output;
     else
-        right_output -= this->min_motor_output;
+        right_output -= this->min_rot_output;
 
 
     /* these can always be addition because backwards skid is unlikely to happen, and if it does, it should sort itself out */
@@ -113,5 +113,10 @@ int MotorController::getOutput( double error, double konstant )
 
 void MotorController::changeMotorMin( int new_min )
 {
-    min_motor_output = new_min;
+    this->min_motor_output = new_min;
+}
+
+void MotorController::changeRotationalMin( int rot_min )
+{
+   this->min_rot_output = rot_min;
 }
