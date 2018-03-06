@@ -24,6 +24,9 @@ typedef enum
     LINEAR, ROTATE, SKID
 } DriveType;
 
+/* skid steering needs just a little extra */
+#define SKID_BUMP 3
+
 class MotorController
 {
     public:

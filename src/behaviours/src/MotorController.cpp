@@ -84,14 +84,14 @@ std::tuple<int,int> MotorController::generateSkidOutput( MotorParams params )
     /* remove the min values from the rotational stuff */
 
     if( left_output < 0 )
-        left_output += this->min_rot_output;
+        left_output += this->min_rot_output - SKID_BUMP;
     else
-        left_output -= this->min_rot_output;
+        left_output -= this->min_rot_output - SKID_BUMP;
 
     if( right_output < 0 )
-        right_output += this->min_rot_output;
+        right_output += this->min_rot_output - SKID_BUMP;
     else
-        right_output -= this->min_rot_output;
+        right_output -= this->min_rot_output - SKID_BUMP;
 
 
     /* these can always be addition because backwards skid is unlikely to happen, and if it does, it should sort itself out */
