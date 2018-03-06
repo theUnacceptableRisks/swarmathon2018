@@ -29,9 +29,9 @@ std::string RotationalCalibState::transition()
     return transition_to;
 }
 
-MCState RotationalCalibState::internalTransition()
+RCState RotationalCalibState::internalTransition()
 {
-    MCState transition_to = internal_state;
+    RCState transition_to = internal_state;
 
     switch( internal_state )
     {
@@ -85,9 +85,9 @@ void RotationalCalibState::internalAction()
 
 }
 
-void RotationalCalibState::forceTransition( MCState transition_to )
+void RotationalCalibState::forceTransition( RCState transition_to )
 {
-    MCState prev_state = internal_state;
+    RCState prev_state = internal_state;
 
     internal_state = transition_to;
 
