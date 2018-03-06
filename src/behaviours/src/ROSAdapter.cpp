@@ -219,7 +219,7 @@ LogicMachine logic_machine( &iotable );
 
 void setupLogicMachine()
 {
-    inputs.controller = MotorController( inputs.calibration.motor_min );
+    inputs.controller = MotorController( inputs.calibration.motor_min, inputs.calibration.rotational_min );
     /* add States */
     logic_machine.addState( motorcalib_state.getIdentifier(), dynamic_cast<State *>(&motorcalib_state) );
     logic_machine.addState( search_state.getIdentifier(), dynamic_cast<State *>(&search_state) );
