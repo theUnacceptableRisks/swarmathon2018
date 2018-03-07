@@ -385,6 +385,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
     std::stringstream ss;
 
     inputs.tags.clear();
+    inputs.examiner.clear();
     if (message->detections.size() > 0)
     {
 
