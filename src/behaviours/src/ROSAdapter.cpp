@@ -45,12 +45,6 @@
 #include "MotorController.h"
 #include "TagUtilities.h"
 
-/***************
- *Tag Examiner *
- ***************/
-
-#include "TagExaminer.h"
-
 // To handle shutdown signals so the node quits
 // properly in response to "rosnode kill"
 #include <ros/ros.h>
@@ -87,9 +81,6 @@ float minutesTime = 0;
 float hoursTime = 0;
 
 float drift_tolerance = 0.5; // meters
-
-TagExaminer tagexaminer = TagExaminer();
-
 
 std_msgs::String msg;
 
@@ -394,7 +385,6 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
     std::stringstream ss;
 
     inputs.tags.clear();
-    //tagexaminer.clear();
     if (message->detections.size() > 0)
     {
 
@@ -416,11 +406,8 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
                                                                   tagPose.pose.orientation.z,
                                                                   tagPose.pose.orientation.w ) );
             inputs.tags.push_back( loc );
-            cout << "Distance: " << TagUtilities::getDistance( loc ) << std::endl;
         }
-        //tagexaminer.loadTags( inputs.tags );
-	    //tagexaminer.determineTurning();
- 	//cout << "X: " << inputs.tags.back().getPositionX() << std::endl;
+        inputs.examiner.loadTags( inputs.tags );
     }
 }
 

@@ -6,6 +6,8 @@
 #include "../Tag.h"
 #include "../Gripper.h"
 #include "../MotorController.h"
+#include "../TagExaminer.h"
+
 class Waypoint;
 
 typedef struct calibration_nums
@@ -30,6 +32,7 @@ typedef struct logic_inputs
     ros::Time			time;
     MotorController		controller;
     CalibNums			calibration;
+    TagExaminer                 examiner;
 } LogicInputs;
 
 typedef struct logic_outputs
