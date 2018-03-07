@@ -80,7 +80,7 @@ void DropOffState::internalAction()
                 t_params.desired_tag = 256;
 
                 t_params.dist_deccel = 0.05;
-                t_params.dist_goal = 0.24;
+                t_params.dist_goal = 0.40;
                 t_params.dist_max_output = 10;
 
                 t_params.yaw_deccel = 0.10;
