@@ -43,10 +43,15 @@ RCState RotationalCalibState::internalTransition()
             break;
         }
         case ROTATIONALCALIB_APPROACH_HOME:
-            if( this->inputs->tags.size() > 0 )
-                std::cout << "Back tag is distance: " << TagUtilities::getDistance( this->inputs->tags.back() ) << std::endl;
-            if( TagUtilities::hasTag( &this->inputs->tags, 256 ) && this->inputs->tags.size() > 4 && TagUtilities::getDistance( this->inputs->tags.back() ) < .40 )
+            if( this->inputs->examiner.columns[4].size() > 0 )
+                std::cout << "Back tag is distance: " << TagUtilities::getDistance( this->inputs->examiner.columns[4][0] ) << std::endl;
+
+            if( TagUtilities::hasTag( &this->inputs->tags, 256 ) &&
+                this->inputs->examiner.columns[4].size() > 0 &&
+                TagUtilities::getDistance( this->inputs->examiner.columns[4][0] ) < .40 )
+            {
                 transition_to = ROTATIONALCALIB_ATTEMPT_ROTATION;
+            }
             break;
         case ROTATIONALCALIB_ATTEMPT_ROTATION:
             if( this->waypoint && this->waypoint->hasArrived() )
@@ -85,15 +90,18 @@ void RotationalCalibState::internalAction()
             break;
         case ROTATIONALCALIB_CHECK:
         {
-            if( fabs( TagUtilities::getDistance( this->inputs->tags.back() ) - this->prev_distance ) > MIN_ROT_DISTANCE )
+            if( this->inputs->examiner.columns[4].size() > 0 )
             {
-                std::cout << "Closest:  " << TagUtilities::getDistance( this->inputs->tags.back() ) << std::endl;
-                std::cout << "Prev:     " << this->prev_distance << std::endl;
-                std::cout << "Fabs Sub: " << fabs( TagUtilities::getDistance( this->inputs->tags.back() ) - this->prev_distance ) << std::endl; 
-                found_optimal = true;
-            }
-            else
-                found_optimal = false;
+                if( fabs( TagUtilities::getDistance( this->inputs->examiner.columns[4][0] ) - this->prev_distance ) > MIN_ROT_DISTANCE )
+                {
+                    std::cout << "Closest:  " << TagUtilities::getDistance( this->inputs->examiner.columns[4][0] ) << std::endl;
+                    std::cout << "Prev:     " << this->prev_distance << std::endl;
+                    std::cout << "Fabs Sub: " << fabs( TagUtilities::getDistance( this->inputs->examiner.columns[4][0] ) - this->prev_distance ) << std::endl; 
+                    found_optimal = true;
+                }
+                else
+                    found_optimal = false;
+                }
             break;
         }
         case ROTATIONALCALIB_COMPLETE:
@@ -164,7 +172,7 @@ void RotationalCalibState::forceTransition( RCState transition_to )
                 this->waypoint = new RawOutputWaypoint( this->inputs, params );
                 this->outputs->current_waypoint = dynamic_cast<Waypoint*>( this->waypoint );
 
-                prev_distance = TagUtilities::getDistance( this->inputs->tags.back() );
+                prev_distance = TagUtilities::getDistance( this->inputs->examiner.columns[4][0] );
                 break;
             }
         }
