@@ -22,6 +22,7 @@
 #include <apriltags_ros/AprilTagDetectionArray.h>
 #include <std_msgs/Float32MultiArray.h>
 #include "swarmie_msgs/Waypoint.h"
+#include "swarmie_msgs/InfoMessage.h"
 
 // Include Controllers
 #include <vector>
@@ -93,6 +94,8 @@ TagExaminer tagexaminer = TagExaminer();
 std_msgs::String msg;
 
 
+string roverName = "";
+
 char host[128];
 char prev_state_machine[128];
 // records time for delays in sequanced actions, 1 second resolution.
@@ -122,6 +125,7 @@ ros::Publisher info_log_publisher;
 ros::Publisher drive_control_publish;
 ros::Publisher heartbeat_publisher;
 ros::Publisher tag_x;
+ros::Publisher rover_info_publisher;
 
 void setupPublishers( ros::NodeHandle &ros_handle, string published_name )
 {
@@ -133,6 +137,9 @@ void setupPublishers( ros::NodeHandle &ros_handle, string published_name )
     drive_control_publish = ros_handle.advertise<geometry_msgs::Twist>((published_name + "/driveControl"), 10);
     heartbeat_publisher = ros_handle.advertise<std_msgs::String>((published_name + "/behaviour/heartbeat"), 1, true);
     tag_x = ros_handle.advertise<std_msgs::String>((published_name + "/tag_x"), 1, true );
+    rover_info_publisher = ros_handle.advertise<swarmie_msgs::InfoMessage>(("roverInfo"), 1, true);
+
+    roverName = published_name;
 }
 
 /*******************
@@ -144,6 +151,7 @@ ros::Subscriber target_subscriber;
 ros::Subscriber raw_odom_subscriber;
 ros::Subscriber odometry_subscriber;
 ros::Subscriber map_subscriber;
+ros::Subscriber rover_info_subscriber;
 
 /******************************************
  * ROS Callback Functions for Subscribers *
@@ -156,6 +164,7 @@ void odomAndAccelHandler(const nav_msgs::Odometry::ConstPtr& message);
 void odomAccelAndGPSHandler(const nav_msgs::Odometry::ConstPtr& message);
 void manualWaypointHandler(const swarmie_msgs::Waypoint& message);
 void sonarHandler(const sensor_msgs::Range::ConstPtr& sonarLeft, const sensor_msgs::Range::ConstPtr& sonarCenter, const sensor_msgs::Range::ConstPtr& sonarRight);
+void roverInfoHandler(const swarmie_msgs::InfoMessage& message);
 
 void setupSubscribers( ros::NodeHandle &ros_handle, string published_name )
 {
@@ -165,6 +174,7 @@ void setupSubscribers( ros::NodeHandle &ros_handle, string published_name )
     raw_odom_subscriber = ros_handle.subscribe((published_name + "/odom/"), 10, odomHandler);
     odometry_subscriber = ros_handle.subscribe((published_name + "/odom/filtered"), 10, odomAndAccelHandler);
     map_subscriber = ros_handle.subscribe((published_name + "/odom/ekf"), 10, odomAccelAndGPSHandler);
+    rover_info_subscriber = ros_handle.subscribe("/roverInfo", 10, roverInfoHandler);
 
     //Sonar Stuff
     message_filters::Subscriber<sensor_msgs::Range> sonar_left_subscriber(ros_handle, (published_name + "/sonarLeft"), 10);
@@ -281,6 +291,20 @@ int main(int argc, char **argv)
     info_log_publisher.publish(msg);
     timerStartTime = time(0);
 
+
+    swarmie_msgs::InfoMessage infoMsg;
+    infoMsg.name = roverName;
+    infoMsg.x = inputs.odom_accel_gps.x;
+    infoMsg.y = inputs.odom_accel_gps.y;
+    infoMsg.sonar_left = inputs.us_left;
+    infoMsg.sonar_right = inputs.us_right;
+    infoMsg.sonar_center = inputs.us_center;
+    infoMsg.state = logic_machine.getCurrentIdentifier();
+    infoMsg.number_of_cubes = TagUtilities::numberOfTags(&inputs.tags, 0);
+    infoMsg.number_of_base_tags = TagUtilities::numberOfTags(&inputs.tags, 256);
+    rover_info_publisher.publish(infoMsg);
+
+
     ros::spin();
 
     return EXIT_SUCCESS;
@@ -380,6 +404,56 @@ void sendGripperPosition( Gripper::Position pos )
 /*************************
  * ROS CALLBACK HANDLERS *
  *************************/
+
+void roverInfoHandler(const swarmie_msgs::InfoMessage& message){
+
+    roverInfo messageInfo;
+    messageInfo.id = message.id;
+    messageInfo.name = message.name;
+    messageInfo.number_of_cubes = message.number_of_cubes;
+    messageInfo.number_of_base_tags = message.number_of_base_tags;
+    messageInfo.x = message.x;
+    messageInfo.y = message.y;
+    messageInfo.state = message.state;
+    messageInfo.sonar_left = message.sonar_left;
+    messageInfo.sonar_right = message.sonar_right;
+    messageInfo.sonar_center = message.sonar_center;
+
+    bool roverExists = false;
+    for(int i = 0; i < infoVector.size(); i++){
+        if(message.name == roverName && roverName == infoVector.at(i).name){
+            infoVector.at(i) = messageInfo;
+            roverExists == true;
+        }
+        cout << "name: " << infoVector.at(i).name << endl;
+        cout << "state: " << infoVector.at(i).state << endl;
+        cout << "sonar left: " << infoVector.at(i).sonar_left << endl;
+        cout << "sonar center: " << infoVector.at(i).sonar_center << endl;
+        cout << "sonar right:" << infoVector.at(i).sonar_right << endl;
+        cout << "x" << infoVector.at(i).x << endl;
+        cout << "y" << infoVector.at(i).y << endl;
+        cout << "numCubes" << infoVector.at(i).number_of_cubes << endl;
+        cout << "numBaseTags" << infoVector.at(i).number_of_base_tags << endl;
+    }
+    if(!roverExists){
+        infoVector.push_back(messageInfo);
+    }
+
+
+    swarmie_msgs::InfoMessage infoMsg;
+    infoMsg.name = roverName;
+    infoMsg.x = inputs.odom_accel_gps.x;
+    infoMsg.y = inputs.odom_accel_gps.y;
+    infoMsg.sonar_left = inputs.us_left;
+    infoMsg.sonar_right = inputs.us_right;
+    infoMsg.sonar_center = inputs.us_center;
+    infoMsg.state = logic_machine.getCurrentIdentifier();
+    infoMsg.number_of_cubes = TagUtilities::numberOfTags(&inputs.tags, 0);
+    infoMsg.number_of_base_tags = TagUtilities::numberOfTags(&inputs.tags, 256);
+    rover_info_publisher.publish(infoMsg);
+
+
+}
 
 void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& message)
 {

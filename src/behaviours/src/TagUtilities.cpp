@@ -26,3 +26,19 @@ double TagUtilities::angleToTag( Tag tag )
 {
     return 0.0;
 }
+
+int TagUtilities::numberOfTags( std::vector<Tag> *tags, int id )
+{
+    int tagCount = 0;
+    if( tags->size() > 0 )
+    {
+        for( int i = 0; i < tags->size(); i++ )
+        {
+            if( tags->at(i).getID() == id )
+            {
+                tagCount ++;
+            }
+        }
+    }
+    return tagCount;
+}
