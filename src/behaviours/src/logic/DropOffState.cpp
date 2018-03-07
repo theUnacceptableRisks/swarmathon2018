@@ -44,6 +44,8 @@ DOState DropOffState::internalTransition()
         case DROPOFF_INIT:
             if( this->approach )
                 transition_to = DROPOFF_APPROACH;
+            else if( attempts > DROPOFF_MAX_ATTEMPTS )
+                transition_to = DROPOFF_FAIL;
             break;
         case DROPOFF_APPROACH:
             if( this->approach && this->approach->hasArrived() )
@@ -54,6 +56,8 @@ DOState DropOffState::internalTransition()
 
                 transition_to = DROPOFF_ADJUST;
             }
+            else if( attempts > DROPOFF_MAX_ATTEMPTS )
+                transition_to = DROPOFF_FAIL;
             break;
     }
 
@@ -67,26 +71,42 @@ void DropOffState::internalAction()
         default:break;
         case DROPOFF_INIT:
         {
-            TagParams t_params;
+            if( TagUtilities::hasTag( &inputs->tags, 256 ) )
+            {
+                TagParams t_params;
 
-            t_params.desired_tag = 256;
+                t_params.desired_tag = 256;
 
-            t_params.dist_deccel = 0.05;
-            t_params.dist_goal = 0.24;
-            t_params.dist_max_output = 10;
+                t_params.dist_deccel = 0.05;
+                t_params.dist_goal = 0.24;
+                t_params.dist_max_output = 10;
 
-            t_params.yaw_deccel = 0.10;
-            t_params.yaw_goal = 0.0;
-            t_params.yaw_max_output = (80/3);
+                t_params.yaw_deccel = 0.10;
+                t_params.yaw_goal = 0.0;
+                t_params.yaw_max_output = (80/3);
 
-            t_params.type = CLOSEST;
+                t_params.type = CLOSEST;
 
-            this->approach = new ApproachTagWaypoint( this->inputs, t_params );
-            this->outputs->current_waypoint = this->approach;
+                this->approach = new ApproachTagWaypoint( this->inputs, t_params );
+                this->outputs->current_waypoint = this->approach;
+                this->attempts = 0;
+            }
+            else
+            {
+                this->attempts++;
+            }
             break;
         }
 
         case DROPOFF_APPROACH:
+            if( TagUtilities::hasTag( &this->inputs->tags, 256 ) )
+            {
+                this->attempts = 0;
+            }
+            else
+            {
+                this->attempts++;
+            }
             break;
         case DROPOFF_ADJUST:
             std::cout << "Made it to adjust" << std::endl;
