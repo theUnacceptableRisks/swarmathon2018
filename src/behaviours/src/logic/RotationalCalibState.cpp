@@ -11,7 +11,6 @@ void RotationalCalibState::action( )
 
 void RotationalCalibState::onEnter( std::string prev_state )
 {
-    this->prev_x = this->inputs->raw_odom.x;
     this->current_PWM = 0;
     forceTransition( ROTATIONALCALIB_INIT );
 }
@@ -88,11 +87,11 @@ void RotationalCalibState::internalAction()
             break;
         case ROTATIONALCALIB_CHECK:
         {
-            if( fabs( this->inputs->tags.back().getPositionX() - this->prev_x ) > MIN_ROT_DISTANCE )
+            if( fabs( TagUtilities::getDistance( this->inputs->tags.back() ) - this->prev_distance ) > MIN_ROT_DISTANCE )
             {
-                std::cout << "Closest:  " << this->inputs->tags.back().getPositionX() << std::endl;
-                std::cout << "Prev_X:   " << this->prev_x << std::endl;
-                std::cout << "Fabs Sub: " << fabs( this->inputs->tags.back().getPositionX() - this->prev_x ) << std::endl; 
+                std::cout << "Closest:  " << TagUtilities::getDistance( this->inputs->tags.back() ) << std::endl;
+                std::cout << "Prev:     " << this->prev_distance << std::endl;
+                std::cout << "Fabs Sub: " << fabs( TagUtilities::getDistance( this->inputs->tags.back() ) - this->prev_distance ) << std::endl; 
                 found_optimal = true;
             }
             else
@@ -167,7 +166,7 @@ void RotationalCalibState::forceTransition( RCState transition_to )
                 this->waypoint = new RawOutputWaypoint( this->inputs, params );
                 this->outputs->current_waypoint = dynamic_cast<Waypoint*>( this->waypoint );
 
-                prev_x = this->inputs->tags.back().getPositionX();
+                prev_distance = TagUtilities::getDistance( this->inputs->tags.back() );
                 break;
             }
         }
