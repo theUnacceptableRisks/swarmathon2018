@@ -179,8 +179,9 @@ void FindHomeState::forceTransition( FHState transition_to )
             {
                 while( waypoints.front() )
                 {
-                    delete waypoints.front();
+                    Waypoint *way = waypoints.front();
                     waypoints.erase( waypoints.begin() );
+                    delete way;
                 }
                 this->outputs->current_waypoint = 0;
                 break;
