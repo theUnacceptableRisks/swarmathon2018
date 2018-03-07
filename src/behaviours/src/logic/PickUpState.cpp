@@ -115,6 +115,7 @@ PUState PickUpState::internalTransition()
                 this->raw = 0;
 
                 this->timer = this->inputs->time.toSec();
+                transition_to = PICKUP_CLAW_CLOSE;
             }
             break;
         case PICKUP_CLAW_CLOSE:
