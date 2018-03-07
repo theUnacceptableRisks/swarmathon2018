@@ -27,7 +27,7 @@ typedef enum
 /* skid steering needs just a little extra */
 #define SKID_BUMP 4
 #define LINEAR_BUMP 1
-#define ROTATION_BUMP 2
+#define ROTATION_BUMP 0
 
 class MotorController
 {

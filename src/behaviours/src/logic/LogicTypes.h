@@ -11,7 +11,7 @@ class Waypoint;
 typedef struct calibration_nums
 {
     int motor_min = 12;
-    int rotational_min = 15;
+    int rotational_min = 30;
 } CalibNums;
 
 typedef struct logic_inputs
