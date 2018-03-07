@@ -11,7 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
   random_numbers
   tf
   apriltags_ros
-)
+  swarmie_msgs
+  )
 
 catkin_package(
   CATKIN_DEPENDS geometry_msgs swarmie_msgs roscpp sensor_msgs std_msgs random_numbers tf apriltags_ros
@@ -24,16 +25,25 @@ include_directories(
 add_executable(
   behaviours
   src/Tag.cpp
-  src/ObstacleController.cpp 
-  src/PickUpController.cpp
-  src/DropOffController.cpp
-  src/SearchController.cpp
   src/ROSAdapter.cpp
   src/PID.cpp
-  src/DriveController.cpp
-  src/RangeController.cpp
-  src/LogicController.cpp
-  src/ManualWaypointController.cpp
+  src/Gripper.cpp
+  src/MotorController.cpp
+  src/TagUtilities.cpp
+  src/state_machine/Error.cpp
+  src/waypoints/Waypoint.cpp
+  src/waypoints/WaypointUtilities.cpp
+  src/waypoints/SimpleWaypoint.cpp
+  src/waypoints/ApproachTagWaypoint.cpp
+  src/waypoints/LinearWaypoint.cpp
+  src/waypoints/RawOutputWaypoint.cpp
+  src/logic/LogicMachine.cpp
+  src/logic/SearchState.cpp
+  src/logic/PickUpState.cpp
+  src/logic/FindHomeState.cpp
+  src/logic/MotorCalibState.cpp
+  src/logic/RotationalCalibState.cpp
+  src/TagExaminer.cpp
 )
 
 add_dependencies(behaviours ${catkin_EXPORTED_TARGETS})
