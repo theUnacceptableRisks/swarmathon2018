@@ -42,19 +42,19 @@ void TagExaminer::determineRange() {
 
         if (x <= -0.209 && x >= -.269) {
             columns[0].push_back(tags[i]);
-        } else if (x <= -.148 && x >= -.208) {
+        } else if (x <= -.163 && x >= -.223) {
             columns[1].push_back(tags[i]);
-        } else if (x <= -0.087 && x >= -0.147) {
+        } else if (x <= -0.092 && x >= -0.162) {
             columns[2].push_back(tags[i]);
-        } else if (x <= -0.026 && x >= -0.086) {
+        } else if (x <= -0.031 && x >= -0.091) {
             columns[3].push_back(tags[i]);
-        } else if (x >= -.025 && x <= 0.025) {
+        } else if (x >= -.03 && x <= 0.03) {
             columns[4].push_back(tags[i]);
-        } else if (x >= 0.026 && x <= 0.086) {
+        } else if (x >= 0.031 && x <= 0.091) {
             columns[5].push_back(tags[i]);
-        } else if (x >= 0.087 && x <= 0.147) {
+        } else if (x >= 0.092 && x <= 0.162) {
             columns[6].push_back(tags[i]);
-        } else if (x >= 0.148 && x <= 0.208) {
+        } else if (x >= 0.163 && x <= 0.223) {
             columns[7].push_back(tags[i]);
         } else if (x >= 0.209 && x <= .269) {
             columns[8].push_back(tags[i]);
