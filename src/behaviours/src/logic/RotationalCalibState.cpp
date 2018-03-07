@@ -4,6 +4,7 @@ void RotationalCalibState::action( )
 {
     forceTransition( internalTransition() );
     internalAction();
+    std::cout << "Current Rotational State: " << this->internal_state << std::endl;
 }
 
 void RotationalCalibState::onEnter( std::string prev_state )
@@ -17,7 +18,6 @@ void RotationalCalibState::onExit( std::string next_state )
 {
     this->inputs->calibration.rotational_min = this->current_PWM;
     this->inputs->controller.changeRotationalMin( this->current_PWM );
-    std::cout << "Rotational Calibration: " << this->current_PWM << std::endl;
 }
 
 std::string RotationalCalibState::transition()
