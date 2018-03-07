@@ -1,4 +1,4 @@
-#include "PickUpState.h"
+#include "DropOffState.h"
 #include "../Gripper.h"
 
 void DropOffState::action()
@@ -77,11 +77,11 @@ void DropOffState::internalAction()
 
             t_params.yaw_deccel = 0.10;
             t_params.yaw_goal = 0.0;
-            t_params.yaw_max_output = (80/3)
+            t_params.yaw_max_output = (80/3);
 
             t_params.type = CLOSEST;
 
-            this->approach = new ApproachTagWaypoint( this->inputs, params );
+            this->approach = new ApproachTagWaypoint( this->inputs, t_params );
             this->outputs->current_waypoint = this->approach;
             break;
         }
