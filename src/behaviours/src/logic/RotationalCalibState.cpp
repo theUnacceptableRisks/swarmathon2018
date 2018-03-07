@@ -43,12 +43,8 @@ RCState RotationalCalibState::internalTransition()
             break;
         }
         case ROTATIONALCALIB_APPROACH_HOME:
-            if( this->inputs->examiner.columns[4].size() > 0 )
-                std::cout << "Back tag is distance: " << TagUtilities::getDistance( this->inputs->examiner.columns[4][0] ) << std::endl;
-
             if( TagUtilities::hasTag( &this->inputs->tags, 256 ) &&
-                this->inputs->examiner.columns[4].size() > 0 &&
-                TagUtilities::getDistance( this->inputs->examiner.columns[4][0] ) < .40 )
+                TagUtilities::getDistance( this->inputs->tags.back() ) < .40 )
             {
                 transition_to = ROTATIONALCALIB_ATTEMPT_ROTATION;
             }
