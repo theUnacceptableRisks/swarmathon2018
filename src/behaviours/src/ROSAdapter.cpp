@@ -40,6 +40,7 @@
 #include "logic/FindHomeState.h"
 #include "logic/MotorCalibState.h"
 #include "logic/RotationalCalibState.h"
+#include "logic/DropOffState.h"
 #include "Gripper.h"
 #include "MotorController.h"
 #include "TagUtilities.h"
@@ -218,6 +219,7 @@ LogicMachine logic_machine( &iotable );
     FindHomeState findhome_state( &iotable );
     MotorCalibState motorcalib_state( &iotable );
     RotationalCalibState rotationalcalib_state( &iotable );
+    DropOffState dropoff_state( &iotable );
 
 void setupLogicMachine()
 {
@@ -228,6 +230,7 @@ void setupLogicMachine()
     logic_machine.addState( search_state.getIdentifier(), dynamic_cast<State *>(&search_state) );
     logic_machine.addState( pickup_state.getIdentifier(), dynamic_cast<State *>(&pickup_state) );
     logic_machine.addState( findhome_state.getIdentifier(), dynamic_cast<State *>(&findhome_state) );
+    logic_machine.addState( dropoff_state.getIdentifier(), dynamic_cast<State *>(&dropoff_state) );
     return;
 }
 
