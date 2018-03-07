@@ -78,7 +78,10 @@ int currentMode = 0;
 const float state_machines_loop = 0.1; // time between state machines function call
 const float status_publish_interval = 1;
 const float heartbeat_publish_interval = 2;
+const float info_publish_interval = 1;
 const float waypoint_tolerance = 0.1; //10 cm tolerance.
+
+bool publish_info = false;
 
 float prevWrist = 0;
 float prevFinger = 0;
@@ -140,6 +143,7 @@ ros::Publisher drive_control_publish;
 ros::Publisher heartbeat_publisher;
 ros::Publisher tag_x;
 ros::Publisher rover_info_publisher;
+ros::Publisher rover_info_timer_publisher;
 
 void setupPublishers( ros::NodeHandle &ros_handle, string published_name )
 {
@@ -150,6 +154,7 @@ void setupPublishers( ros::NodeHandle &ros_handle, string published_name )
     info_log_publisher = ros_handle.advertise<std_msgs::String>("/infoLog", 1, true);
     drive_control_publish = ros_handle.advertise<geometry_msgs::Twist>((published_name + "/driveControl"), 10);
     heartbeat_publisher = ros_handle.advertise<std_msgs::String>((published_name + "/behaviour/heartbeat"), 1, true);
+    rover_info_timer_publisher = ros_handle.advertise<std_msgs::String>((published_name + "/infoTimer"), 1, true);
     tag_x = ros_handle.advertise<std_msgs::String>((published_name + "/tag_x"), 1, true );
     rover_info_publisher = ros_handle.advertise<swarmie_msgs::InfoMessage>(("roverInfo"), 1, true);
 
@@ -205,6 +210,7 @@ void setupSubscribers( ros::NodeHandle &ros_handle, string published_name )
 ros::Timer state_machine_timer;
 ros::Timer publish_status_timer;
 ros::Timer publish_heartbeat_timer;
+ros::Timer publish_info_timer;
 
 /***********************
  * ROS Timer Functions *
@@ -212,12 +218,15 @@ ros::Timer publish_heartbeat_timer;
 void runStateMachines(const ros::TimerEvent&);
 void publishStatusTimerEventHandler(const ros::TimerEvent& event);
 void publishHeartBeatTimerEventHandler(const ros::TimerEvent& event);
+void publishRoverInfoTimerEventHandler(const ros::TimerEvent& event);
 
 void setupTimerCallbacks( ros::NodeHandle &ros_handle )
 {
     publish_status_timer = ros_handle.createTimer(ros::Duration(status_publish_interval), publishStatusTimerEventHandler);
     state_machine_timer = ros_handle.createTimer(ros::Duration(state_machines_loop), runStateMachines);
     publish_heartbeat_timer = ros_handle.createTimer(ros::Duration(heartbeat_publish_interval), publishHeartBeatTimerEventHandler);
+    publish_info_timer = ros_handle.createTimer(ros::Duration(info_publish_interval), publishRoverInfoTimerEventHandler);
+
 }
 
 /******************
@@ -420,53 +429,38 @@ void sendGripperPosition( Gripper::Position pos )
  *************************/
 
 void roverInfoHandler(const swarmie_msgs::InfoMessage& message){
+        roverInfo messageInfo;
+        messageInfo.name = message.name;
+        messageInfo.number_of_cubes = message.number_of_cubes;
+        messageInfo.number_of_base_tags = message.number_of_base_tags;
+        messageInfo.x = message.x;
+        messageInfo.y = message.y;
+        messageInfo.state = message.state;
+        messageInfo.sonar_left = message.sonar_left;
+        messageInfo.sonar_right = message.sonar_right;
+        messageInfo.sonar_center = message.sonar_center;
 
-    roverInfo messageInfo;
-    messageInfo.name = message.name;
-    messageInfo.number_of_cubes = message.number_of_cubes;
-    messageInfo.number_of_base_tags = message.number_of_base_tags;
-    messageInfo.x = message.x;
-    messageInfo.y = message.y;
-    messageInfo.state = message.state;
-    messageInfo.sonar_left = message.sonar_left;
-    messageInfo.sonar_right = message.sonar_right;
-    messageInfo.sonar_center = message.sonar_center;
-
-    bool roverExists = false;
-    for(int i = 0; i < infoVector.size(); i++){
-        if(message.name == roverName && roverName == infoVector.at(i).name){
-            infoVector.at(i) = messageInfo;
-            roverExists == true;
+        bool roverExists = false;
+        for(int i = 0; i < infoVector.size(); i++){
+            if(message.name == roverName && roverName == infoVector.at(i).name){
+                infoVector.at(i) = messageInfo;
+                roverExists == true;
+            }
+            cout << "name: " << infoVector.at(i).name << endl;
+            cout << "state: " << infoVector.at(i).state << endl;
+            cout << "sonar left: " << infoVector.at(i).sonar_left << endl;
+            cout << "sonar center: " << infoVector.at(i).sonar_center << endl;
+            cout << "sonar right:" << infoVector.at(i).sonar_right << endl;
+            cout << "x" << infoVector.at(i).x << endl;
+            cout << "y" << infoVector.at(i).y << endl;
+            cout << "numCubes" << infoVector.at(i).number_of_cubes << endl;
+            cout << "numBaseTags" << infoVector.at(i).number_of_base_tags << endl;
         }
-        cout << "name: " << infoVector.at(i).name << endl;
-        cout << "state: " << infoVector.at(i).state << endl;
-        cout << "sonar left: " << infoVector.at(i).sonar_left << endl;
-        cout << "sonar center: " << infoVector.at(i).sonar_center << endl;
-        cout << "sonar right:" << infoVector.at(i).sonar_right << endl;
-        cout << "x" << infoVector.at(i).x << endl;
-        cout << "y" << infoVector.at(i).y << endl;
-        cout << "numCubes" << infoVector.at(i).number_of_cubes << endl;
-        cout << "numBaseTags" << infoVector.at(i).number_of_base_tags << endl;
-    }
-    if(!roverExists){
-        infoVector.push_back(messageInfo);
-    }
-
-
-    swarmie_msgs::InfoMessage infoMsg;
-    infoMsg.name = roverName;
-    infoMsg.x = inputs.odom_accel_gps.x;
-    infoMsg.y = inputs.odom_accel_gps.y;
-    infoMsg.sonar_left = inputs.us_left;
-    infoMsg.sonar_right = inputs.us_right;
-    infoMsg.sonar_center = inputs.us_center;
-    infoMsg.state = logic_machine.getCurrentIdentifier();
-    infoMsg.number_of_cubes = TagUtilities::numberOfTags(&inputs.tags, 0);
-    infoMsg.number_of_base_tags = TagUtilities::numberOfTags(&inputs.tags, 256);
-    rover_info_publisher.publish(infoMsg);
-
-
+        if(!roverExists){
+            infoVector.push_back(messageInfo);
+        }
 }
+    
 
 void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& message)
 {
@@ -564,6 +558,8 @@ void odomAccelAndGPSHandler(const nav_msgs::Odometry::ConstPtr& message)
 void joyCmdHandler(const sensor_msgs::Joy::ConstPtr& message)
 {
     const int max_motor_cmd = 255;
+  std_msgs::String msg;
+  msg.data = "";
 
     if (currentMode == 0 || currentMode == 1)
     {
@@ -605,6 +601,29 @@ void publishHeartBeatTimerEventHandler(const ros::TimerEvent&)
   std_msgs::String msg;
   msg.data = "";
   heartbeat_publisher.publish(msg);
+}
+void publishRoverInfoTimerEventHandler(const ros::TimerEvent&)
+{
+  std_msgs::String msg;
+  msg.data = "trial";
+  rover_info_timer_publisher.publish(msg);
+
+
+
+
+        swarmie_msgs::InfoMessage infoMsg;
+        infoMsg.name = roverName;
+        infoMsg.x = inputs.odom_accel_gps.x;
+        infoMsg.y = inputs.odom_accel_gps.y;
+        infoMsg.sonar_left = inputs.us_left;
+        infoMsg.sonar_right = inputs.us_right;
+        infoMsg.sonar_center = inputs.us_center;
+        infoMsg.state = logic_machine.getCurrentIdentifier();
+        infoMsg.number_of_cubes = TagUtilities::numberOfTags(&inputs.tags, 0);
+        infoMsg.number_of_base_tags = TagUtilities::numberOfTags(&inputs.tags, 256);
+        rover_info_publisher.publish(infoMsg);
+
+  publish_info = true;
 }
 
 long int getROSTimeInMilliSecs()
