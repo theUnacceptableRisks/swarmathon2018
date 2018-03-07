@@ -29,6 +29,8 @@ std::string DropOffState::transition()
         default:break;
         case DROPOFF_COMPLETE:
             transition_to = "search_state";
+        case DROPOFF_FAIL:
+            transition_to = "findhome_state";
     }
 
     return transition_to;
