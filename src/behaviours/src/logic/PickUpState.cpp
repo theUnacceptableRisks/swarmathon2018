@@ -195,6 +195,7 @@ void PickUpState::internalAction()
         case PICKUP_FINAL_CAMERA_DRIVE:
             outputs->gripper_position = Gripper::DOWN_OPEN;
             this->prev_distance = TagUtilities::getDistance( this->inputs->tags.back() );
+            std::cout << "Prev Distance: " << prev_distance << std::endl;
             break;
         case PICKUP_FINAL_APPROACH:
             outputs->gripper_position = Gripper::DOWN_OPEN;
@@ -251,7 +252,7 @@ void PickUpState::forceTransition( PUState transition_to )
                 /* on Enter */
                 LinearParams l_params;
 
-                l_params.distance = 0.1;
+                l_params.distance = 0.12;
                 l_params.deccel_point = 0;
                 l_params.max_vel = 5;
 
