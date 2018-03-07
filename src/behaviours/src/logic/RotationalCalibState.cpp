@@ -89,7 +89,12 @@ void RotationalCalibState::internalAction()
         case ROTATIONALCALIB_CHECK:
         {
             if( fabs( this->inputs->tags.back().getPositionX() - this->prev_x ) > MIN_ROT_DISTANCE )
+            {
+                std::cout << "Closest:  " << this->inputs->tags.back().getPositionX() << std::endl;
+                std::cout << "Prev_X:   " << this->prev_x << std::endl;
+                std::cout << "Fabs Sub: " << fabs( this->inputs->tags.back().getPositionX() - this->prev_x ) << std::endl; 
                 found_optimal = true;
+            }
             else
                 found_optimal = false;
             break;
