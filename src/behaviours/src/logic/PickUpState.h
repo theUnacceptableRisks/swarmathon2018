@@ -4,6 +4,7 @@
 #include "../state_machine/State.h"
 #include "../waypoints/ApproachTagWaypoint.h"
 #include "../waypoints/LinearWaypoint.h"
+#include "../waypoints/RawOutputWaypoint.h"
 #include "LogicTypes.h"
 
 #define MAX_ATTEMPTS 20
@@ -18,6 +19,7 @@ typedef enum
     PICKUP_INIT,
     PICKUP_COMPLETE_FAILURE,
     PICKUP_APPROACH,
+    PICKUP_FINAL_CAMERA_DRIVE,
     PICKUP_FINAL_APPROACH,
     PICKUP_CLAW_CLOSE,
     PICKUP_CLAW_UP,
@@ -43,6 +45,7 @@ class PickUpState : public State
 
         ApproachTagWaypoint *approach;
         LinearWaypoint *linear;
+        RawOutputWaypoint *raw;
 
         double timer;
 

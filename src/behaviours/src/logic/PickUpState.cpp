@@ -82,14 +82,14 @@ PUState PickUpState::internalTransition()
                 delete this->approach;
                 this->approach = 0;
 
-                transition_to = PICKUP_FINAL_APPROACH;
+                transition_to = PICKUP_FINAL_CAMERA_DRIVE;
             }
             else if( attempts > MAX_ATTEMPTS )
             {
                 transition_to = PICKUP_COMPLETE_FAILURE;
             }
             break;
-        case PICKUP_FINAL_APPROACH:
+        case PICKUP_FINAL_CAMERA_DRIVE:
             if( linear && linear->hasArrived() )
             {
                 outputs->current_waypoint = 0;
@@ -104,10 +104,18 @@ PUState PickUpState::internalTransition()
                 delete this->linear;
                 this->linear = 0;
 
-                transition_to = PICKUP_CLAW_CLOSE;
+                transition_to = PICKUP_FINAL_APPROACH;
+            }
+            break;
+        case PICKUP_FINAL_APPROACH:
+            if( this->raw && this->raw->hasArrived() )
+            {
+                outputs->current_waypoint = 0;
+                delete this->raw;
+                this->raw = 0;
+
                 this->timer = this->inputs->time.toSec();
             }
-
             break;
         case PICKUP_CLAW_CLOSE:
             if( ( this->inputs->time.toSec() - this->timer ) >= CLOSE_TIME )
@@ -184,9 +192,12 @@ void PickUpState::internalAction()
             else
                 this->attempts++;
             break;
-        case PICKUP_FINAL_APPROACH:
+        case PICKUP_FINAL_CAMERA_DRIVE:
             outputs->gripper_position = Gripper::DOWN_OPEN;
             this->prev_distance = TagUtilities::getDistance( this->inputs->tags.back() );
+            break;
+        case PICKUP_FINAL_APPROACH:
+            outputs->gripper_position = Gripper::DOWN_OPEN;
             break;
         case PICKUP_CLAW_CLOSE:
             outputs->gripper_position = Gripper::DOWN_CLOSED;
@@ -230,8 +241,13 @@ void PickUpState::forceTransition( PUState transition_to )
         switch( internal_state )
         {
             default: break;
-            case PICKUP_FINAL_APPROACH:
+            case PICKUP_FINAL_CAMERA_DRIVE:
             {
+                if( this->linear )
+                {
+                    delete this->linear;
+                    this->linear = 0;
+                }
                 /* on Enter */
                 LinearParams l_params;
 
@@ -244,9 +260,31 @@ void PickUpState::forceTransition( PUState transition_to )
                 this->prev_distance = TagUtilities::getDistance( this->inputs->tags.back() );
                 break;
             }
+            case PICKUP_FINAL_APPROACH:
+            {
+                if( this->raw )
+                {
+                    delete this->raw;
+                    this->raw = 0;
+                }
+                RawOutputParams r_params;
+
+                r_params.left_output = this->inputs->calibration.motor_min + 5;
+                r_params.right_output = this->inputs->calibration.motor_min + 5;
+                r_params.duration = 0.2;
+
+                this->raw = new RawOutputWaypoint( this->inputs, r_params );
+                this->outputs->current_waypoint = this->linear;
+                break;
+            }
             case PICKUP_FAIL:
             {
                 /* on Enter */
+                if( this->linear )
+                {
+                    delete this->linear;
+                    this->linear = 0;
+                }
                 this->num_tries++;
 
                 LinearParams l_params;
