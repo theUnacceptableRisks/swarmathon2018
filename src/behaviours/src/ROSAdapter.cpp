@@ -96,6 +96,20 @@ std_msgs::String msg;
 
 string roverName = "";
 
+struct roverInfo {
+    int id;
+    string name;
+    float x;
+    float y;
+    float sonar_left;
+    float sonar_right;
+    float sonar_center;
+    string state;
+    int number_of_cubes;
+    int number_of_base_tags;
+};
+vector<roverInfo> infoVector;
+
 char host[128];
 char prev_state_machine[128];
 // records time for delays in sequanced actions, 1 second resolution.
@@ -408,7 +422,6 @@ void sendGripperPosition( Gripper::Position pos )
 void roverInfoHandler(const swarmie_msgs::InfoMessage& message){
 
     roverInfo messageInfo;
-    messageInfo.id = message.id;
     messageInfo.name = message.name;
     messageInfo.number_of_cubes = message.number_of_cubes;
     messageInfo.number_of_base_tags = message.number_of_base_tags;
