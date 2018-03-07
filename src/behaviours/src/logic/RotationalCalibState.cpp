@@ -5,8 +5,6 @@ void RotationalCalibState::action( )
     forceTransition( internalTransition() );
     internalAction();
     std::cout << "Current Rotational State: " << this->internal_state << std::endl;
-    if( this->inputs->tags.size() > 0 )
-        std::cout << "Current Tag's X: " << this->inputs->tags.back().getPositionX() << std::endl;
 }
 
 void RotationalCalibState::onEnter( std::string prev_state )
