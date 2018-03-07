@@ -44,7 +44,7 @@ RCState RotationalCalibState::internalTransition()
             break;
         }
         case ROTATIONALCALIB_APPROACH_HOME:
-            if( TagUtilities::hasTag( &this->inputs->tags, 256 ) && this->inputs->tags.size() > 4 )
+            if( TagUtilities::hasTag( &this->inputs->tags, 256 ) && this->inputs->tags.size() > 4 && TagUtilities::getDistance( this->inputs->tags.back() ) < .26 )
                 transition_to = ROTATIONALCALIB_ATTEMPT_ROTATION;
             break;
         case ROTATIONALCALIB_ATTEMPT_ROTATION:
@@ -56,6 +56,7 @@ RCState RotationalCalibState::internalTransition()
 
                 transition_to = ROTATIONALCALIB_CHECK;
             }
+            break;
         case ROTATIONALCALIB_CHECK:
             if( found_optimal )
                 transition_to = ROTATIONALCALIB_COMPLETE;
@@ -132,8 +133,6 @@ void RotationalCalibState::forceTransition( RCState transition_to )
             }
             case ROTATIONALCALIB_ATTEMPT_ROTATION:
             {
-                prev_x = this->inputs->tags.back().getPositionX();
-
                 RawOutputParams params;
 
                 this->current_PWM++;
@@ -159,7 +158,7 @@ void RotationalCalibState::forceTransition( RCState transition_to )
                 this->waypoint = new RawOutputWaypoint( this->inputs, params );
                 this->outputs->current_waypoint = dynamic_cast<Waypoint*>( this->waypoint );
 
-                prev_x = this->inputs->raw_odom.x;
+                prev_x = this->inputs->tags.back().getPositionX();
                 break;
             }
         }
