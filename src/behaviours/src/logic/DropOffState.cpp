@@ -85,9 +85,10 @@ void DropOffState::internalAction()
 
                 t_params.yaw_deccel = 0.10;
                 t_params.yaw_goal = 0.0;
-                t_params.yaw_max_output = (80/3);
+                t_params.yaw_max_output = 1;
 
                 t_params.type = CLOSEST;
+                t_params.skid_rotate_threshold = 0.02;
 
                 this->approach = new ApproachTagWaypoint( this->inputs, t_params );
                 this->outputs->current_waypoint = this->approach;
