@@ -1,31 +1,28 @@
-#ifndef zz_h
-#define findhome_h
+#ifndef obstavoid_h
+#define obstavoid_h
 
 #include "../state_machine/State.h"
 #include "LogicMachine.h"
 
-#define GROWTH_CONSTANT 0.5
 
 typedef enum
 {
-    FINDHOME_INIT,
-    FINDHOME_GOHOME,
-    FINDHOME_LOST,
-    FINDHOME_COMPLETE,
-    FINDHOME_RESET
-} FHState;
+    AVOID_INIT,
+    AVOID_FOLLOW,
+    AVOID_LOST
+} AvoidState;
 
-class FindHomeState : public State
+class ObstAvoidState : public State
 {
     public:
-        FindHomeState( IOTable *io ) : State( "findhome_state" ), inputs(io->inputs), outputs(io->outputs), internal_state(FINDHOME_INIT) {}
+        ObstAvoidState( IOTable *io ) : State( "obstavoid_state" ), inputs(io->inputs), outputs(io->outputs), internal_state(AVOID_INIT) {}
         virtual void action( void );
         virtual void onEnter( std::string prev_state );
         virtual void onExit( std::string next_state );
         virtual std::string transition();
 
     private:
-        FHState internalTransition();
+        AvoidState internalTransition();
         void internalAction();
         void forceTransition( FHState transition_to );
 
