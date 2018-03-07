@@ -91,17 +91,6 @@ float Tag::getOrientationX() const {
 }
 
 float Tag::getOrientationY() const {
-<<<<<<< HEAD
-  return orientation.R_component_2();
-}
-
-float Tag::getOrientationZ() const {
-  return orientation.R_component_3();
-}
-
-float Tag::getOrientationW() const {
-  return orientation.R_component_4();
-=======
 	return orientation.R_component_2();
 }
 
@@ -111,7 +100,6 @@ float Tag::getOrientationZ() const {
 
 float Tag::getOrientationW() const {
 	return orientation.R_component_4();
->>>>>>> 5fce3fd0decefe81d63c9d6920a82f1d998ba6da
 }
 
 void Tag::setPositionX(float x) {
