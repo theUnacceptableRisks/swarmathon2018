@@ -40,20 +40,27 @@ RCState RotationalCalibState::internalTransition()
         case ROTATIONALCALIB_INIT:
         {
             if( current_PWM != 0 )
-                transition_to = ROTATIONALCALIB_DRIVE;
+                transition_to = ROTATIONALCALIB_APPROACH_HOME;
             break;
         }
-        case ROTATIONALCALIB_DRIVE:
-        {
-            if( waypoint && waypoint->hasArrived() )
+        case ROTATIONALCALIB_APPROACH_HOME:
+            if( TagUtilities::hasTag( &this->inputs->tags, 256 ) && this->inputs->tags.size() > 4 )
+                transition_to = ROTATIONALCALIB_ATTEMPT_ROTATION;
+            break;
+        case ROTATIONALCALIB_ATTEMPT_ROTATION:
+            if( this->waypoint && this->waypoint->hasArrived() )
+            {
+                this->outputs->current_waypoint = 0;
+                delete this->waypoint;
+                this->waypoint = 0;
+
                 transition_to = ROTATIONALCALIB_CHECK;
-            break;
-        }
+            }
         case ROTATIONALCALIB_CHECK:
             if( found_optimal )
                 transition_to = ROTATIONALCALIB_COMPLETE;
             else
-                transition_to = ROTATIONALCALIB_DRIVE;
+                transition_to = ROTATIONALCALIB_ATTEMPT_ROTATION;
             break;
         case ROTATIONALCALIB_COMPLETE:
             break;
@@ -70,11 +77,13 @@ void RotationalCalibState::internalAction()
         case ROTATIONALCALIB_INIT:
             this->current_PWM = this->inputs->calibration.rotational_min;
             break;
-        case ROTATIONALCALIB_DRIVE:
+        case ROTATIONALCALIB_APPROACH_HOME:
+            break;
+        case ROTATIONALCALIB_ATTEMPT_ROTATION:
             break;
         case ROTATIONALCALIB_CHECK:
         {
-            if( fabs( this->inputs->raw_odom.x - this->prev_x ) > MIN_ROT_DISTANCE )
+            if( fabs( this->inputs->tags.back().getPositionX() - this->prev_x ) > MIN_ROT_DISTANCE )
                 found_optimal = true;
             else
                 found_optimal = false;
@@ -104,13 +113,42 @@ void RotationalCalibState::forceTransition( RCState transition_to )
         switch( internal_state )
         {
             default: break;
-            case ROTATIONALCALIB_DRIVE:
+            case ROTATIONALCALIB_APPROACH_HOME:
             {
                 RawOutputParams params;
 
+                params.left_output = this->inputs->calibration.motor_min + 5;
+                params.right_output = this->inputs->calibration.motor_min + 5;
+
+                if( this->waypoint )
+                {
+                    delete this->waypoint;
+                    this->waypoint = 0;
+                }
+
+                this->waypoint = new RawOutputWaypoint( this->inputs, params );
+                this->outputs->current_waypoint = dynamic_cast<Waypoint*>( this->waypoint );
+                break;
+            }
+            case ROTATIONALCALIB_ATTEMPT_ROTATION:
+            {
+                prev_x = this->inputs->tags.back().getPositionX();
+
+                RawOutputParams params;
+
                 this->current_PWM++;
-                params.left_output = (-1)*this->current_PWM;
-                params.right_output = this->current_PWM;
+                if( rot_direction == 0 )
+                {
+                    params.left_output = (-1)*this->current_PWM;
+                    params.right_output = this->current_PWM;
+                    rot_direction = 1;
+                }
+                else
+                {
+                    params.left_output = this->current_PWM;
+                    params.right_output = (-1)*this->current_PWM;
+                    rot_direction = 0;
+                }
                 params.duration = CALIB_ROT_DURATION;
 
                 if( this->waypoint )
