@@ -275,7 +275,7 @@ void PickUpState::forceTransition( PUState transition_to )
                 r_params.duration = 0.2;
 
                 this->raw = new RawOutputWaypoint( this->inputs, r_params );
-                this->outputs->current_waypoint = this->linear;
+                this->outputs->current_waypoint = this->raw;
                 break;
             }
             case PICKUP_FAIL:
