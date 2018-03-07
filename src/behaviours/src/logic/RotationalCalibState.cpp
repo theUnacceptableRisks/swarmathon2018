@@ -88,6 +88,7 @@ void RotationalCalibState::internalAction()
         {
             if( this->inputs->examiner.columns[4].size() > 0 )
             {
+                std::cout << "Center 0 now is: " << TagUtilities::getDistance( this->inputs->examiner.columns[4][0] ) << std::endl;
                 if( fabs( TagUtilities::getDistance( this->inputs->examiner.columns[4][0] ) - this->prev_distance ) > MIN_ROT_DISTANCE )
                 {
                     std::cout << "Closest:  " << TagUtilities::getDistance( this->inputs->examiner.columns[4][0] ) << std::endl;
