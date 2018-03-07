@@ -98,7 +98,7 @@ PUState PickUpState::internalTransition()
 
                 transition_to = PICKUP_FAIL;
             }
-            else if( this->inputs->tags.size() == 0 || prev_distance - TagUtilities::getDistance( this->inputs->tags.back() ) > MAX_DISTANCE_CHANGE )
+            else if( this->inputs->tags.size() == 0 || fabs( prev_distance - TagUtilities::getDistance( this->inputs->tags.back() ) ) > MAX_DISTANCE_CHANGE )
             {
                 outputs->current_waypoint = 0;
                 delete this->linear;
