@@ -11,6 +11,7 @@
 #define CLOSE_TIME 1.25
 #define UP_TIME 1.25
 #define CONFIRM_TIME 2.00
+#define MAX_DISTANCE_CHANGE 0.05
 
 typedef enum
 {
@@ -48,6 +49,7 @@ class PickUpState : public State
         LogicInputs *inputs;
         LogicOutputs *outputs;
         PUState internal_state;
+        double prev_distance;
         int attempts;
         int num_tries;
         bool cube_secured;

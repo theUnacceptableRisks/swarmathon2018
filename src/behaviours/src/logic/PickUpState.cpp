@@ -96,9 +96,18 @@ PUState PickUpState::internalTransition()
                 delete this->linear;
                 this->linear = 0;
 
+                transition_to = PICKUP_FAIL;
+            }
+            else if( prev_distance - TagUtilities::getDistance( this->inputs->tags.back() ) > MAX_DISTANCE_CHANGE )
+            {
+                outputs->current_waypoint = 0;
+                delete this->linear;
+                this->linear = 0;
+
                 transition_to = PICKUP_CLAW_CLOSE;
                 this->timer = this->inputs->time.toSec();
             }
+
             break;
         case PICKUP_CLAW_CLOSE:
             if( ( this->inputs->time.toSec() - this->timer ) >= CLOSE_TIME )
@@ -177,6 +186,7 @@ void PickUpState::internalAction()
             break;
         case PICKUP_FINAL_APPROACH:
             outputs->gripper_position = Gripper::DOWN_OPEN;
+            this->prev_distance = TagUtilities::getDistance( this->inputs->tags.back() );
             break;
         case PICKUP_CLAW_CLOSE:
             outputs->gripper_position = Gripper::DOWN_CLOSED;
@@ -225,12 +235,13 @@ void PickUpState::forceTransition( PUState transition_to )
                 /* on Enter */
                 LinearParams l_params;
 
-                l_params.distance = 0.09;
+                l_params.distance = 0.1;
                 l_params.deccel_point = 0;
                 l_params.max_vel = 5;
 
                 this->linear = new LinearWaypoint( this->inputs, l_params );
                 this->outputs->current_waypoint = this->linear;
+                this->prev_distance = TagUtilities::getDistance( this->inputs->tags.back() );
                 break;
             }
             case PICKUP_FAIL:
