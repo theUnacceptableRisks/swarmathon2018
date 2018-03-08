@@ -26,6 +26,8 @@ std::string SearchState::transition()
 
     if( TagUtilities::hasTag( &this->inputs->tags, 0 ) )
         transition_to = "pickup_state";
+    if( this->inputs->us_center < .7 )
+        transition_to = "avoid_state";
 
     return transition_to;
 }
