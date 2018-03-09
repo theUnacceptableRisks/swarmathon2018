@@ -13,6 +13,9 @@ class LogicMachine : public StateMachine
     friend class SearchState;
     friend class PickUpState;
     friend class FindHomeState;
+    friend class AvoidState;
+    friend class AvoidHomeState;
+    friend class AvoidCubeState;
     friend class DropOffState;
     friend class ObstacleAvoidanceState;
     public:

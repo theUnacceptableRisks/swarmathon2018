@@ -41,6 +41,7 @@
 #include "logic/FindHomeState.h"
 #include "logic/AvoidState.h"
 #include "logic/AvoidHomeState.h"
+#include "logic/AvoidCubeState.h"
 #include "logic/MotorCalibState.h"
 #include "logic/RotationalCalibState.h"
 #include "Gripper.h"
@@ -246,6 +247,7 @@ LogicMachine logic_machine( &iotable );
     FindHomeState findhome_state( &iotable );
     AvoidState avoid_state( &iotable );
     AvoidHomeState avoidhome_state( &iotable );
+    AvoidCubeState avoidcube_state( &iotable );
     MotorCalibState motorcalib_state( &iotable );
     RotationalCalibState rotationalcalib_state( &iotable );
 
@@ -260,6 +262,7 @@ void setupLogicMachine()
     logic_machine.addState( findhome_state.getIdentifier(), dynamic_cast<State *>(&findhome_state) );
     logic_machine.addState( avoid_state.getIdentifier(), dynamic_cast<State *>(&avoid_state) );
     logic_machine.addState( avoidhome_state.getIdentifier(), dynamic_cast<State *>(&avoidhome_state) );
+    logic_machine.addState( avoidcube_state.getIdentifier(), dynamic_cast<State *>(&avoidcube_state) );
     return;
 }
 
@@ -369,7 +372,7 @@ void runStateMachines(const ros::TimerEvent&)
          * State Machine Execution *
          ***************************/
         logic_machine.run();
-        std::cout << "current state is..." << logic_machine.getCurrentIdentifier() << std::endl;
+        //std::cout << "current state is..." << logic_machine.getCurrentIdentifier() << std::endl;
 
         /*****************
          * Drive Portion *
@@ -386,8 +389,8 @@ void runStateMachines(const ros::TimerEvent&)
             left = std::get<0>( output );
             right = std::get<1>( output );
 
-            std::cout << "Left is " << left << std::endl;
-            std::cout << "Right is " << right << std::endl;
+            //std::cout << "Left is " << left << std::endl;
+            //std::cout << "Right is " << right << std::endl;
 
             /* TODO: add else messaging */
             sendDriveCommand( left, right );
@@ -455,15 +458,15 @@ void roverInfoHandler(const swarmie_msgs::InfoMessage& message){
                 infoVector.at(i) = messageInfo;
                 roverExists == true;
             }
-            cout << "name: " << infoVector.at(i).name << endl;
-            cout << "state: " << infoVector.at(i).state << endl;
-            cout << "sonar left: " << infoVector.at(i).sonar_left << endl;
-            cout << "sonar center: " << infoVector.at(i).sonar_center << endl;
-            cout << "sonar right:" << infoVector.at(i).sonar_right << endl;
-            cout << "x" << infoVector.at(i).x << endl;
-            cout << "y" << infoVector.at(i).y << endl;
-            cout << "numCubes" << infoVector.at(i).number_of_cubes << endl;
-            cout << "numBaseTags" << infoVector.at(i).number_of_base_tags << endl;
+            //cout << "name: " << infoVector.at(i).name << endl;
+            //cout << "state: " << infoVector.at(i).state << endl;
+            //cout << "sonar left: " << infoVector.at(i).sonar_left << endl;
+            //cout << "sonar center: " << infoVector.at(i).sonar_center << endl;
+            //cout << "sonar right:" << infoVector.at(i).sonar_right << endl;
+            //cout << "x" << infoVector.at(i).x << endl;
+            //cout << "y" << infoVector.at(i).y << endl;
+            //cout << "numCubes" << infoVector.at(i).number_of_cubes << endl;
+            //cout << "numBaseTags" << infoVector.at(i).number_of_base_tags << endl;
         }
         if(!roverExists){
             infoVector.push_back(messageInfo);
