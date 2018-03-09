@@ -25,6 +25,9 @@ void AvoidHomeState::onExit( std::string next_state )
 std::string AvoidHomeState::transition()
 {
     std::string transition_to = getIdentifier();
+    if(wheelRatio >= 4.2){
+        transition_to = previousState;
+    }
     return transition_to;
 }
 
@@ -59,18 +62,19 @@ void AvoidHomeState::internalAction()
         case AVOIDHOME_INIT:
         {
             wheelRatio = 1;
-            params.left_output = -40;
-            params.right_output = 40;
-            params.duration = .7;
+            params.left_output = -65;
+            params.right_output = 65;
+            params.duration = 1.5;
             std::cout << "AVOID INIT" << endl;
             std::cout << "NEAREST US: " << getNearestUS() << endl;
            break;
         }
         case AVOIDHOME_DRIVE:
         {
-            params.left_output = 40 * wheelRatio;
-            params.right_output = 40 * (1/wheelRatio);
-            wheelRatio += 0.02;
+            params.left_output = 60 * wheelRatio;
+            params.right_output = 60 * (1/wheelRatio);
+            wheelRatio += 0.04;
+            wheelRatio = min(wheelRatio, 4.3);
             std::cout << "AVOID DRIVE" << endl;
             std::cout << "NEAREST US: " << getNearestUS() << endl;
             break;

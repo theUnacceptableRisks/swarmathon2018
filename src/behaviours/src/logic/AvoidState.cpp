@@ -26,7 +26,8 @@ std::string AvoidState::transition()
 {
     std::string transition_to = getIdentifier();
 
-    if( (internal_state == AVOID_DRIVE && wheelRatio < 3 && getNearestUS() > 1.5 && (this->inputs->odom_accel_gps.theta > initialTheta || this->inputs->odom_accel_gps.theta < initialTheta - 3.1415926 ))|| wheelRatio > 4)
+    //if( (internal_state == AVOID_DRIVE && wheelRatio < 3 && getNearestUS() > 1.5 && (this->inputs->odom_accel_gps.theta > initialTheta || this->inputs->odom_accel_gps.theta < initialTheta - 3.1415926 ))|| wheelRatio > 4)
+    if(wheelRatio == 4)
         transition_to = previousState;
     return transition_to;
 }
@@ -71,9 +72,10 @@ void AvoidState::internalAction()
         }
         case AVOID_DRIVE:
         {
-            params.left_output = 40 * wheelRatio;
-            params.right_output = 40 * (1/wheelRatio);
-            wheelRatio += 0.02;
+            params.left_output = 60 * wheelRatio;
+            params.right_output = 60 * (1/wheelRatio);
+            wheelRatio += 0.05;
+            wheelRatio = min(wheelRatio, 4.0);
             std::cout << "AVOID DRIVE" << endl;
             std::cout << "NEAREST US: " << getNearestUS() << endl;
             break;
