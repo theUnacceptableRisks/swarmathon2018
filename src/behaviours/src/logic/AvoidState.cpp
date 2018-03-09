@@ -26,7 +26,7 @@ std::string AvoidState::transition()
 {
     std::string transition_to = getIdentifier();
 
-    if( (internal_state == AVOID_DRIVE && wheelRatio < 3 && getNearestUS() > 1.5 && this->inputs->odom_accel_gps.theta > initialTheta )|| wheelRatio > 4)
+    if( (internal_state == AVOID_DRIVE && wheelRatio < 3 && getNearestUS() > 1.5 && (this->inputs->odom_accel_gps.theta > initialTheta || this->inputs->odom_accel_gps.theta < initialTheta - 3.1415926 ))|| wheelRatio > 4)
         transition_to = previousState;
     return transition_to;
 }
