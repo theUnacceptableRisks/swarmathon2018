@@ -13,6 +13,7 @@
 #define UP_TIME 1.25
 #define CONFIRM_TIME 2.00
 #define MAX_DISTANCE_CHANGE 0.02
+#define TAG_DIST_TOLERANCE 0.05
 
 typedef enum
 {
