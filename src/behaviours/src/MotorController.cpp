@@ -22,9 +22,9 @@ std::tuple<int,int> MotorController::generateLinearOutput( MotorParams params )
     }
 
     if( vel_output >= 0 )
-        vel_output += this->min_motor_output;
+        vel_output += this->min_motor_output + LINEAR_BUMP;
     else
-        vel_output -= this->min_motor_output;
+        vel_output -= this->min_motor_output + LINEAR_BUMP;
 
     return std::make_tuple ( vel_output, vel_output );
 }
@@ -55,13 +55,13 @@ std::tuple<int,int> MotorController::generateRotationalOutput( MotorParams param
 
     if( yaw_error <= 0 )
     {
-       left_output = (-1)*( yaw_output + this->min_motor_output );
-       right_output = yaw_output + this->min_motor_output;
+       left_output = (-1)*( yaw_output + this->min_rot_output + ROTATION_BUMP );
+       right_output = yaw_output + this->min_rot_output + ROTATION_BUMP;
     }
     else
     {
-       left_output = yaw_output + this->min_motor_output;
-       right_output = (-1)*( yaw_output + this->min_motor_output );
+       left_output = yaw_output + this->min_rot_output + ROTATION_BUMP;
+       right_output = (-1)*( yaw_output + this->min_rot_output + ROTATION_BUMP );
     }
 
 
@@ -84,14 +84,14 @@ std::tuple<int,int> MotorController::generateSkidOutput( MotorParams params )
     /* remove the min values from the rotational stuff */
 
     if( left_output < 0 )
-        left_output += this->min_motor_output;
+        left_output += this->min_rot_output - SKID_BUMP;
     else
-        left_output -= this->min_motor_output;
+        left_output -= this->min_rot_output - SKID_BUMP;
 
     if( right_output < 0 )
-        right_output += this->min_motor_output;
+        right_output += this->min_rot_output - SKID_BUMP;
     else
-        right_output -= this->min_motor_output;
+        right_output -= this->min_rot_output - SKID_BUMP;
 
 
     /* these can always be addition because backwards skid is unlikely to happen, and if it does, it should sort itself out */
@@ -109,4 +109,14 @@ double MotorController::calcKonstant( int max, double deccel )
 int MotorController::getOutput( double error, double konstant )
 {
     return (int)( error * konstant );
+}
+
+void MotorController::changeMotorMin( int new_min )
+{
+    this->min_motor_output = new_min;
+}
+
+void MotorController::changeRotationalMin( int rot_min )
+{
+   this->min_rot_output = rot_min;
 }

@@ -153,7 +153,7 @@ void PickUpState::internalAction()
 
                 t_params.yaw_deccel = 0.10;
                 t_params.yaw_goal = 0.0;
-                t_params.yaw_max_output = (80/3);
+                t_params.yaw_max_output = 5;
 
                 t_params.type = CLOSEST;
 
@@ -185,9 +185,9 @@ void PickUpState::internalAction()
             outputs->gripper_position = Gripper::UP_CLOSED;
             break;
         case PICKUP_CONFIRM:
-            if( this->inputs->us_center < 0.13 )
-                cube_secured = true;
-            else if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && TagUtilities::getDistance( this->inputs->tags.back() ) < 0.15 )
+  //          if( this->inputs->us_center < 0.13 )
+    //            cube_secured = true;
+            if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && TagUtilities::getDistance( this->inputs->tags.back() ) < 0.15 )
                 cube_secured = true;
             break;
         case PICKUP_COMPLETE:
@@ -225,7 +225,7 @@ void PickUpState::forceTransition( PUState transition_to )
                 /* on Enter */
                 LinearParams l_params;
 
-                l_params.distance = 0.11;
+                l_params.distance = 0.09;
                 l_params.deccel_point = 0;
                 l_params.max_vel = 5;
 

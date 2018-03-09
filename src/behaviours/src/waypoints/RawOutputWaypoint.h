@@ -7,7 +7,7 @@ typedef struct rawoutputparams
 {
     int left_output;
     int right_output;
-    double duration;
+    double duration = 0.;
 } RawOutputParams;
 
 class RawOutputWaypoint : public Waypoint

@@ -46,6 +46,7 @@ find_package(catkin REQUIRED COMPONENTS message_generation)
 add_message_files(
   FILES
   Waypoint.msg
+  InfoMessage.msg
 )
 
 ## Generate services in the 'srv' folder

@@ -1,45 +1,40 @@
 #pragma once
 #include "Tag.h"
 #include <vector>
-#include <utility>      // std::pair, std::make_pair
 
 using namespace std;
 class TagExaminer
 {
 
-
 public:
 	TagExaminer();
-	~TagExaminer();
 
-	enum Turns{
+    enum Turns{
 		LEFT,
 		RIGHT,
 		STRAIGHT,
-		SUCCESS,
-		FAIL
+		CORNER
 	};
-
-	vector<Tag> tags;
-	vector<vector<Tag>> columns;
-	vector< pair<double, double>> ranges;
+	
+	Turns determineTurning();
+	
+    // margin suggests how close tags
+	// have to be to be considered straight
+	const double margin = 0.008;
+	const double minDistance = .25;
+	
+    vector<Tag> tags;
+    vector<vector<Tag>> columns;
 
 	void loadTags(vector<Tag>);
 	void determineRange();
 	void sortColumn(vector<Tag> &);
-	Turns determineTurning();
 	void graph();
 	void clear();
-	double distToTag(Tag);
+	
+	double getDist(Tag);
+    bool isClose(Tag, Tag, double);
 
-    //
-	const double margin = 0.008;
-	const double minDist = 0.20;
-    //
-private:
-	const double colWidth = .06;
-	const double center = 0;
-	const double colMin = -.3;
-	const double colMax = .3;
+    
 
 };

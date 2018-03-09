@@ -14,8 +14,9 @@ typedef struct motor_params
     double yaw_deccel_point = 0.0;
     double yaw_current = 0.0;
     double yaw_goal = 0.0;
-    bool yaw_in_radians = false;
     int yaw_max_output = 0;
+
+    bool yaw_in_radians = false;
 } MotorParams;
 
 typedef enum
@@ -23,18 +24,26 @@ typedef enum
     LINEAR, ROTATE, SKID
 } DriveType;
 
+/* skid steering needs just a little extra */
+#define SKID_BUMP 4
+#define LINEAR_BUMP 1
+#define ROTATION_BUMP 2
+
 class MotorController
 {
     public:
-        MotorController() : min_motor_output(0) {}
-        MotorController( int mmo ) : min_motor_output(mmo) {}
+        MotorController() : min_motor_output(0), min_rot_output(0) {}
+        MotorController( int mmo, int rmo ) : min_motor_output(mmo), min_rot_output(rmo) {}
         std::tuple<int,int> generateLinearOutput( MotorParams params );
         std::tuple<int,int> generateRotationalOutput( MotorParams params );
         std::tuple<int,int> generateSkidOutput( MotorParams params );
+        void changeMotorMin( int new_min );
+        void changeRotationalMin( int rot_min );
     private:
         double calcKonstant( int max, double deccel );
         int getOutput( double error, double konstant );
         int min_motor_output;
+        int min_rot_output;
 };
 
 

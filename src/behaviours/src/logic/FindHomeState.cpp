@@ -96,8 +96,22 @@ void FindHomeState::internalAction()
             break;
         }
         case FINDHOME_GOHOME:
-            break;
         case FINDHOME_LOST:
+            /* both states should cycle through the waypoints */
+            if( waypoints.size() > 0 )
+            {
+                Waypoint *waypoint = waypoints.front();
+                if( waypoint && waypoint->hasArrived() )
+                {
+                    delete waypoints.front();
+                    waypoints.erase( waypoints.begin() );
+                    if( waypoints.size() > 0 )
+                        this->outputs->current_waypoint = waypoints.front();
+                    else
+                        this->outputs->current_waypoint = 0;
+                }
+                break;
+            }
             break;
         case FINDHOME_COMPLETE:
             break;
@@ -158,6 +172,7 @@ void FindHomeState::forceTransition( FHState transition_to )
                     waypoint = new SimpleWaypoint( this->inputs, params );
                     this->waypoints.push_back( (Waypoint *)waypoint );
                 }
+                this->outputs->current_waypoint = waypoints.front();
                 break;
             }
             case FINDHOME_COMPLETE:
@@ -167,6 +182,7 @@ void FindHomeState::forceTransition( FHState transition_to )
                     delete waypoints.front();
                     waypoints.erase( waypoints.begin() );
                 }
+                this->outputs->current_waypoint = 0;
                 break;
             }
         }
