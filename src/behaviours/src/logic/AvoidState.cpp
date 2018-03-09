@@ -11,6 +11,7 @@ void AvoidState::action()
 
 void AvoidState::onEnter( std::string prev_state )
 {
+    previousState = prev_state;
     if( waypoints.size() > 0 )
         outputs->current_waypoint = waypoints.front();
 }
@@ -23,7 +24,10 @@ void AvoidState::onExit( std::string next_state )
 std::string AvoidState::transition()
 {
     std::string transition_to = getIdentifier();
-
+    double angleToWaypoint = atan2f(this->inputs->odom_accel_gps.y - goal_y, this->inputs->odom_accel_gps.x - goal_x);
+    if(angleToWaypoint > 0){
+        transition_to = previousState;
+    }
     return transition_to;
 }
 

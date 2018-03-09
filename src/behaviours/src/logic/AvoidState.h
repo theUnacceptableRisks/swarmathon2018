@@ -22,6 +22,8 @@ class AvoidState : public State
         virtual std::string transition();
     private:
         double wheelRatio = 1;
+        std::string previousState = "";
+        double goal_x, goal_y;
         double getNearestUS ();
         InternalState internalTransition();
         void internalAction();
