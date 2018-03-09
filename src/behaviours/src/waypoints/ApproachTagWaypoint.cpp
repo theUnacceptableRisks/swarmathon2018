@@ -21,7 +21,16 @@ void ApproachTagWaypoint::run()
             /* check the distance */
             double current_distance = TagUtilities::getDistance( current_tag );
 
-            /* is it below or at our goal */
+            if( prev_distance == 0 )
+                prev_distance = current_distance;
+            else
+            {
+                if( prev_distance - current_distance < 0.05 )
+                {
+                    return;
+                }
+            }
+                /* is it below or at our goal */
             if( current_distance <= this->t_params.dist_goal )
                 has_arrived = true;
             else

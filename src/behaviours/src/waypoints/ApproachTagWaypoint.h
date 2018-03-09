@@ -39,10 +39,11 @@ typedef struct tag_params
 class ApproachTagWaypoint : public Waypoint
 {
     public:
-        ApproachTagWaypoint( LogicInputs *i, TagParams tp ) : Waypoint( i ), t_params(tp) {}
+        ApproachTagWaypoint( LogicInputs *i, TagParams tp ) : Waypoint( i ), t_params(tp), prev_distance(0) {}
         virtual void run();
     private:
         TagParams t_params;
+        double prev_distance;
 };
 
 #endif
