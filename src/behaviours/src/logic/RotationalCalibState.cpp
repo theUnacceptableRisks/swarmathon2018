@@ -8,7 +8,7 @@ void RotationalCalibState::action( )
 
 void RotationalCalibState::onEnter( std::string prev_state )
 {
-    this->prev_x = this->inputs->raw_odom.x;
+    this->start_x = this->inputs->raw_odom.x;
     this->current_PWM = 0;
     forceTransition( ROTATIONALCALIB_INIT );
 }
@@ -74,7 +74,7 @@ void RotationalCalibState::internalAction()
             break;
         case ROTATIONALCALIB_CHECK:
         {
-            if( fabs( this->inputs->raw_odom.x - this->prev_x ) > MIN_ROT_DISTANCE )
+            if( fabs( this->inputs->raw_odom.x - this->start_x ) > MIN_ROT_DISTANCE )
                 found_optimal = true;
             else
                 found_optimal = false;
@@ -121,7 +121,6 @@ void RotationalCalibState::forceTransition( RCState transition_to )
                 this->waypoint = new RawOutputWaypoint( this->inputs, params );
                 this->outputs->current_waypoint = dynamic_cast<Waypoint*>( this->waypoint );
 
-                prev_x = this->inputs->raw_odom.x;
                 break;
             }
         }
