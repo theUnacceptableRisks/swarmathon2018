@@ -15,7 +15,9 @@ void MotorCalibState::onEnter( std::string prev_state )
 void MotorCalibState::onExit( std::string next_state )
 {
     this->inputs->calibration.motor_min = this->current_PWM;
+    this->inputs->calibration.rotational_min = this->current_PWM * 3;
     this->inputs->controller.changeMotorMin( this->current_PWM );
+    this->inputs->controller.changeRotationalMin( this->current_PWM );
     std::cout << "Current Calibration: " << this->current_PWM << std::endl;
 }
 
@@ -24,7 +26,7 @@ std::string MotorCalibState::transition()
     std::string transition_to = getIdentifier();
 
     if( internal_state == MOTORCALIB_COMPLETE )
-        transition_to = "rotationalcalib_state";
+        transition_to = "search_state";
 
     return transition_to;
 }
