@@ -40,6 +40,7 @@
 #include "logic/PickUpState.h"
 #include "logic/FindHomeState.h"
 #include "logic/AvoidState.h"
+#include "logic/AvoidHomeState.h"
 #include "logic/MotorCalibState.h"
 #include "logic/RotationalCalibState.h"
 #include "Gripper.h"
@@ -244,6 +245,7 @@ LogicMachine logic_machine( &iotable );
     PickUpState pickup_state( &iotable );
     FindHomeState findhome_state( &iotable );
     AvoidState avoid_state( &iotable );
+    AvoidHomeState avoidhome_state( &iotable );
     MotorCalibState motorcalib_state( &iotable );
     RotationalCalibState rotationalcalib_state( &iotable );
 
@@ -257,6 +259,7 @@ void setupLogicMachine()
     logic_machine.addState( pickup_state.getIdentifier(), dynamic_cast<State *>(&pickup_state) );
     logic_machine.addState( findhome_state.getIdentifier(), dynamic_cast<State *>(&findhome_state) );
     logic_machine.addState( avoid_state.getIdentifier(), dynamic_cast<State *>(&avoid_state) );
+    logic_machine.addState( avoidhome_state.getIdentifier(), dynamic_cast<State *>(&avoidhome_state) );
     return;
 }
 
