@@ -79,15 +79,17 @@ Tag TagUtilities::getClosestTagSane( std::vector<Tag> *tags, int id, double tole
         if( selection_of_tags.size() > 1 )
         {
             Tag curr_selection = selection_of_tags.at(0);
-            double curr_x = fabs( curr_selection.getPositionX() );
+            double curr_diff = 0.023 - curr_selection.getPositionX();
 
             for( int i = 1; i < selection_of_tags.size(); i++ )
             {
                 Tag new_tag = selection_of_tags.at(i);
                 double new_x = new_tag.getPositionX();
-                if( new_x <= curr_x )
+                double diff_new = 0.023 - new_x;
+
+                if( diff_new <= curr_diff )
                 {
-                    curr_x = new_x;
+                    curr_diff = new_x;
                     curr_selection = new_tag;
                 }
             }
