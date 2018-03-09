@@ -446,21 +446,11 @@ void roverInfoHandler(const swarmie_msgs::InfoMessage& message){
                 infoVector.at(i) = messageInfo;
                 roverExists == true;
             }
-            cout << "name: " << infoVector.at(i).name << endl;
-            cout << "state: " << infoVector.at(i).state << endl;
-            cout << "sonar left: " << infoVector.at(i).sonar_left << endl;
-            cout << "sonar center: " << infoVector.at(i).sonar_center << endl;
-            cout << "sonar right:" << infoVector.at(i).sonar_right << endl;
-            cout << "x" << infoVector.at(i).x << endl;
-            cout << "y" << infoVector.at(i).y << endl;
-            cout << "numCubes" << infoVector.at(i).number_of_cubes << endl;
-            cout << "numBaseTags" << infoVector.at(i).number_of_base_tags << endl;
         }
         if(!roverExists){
             infoVector.push_back(messageInfo);
         }
 }
-    
 
 void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& message)
 {
