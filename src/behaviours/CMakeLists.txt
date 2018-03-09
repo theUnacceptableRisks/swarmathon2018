@@ -43,6 +43,7 @@ add_executable(
   src/logic/FindHomeState.cpp
   src/logic/MotorCalibState.cpp
   src/logic/RotationalCalibState.cpp
+  src/logic/DropOffState.cpp
   src/TagExaminer.cpp
 )
 

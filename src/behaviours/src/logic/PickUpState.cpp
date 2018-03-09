@@ -82,22 +82,40 @@ PUState PickUpState::internalTransition()
                 delete this->approach;
                 this->approach = 0;
 
-                transition_to = PICKUP_FINAL_APPROACH;
+                transition_to = PICKUP_FINAL_CAMERA_DRIVE;
             }
             else if( attempts > MAX_ATTEMPTS )
             {
                 transition_to = PICKUP_COMPLETE_FAILURE;
             }
             break;
-        case PICKUP_FINAL_APPROACH:
+        case PICKUP_FINAL_CAMERA_DRIVE:
             if( linear && linear->hasArrived() )
             {
                 outputs->current_waypoint = 0;
                 delete this->linear;
                 this->linear = 0;
 
-                transition_to = PICKUP_CLAW_CLOSE;
+                transition_to = PICKUP_FAIL;
+            }
+            else if( this->inputs->tags.size() == 0 || fabs( prev_distance - TagUtilities::getDistance( this->inputs->tags.back() ) ) > MAX_DISTANCE_CHANGE )
+            {
+                outputs->current_waypoint = 0;
+                delete this->linear;
+                this->linear = 0;
+
+                transition_to = PICKUP_FINAL_APPROACH;
+            }
+            break;
+        case PICKUP_FINAL_APPROACH:
+            if( this->raw && this->raw->hasArrived() )
+            {
+                outputs->current_waypoint = 0;
+                delete this->raw;
+                this->raw = 0;
+
                 this->timer = this->inputs->time.toSec();
+                transition_to = PICKUP_CLAW_CLOSE;
             }
             break;
         case PICKUP_CLAW_CLOSE:
@@ -155,6 +173,7 @@ void PickUpState::internalAction()
                 t_params.yaw_goal = 0.0;
                 t_params.yaw_max_output = 5;
 
+                t_params.skid_rotate_threshold = 0.02;
                 t_params.type = CLOSEST;
 
                 approach = new ApproachTagWaypoint( inputs, t_params );
@@ -174,6 +193,11 @@ void PickUpState::internalAction()
                 this->attempts = 0;
             else
                 this->attempts++;
+            break;
+        case PICKUP_FINAL_CAMERA_DRIVE:
+            outputs->gripper_position = Gripper::DOWN_OPEN;
+            this->prev_distance = TagUtilities::getDistance( this->inputs->tags.back() );
+            std::cout << "Prev Distance: " << prev_distance << std::endl;
             break;
         case PICKUP_FINAL_APPROACH:
             outputs->gripper_position = Gripper::DOWN_OPEN;
@@ -220,22 +244,50 @@ void PickUpState::forceTransition( PUState transition_to )
         switch( internal_state )
         {
             default: break;
-            case PICKUP_FINAL_APPROACH:
+            case PICKUP_FINAL_CAMERA_DRIVE:
             {
+                if( this->linear )
+                {
+                    delete this->linear;
+                    this->linear = 0;
+                }
                 /* on Enter */
                 LinearParams l_params;
 
-                l_params.distance = 0.09;
+                l_params.distance = 0.12;
                 l_params.deccel_point = 0;
                 l_params.max_vel = 5;
 
                 this->linear = new LinearWaypoint( this->inputs, l_params );
                 this->outputs->current_waypoint = this->linear;
+                this->prev_distance = TagUtilities::getDistance( this->inputs->tags.back() );
+                break;
+            }
+            case PICKUP_FINAL_APPROACH:
+            {
+                if( this->raw )
+                {
+                    delete this->raw;
+                    this->raw = 0;
+                }
+                RawOutputParams r_params;
+
+                r_params.left_output = this->inputs->calibration.motor_min + 5;
+                r_params.right_output = this->inputs->calibration.motor_min + 5;
+                r_params.duration = 0.2;
+
+                this->raw = new RawOutputWaypoint( this->inputs, r_params );
+                this->outputs->current_waypoint = this->raw;
                 break;
             }
             case PICKUP_FAIL:
             {
                 /* on Enter */
+                if( this->linear )
+                {
+                    delete this->linear;
+                    this->linear = 0;
+                }
                 this->num_tries++;
 
                 LinearParams l_params;

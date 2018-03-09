@@ -32,6 +32,8 @@ typedef struct tag_params
     int yaw_max_output = 60;
 
     ApproachType type = CLOSEST;
+    double skid_rotate_threshold = 0.05;
+
 } TagParams;
 
 class ApproachTagWaypoint : public Waypoint

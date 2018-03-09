@@ -41,15 +41,10 @@
 #include "logic/FindHomeState.h"
 #include "logic/MotorCalibState.h"
 #include "logic/RotationalCalibState.h"
+#include "logic/DropOffState.h"
 #include "Gripper.h"
 #include "MotorController.h"
 #include "TagUtilities.h"
-
-/***************
- *Tag Examiner *
- ***************/
-
-#include "TagExaminer.h"
 
 // To handle shutdown signals so the node quits
 // properly in response to "rosnode kill"
@@ -90,9 +85,6 @@ float minutesTime = 0;
 float hoursTime = 0;
 
 float drift_tolerance = 0.5; // meters
-
-TagExaminer tagexaminer = TagExaminer();
-
 
 std_msgs::String msg;
 
@@ -251,6 +243,7 @@ LogicMachine logic_machine( &iotable );
     FindHomeState findhome_state( &iotable );
     MotorCalibState motorcalib_state( &iotable );
     RotationalCalibState rotationalcalib_state( &iotable );
+    DropOffState dropoff_state( &iotable );
 
 void setupLogicMachine()
 {
@@ -261,6 +254,7 @@ void setupLogicMachine()
     logic_machine.addState( search_state.getIdentifier(), dynamic_cast<State *>(&search_state) );
     logic_machine.addState( pickup_state.getIdentifier(), dynamic_cast<State *>(&pickup_state) );
     logic_machine.addState( findhome_state.getIdentifier(), dynamic_cast<State *>(&findhome_state) );
+    logic_machine.addState( dropoff_state.getIdentifier(), dynamic_cast<State *>(&dropoff_state) );
     return;
 }
 
@@ -446,21 +440,11 @@ void roverInfoHandler(const swarmie_msgs::InfoMessage& message){
                 infoVector.at(i) = messageInfo;
                 roverExists == true;
             }
-            cout << "name: " << infoVector.at(i).name << endl;
-            cout << "state: " << infoVector.at(i).state << endl;
-            cout << "sonar left: " << infoVector.at(i).sonar_left << endl;
-            cout << "sonar center: " << infoVector.at(i).sonar_center << endl;
-            cout << "sonar right:" << infoVector.at(i).sonar_right << endl;
-            cout << "x" << infoVector.at(i).x << endl;
-            cout << "y" << infoVector.at(i).y << endl;
-            cout << "numCubes" << infoVector.at(i).number_of_cubes << endl;
-            cout << "numBaseTags" << infoVector.at(i).number_of_base_tags << endl;
         }
         if(!roverExists){
             infoVector.push_back(messageInfo);
         }
 }
-    
 
 void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& message)
 {
@@ -472,7 +456,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
     std::stringstream ss;
 
     inputs.tags.clear();
-    //tagexaminer.clear();
+    inputs.examiner.clear();
     if (message->detections.size() > 0)
     {
 
@@ -495,10 +479,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
                                                                   tagPose.pose.orientation.w ) );
             inputs.tags.push_back( loc );
         }
-     //   cout << "Distance: " << TagUtilities::getDistance( inputs.tags.back() ) << std::endl;
-        //tagexaminer.loadTags( inputs.tags );
-	    //tagexaminer.determineTurning();
- 	//cout << "X: " << inputs.tags.back().getPositionX() << std::endl;
+        inputs.examiner.loadTags( inputs.tags );
     }
 }
 

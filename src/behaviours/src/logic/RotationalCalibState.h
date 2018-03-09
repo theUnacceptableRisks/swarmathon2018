@@ -3,15 +3,17 @@
 
 #include "../state_machine/State.h"
 #include "../waypoints/RawOutputWaypoint.h"
+#include "../TagUtilities.h"
 #include "LogicMachine.h"
 
-#define MIN_ROT_DISTANCE 0.005
+#define MIN_ROT_DISTANCE 0.011
 #define CALIB_ROT_DURATION 1
 
 typedef enum
 {
     ROTATIONALCALIB_INIT,
-    ROTATIONALCALIB_DRIVE,
+    ROTATIONALCALIB_APPROACH_HOME,
+    ROTATIONALCALIB_ATTEMPT_ROTATION,
     ROTATIONALCALIB_CHECK,
     ROTATIONALCALIB_COMPLETE
 } RCState;

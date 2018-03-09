@@ -8,16 +8,27 @@ void ApproachTagWaypoint::run()
     {
         if( TagUtilities::hasTag( &inputs->tags, this->t_params.desired_tag) )
         {
-            Tag current_tag = inputs->tags.back();
+            Tag current_tag;
+
+            /* approach the closest tag or the farthest tag */
+            if( t_params.type == CLOSEST )
+                current_tag = inputs->tags.back();
+            else if( t_params.type == FARTHEST )
+                current_tag = inputs->tags.front();
+            else
+                current_tag = inputs->tags.back();
+
+            /* check the distance */
             double current_distance = TagUtilities::getDistance( current_tag );
 
+            /* is it below or at our goal */
             if( current_distance <= this->t_params.dist_goal )
                 has_arrived = true;
             else
             {
                 MotorParams m_params;
 
-                if( fabs( current_tag.getPositionX() ) > 0.05 )
+                if( fabs( current_tag.getPositionX() ) > this->t_params.skid_rotate_threshold )
                 {
                     m_params.yaw_deccel_point = this->t_params.yaw_deccel;
                     m_params.yaw_current = current_tag.getPositionX();
@@ -33,12 +44,7 @@ void ApproachTagWaypoint::run()
                     m_params.dist_goal = this->t_params.dist_goal;
                     m_params.dist_max_output = this->t_params.dist_max_output;
 
-                    m_params.yaw_deccel_point = this->t_params.yaw_deccel;
-                    m_params.yaw_current = current_tag.getPositionX();
-                    m_params.yaw_goal = this->t_params.yaw_goal;
-                    m_params.yaw_max_output = this->t_params.yaw_max_output;
-
-                    leftAndRight = inputs->controller.generateSkidOutput( m_params );
+                    leftAndRight = inputs->controller.generateLinearOutput( m_params );
                 }
                 setOutputLeftPWM( std::get<0>( leftAndRight ) );
                 setOutputRightPWM( std::get<1>( leftAndRight ) );

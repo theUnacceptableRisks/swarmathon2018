@@ -15,7 +15,7 @@ void FindHomeState::onEnter( std::string prev_state )
         forceTransition( FINDHOME_INIT );
         while( this->waypoints.front() )
         {
-            delete waypoints.front();
+            delete this->waypoints.front();
             this->waypoints.erase( waypoints.begin() );
         }
     }
@@ -103,9 +103,9 @@ void FindHomeState::internalAction()
                 Waypoint *waypoint = waypoints.front();
                 if( waypoint && waypoint->hasArrived() )
                 {
-                    delete waypoints.front();
-                    waypoints.erase( waypoints.begin() );
-                    if( waypoints.size() > 0 )
+                    delete waypoint;
+                    this->waypoints.erase( this->waypoints.begin() );
+                    if( this->waypoints.size() > 0 )
                         this->outputs->current_waypoint = waypoints.front();
                     else
                         this->outputs->current_waypoint = 0;
@@ -177,9 +177,9 @@ void FindHomeState::forceTransition( FHState transition_to )
             }
             case FINDHOME_COMPLETE:
             {
-                while( waypoints.front() )
+                while( this->waypoints.size() > 0 )
                 {
-                    delete waypoints.front();
+                    delete this->waypoints.front();
                     waypoints.erase( waypoints.begin() );
                 }
                 this->outputs->current_waypoint = 0;
