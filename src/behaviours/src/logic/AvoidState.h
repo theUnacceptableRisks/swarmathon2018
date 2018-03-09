@@ -23,7 +23,7 @@ class AvoidState : public State
     private:
         double wheelRatio = 1;
         std::string previousState = "";
-        double goal_x, goal_y;
+        double initialTheta = 0;
         double getNearestUS ();
         InternalState internalTransition();
         void internalAction();

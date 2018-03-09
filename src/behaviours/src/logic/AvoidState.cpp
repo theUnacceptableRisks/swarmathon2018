@@ -14,6 +14,7 @@ void AvoidState::onEnter( std::string prev_state )
     previousState = prev_state;
     if( waypoints.size() > 0 )
         outputs->current_waypoint = waypoints.front();
+    initialTheta = this->inputs->odom_accel_gps.theta;
 }
 
 void AvoidState::onExit( std::string next_state )
@@ -24,10 +25,9 @@ void AvoidState::onExit( std::string next_state )
 std::string AvoidState::transition()
 {
     std::string transition_to = getIdentifier();
-    double angleToWaypoint = atan2f(this->inputs->odom_accel_gps.y - goal_y, this->inputs->odom_accel_gps.x - goal_x);
-    if(angleToWaypoint > 0){
+
+    if( (internal_state == AVOID_DRIVE && wheelRatio < 3 && getNearestUS() > 1.5 && this->inputs->odom_accel_gps.theta > initialTheta )|| wheelRatio > 4)
         transition_to = previousState;
-    }
     return transition_to;
 }
 
@@ -64,7 +64,7 @@ void AvoidState::internalAction()
             wheelRatio = 1;
             params.left_output = -40;
             params.right_output = 40;
-            params.duration = .5;
+            params.duration = .7;
             std::cout << "AVOID INIT" << endl;
             std::cout << "NEAREST US: " << getNearestUS() << endl;
            break;
@@ -73,12 +73,15 @@ void AvoidState::internalAction()
         {
             params.left_output = 40 * wheelRatio;
             params.right_output = 40 * (1/wheelRatio);
-            wheelRatio += 0.1;
+            wheelRatio += 0.02;
             std::cout << "AVOID DRIVE" << endl;
             std::cout << "NEAREST US: " << getNearestUS() << endl;
             break;
         }
     }
+    std::cout << "INITIAL THETA: " << initialTheta << endl;
+    std::cout << "CURRENT THETA: " << this->inputs->odom_accel_gps.theta  << endl;
+    std::cout << "WheelRatio: " << wheelRatio << endl;
     waypoint = new RawOutputWaypoint( this->inputs, params );
     this->waypoints.push_back( dynamic_cast<Waypoint*>( waypoint ) );
     this->outputs->current_waypoint = waypoints.front();
