@@ -9,6 +9,7 @@ void RotationalCalibState::action( )
 
 void RotationalCalibState::onEnter( std::string prev_state )
 {
+    this->start_x = this->inputs->raw_odom.x;
     this->current_PWM = 0;
     forceTransition( ROTATIONALCALIB_INIT );
 }
@@ -86,19 +87,10 @@ void RotationalCalibState::internalAction()
             break;
         case ROTATIONALCALIB_CHECK:
         {
-            if( this->inputs->examiner.columns[4].size() > 0 )
-            {
-                std::cout << "Center 0 now is: " << TagUtilities::getDistance( this->inputs->examiner.columns[4][0] ) << std::endl;
-                if( fabs( TagUtilities::getDistance( this->inputs->examiner.columns[4][0] ) - this->prev_distance ) > MIN_ROT_DISTANCE )
-                {
-                    std::cout << "Closest:  " << TagUtilities::getDistance( this->inputs->examiner.columns[4][0] ) << std::endl;
-                    std::cout << "Prev:     " << this->prev_distance << std::endl;
-                    std::cout << "Fabs Sub: " << fabs( TagUtilities::getDistance( this->inputs->examiner.columns[4][0] ) - this->prev_distance ) << std::endl; 
-                    found_optimal = true;
-                }
-                else
-                    found_optimal = false;
-                }
+            if( fabs( this->inputs->raw_odom.x - this->start_x ) > MIN_ROT_DISTANCE )
+                found_optimal = true;
+            else
+                found_optimal = false;
             break;
         }
         case ROTATIONALCALIB_COMPLETE:
@@ -147,18 +139,8 @@ void RotationalCalibState::forceTransition( RCState transition_to )
                 RawOutputParams params;
 
                 this->current_PWM++;
-                if( rot_direction == 0 )
-                {
-                    params.left_output = (-1)*this->current_PWM;
-                    params.right_output = this->current_PWM;
-                    rot_direction = 1;
-                }
-                else
-                {
-                    params.left_output = this->current_PWM;
-                    params.right_output = (-1)*this->current_PWM;
-                    rot_direction = 0;
-                }
+                params.left_output = this->current_PWM;
+                params.right_output = this->current_PWM;
                 params.duration = CALIB_ROT_DURATION;
 
                 if( this->waypoint )
@@ -168,8 +150,6 @@ void RotationalCalibState::forceTransition( RCState transition_to )
                 }
                 this->waypoint = new RawOutputWaypoint( this->inputs, params );
                 this->outputs->current_waypoint = dynamic_cast<Waypoint*>( this->waypoint );
-
-                prev_distance = TagUtilities::getDistance( this->inputs->examiner.columns[4][0] );
                 break;
             }
         }

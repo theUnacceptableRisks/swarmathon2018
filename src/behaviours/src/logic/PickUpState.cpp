@@ -169,9 +169,9 @@ void PickUpState::internalAction()
                 t_params.dist_goal = 0.24;
                 t_params.dist_max_output = 10;
 
-                t_params.yaw_deccel = 0.0;
-                t_params.yaw_goal = 0.023;
-                t_params.yaw_max_output = 1;
+                t_params.yaw_deccel = 0.10;
+                t_params.yaw_goal = 0.0;
+                t_params.yaw_max_output = 5;
 
                 t_params.skid_rotate_threshold = 0.02;
                 t_params.type = CLOSEST;

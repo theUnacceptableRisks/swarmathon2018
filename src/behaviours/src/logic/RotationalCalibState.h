@@ -21,7 +21,7 @@ typedef enum
 class RotationalCalibState : public State
 {
     public:
-        RotationalCalibState( IOTable *io ) : State( "rotationalcalib_state" ), inputs(io->inputs), outputs(io->outputs), internal_state(ROTATIONALCALIB_INIT), current_PWM(0), prev_distance(0), rot_direction(0), found_optimal(false) {}
+        RotationalCalibState( IOTable *io ) : State( "rotationalcalib_state" ), inputs(io->inputs), outputs(io->outputs), internal_state(ROTATIONALCALIB_INIT), current_PWM(0), start_x(0.0), found_optimal(false) {}
         virtual void action( void );
         virtual void onEnter( std::string prev_state );
         virtual void onExit( std::string next_state );
@@ -36,8 +36,7 @@ class RotationalCalibState : public State
         LogicOutputs *outputs;
         RCState internal_state;
 
-        double prev_distance;
-        int rot_direction;
+        double start_x;
         bool found_optimal;
         int current_PWM;
 };

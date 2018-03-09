@@ -6,3 +6,4 @@ devel
 *.swp
 logs
 .catkin_tools
+.vscode*
