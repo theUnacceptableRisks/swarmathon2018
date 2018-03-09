@@ -10,6 +10,7 @@ namespace TagUtilities
     double getDistance( Tag tag );
     double angleToTag( Tag tag );
     int numberOfTags(std::vector<Tag> *tags, int id);
+    Tag getClosestTag( std::vector<Tag> *tags, int id );
 
     //pids specific to tag info
     

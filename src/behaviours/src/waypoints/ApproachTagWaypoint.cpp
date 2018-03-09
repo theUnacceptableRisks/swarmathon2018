@@ -12,11 +12,11 @@ void ApproachTagWaypoint::run()
 
             /* approach the closest tag or the farthest tag */
             if( t_params.type == CLOSEST )
-                current_tag = inputs->tags.back();
+                current_tag = TagUtilities::getClosestTag( &inputs->tags, 0 );
             else if( t_params.type == FARTHEST )
                 current_tag = inputs->tags.front();
             else
-                current_tag = inputs->tags.back();
+                current_tag = TagUtilities::getClosestTag( &inputs->tags, 0 );
 
             /* check the distance */
             double current_distance = TagUtilities::getDistance( current_tag );

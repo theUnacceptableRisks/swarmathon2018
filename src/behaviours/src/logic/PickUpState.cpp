@@ -98,7 +98,7 @@ PUState PickUpState::internalTransition()
 
                 transition_to = PICKUP_FAIL;
             }
-            else if( this->inputs->tags.size() == 0 || fabs( prev_distance - TagUtilities::getDistance( this->inputs->tags.back() ) ) > MAX_DISTANCE_CHANGE )
+            else if( this->inputs->tags.size() == 0 || fabs( prev_distance - TagUtilities::getDistance( TagUtilities::getClosestTag( &this->inputs->tags, 0 ) ) ) > MAX_DISTANCE_CHANGE )
             {
                 outputs->current_waypoint = 0;
                 delete this->linear;
@@ -196,8 +196,8 @@ void PickUpState::internalAction()
             break;
         case PICKUP_FINAL_CAMERA_DRIVE:
             outputs->gripper_position = Gripper::DOWN_OPEN;
-            this->prev_distance = TagUtilities::getDistance( this->inputs->tags.back() );
-            std::cout << "Prev Distance: " << prev_distance << std::endl;
+            if( this->inputs->tags.size() > 0 )
+                this->prev_distance = TagUtilities::getDistance( TagUtilities::getClosestTag( &this->inputs->tags, 0 ) );
             break;
         case PICKUP_FINAL_APPROACH:
             outputs->gripper_position = Gripper::DOWN_OPEN;
@@ -211,7 +211,7 @@ void PickUpState::internalAction()
         case PICKUP_CONFIRM:
   //          if( this->inputs->us_center < 0.13 )
     //            cube_secured = true;
-            if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && TagUtilities::getDistance( this->inputs->tags.back() ) < 0.15 )
+            if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && TagUtilities::getDistance( TagUtilities::getClosestTag( &this->inputs->tags, 0 ) ) < 0.15 )
                 cube_secured = true;
             break;
         case PICKUP_COMPLETE:
@@ -260,7 +260,10 @@ void PickUpState::forceTransition( PUState transition_to )
 
                 this->linear = new LinearWaypoint( this->inputs, l_params );
                 this->outputs->current_waypoint = this->linear;
-                this->prev_distance = TagUtilities::getDistance( this->inputs->tags.back() );
+                if( this->inputs->tags.size() > 0 )
+                    this->prev_distance = TagUtilities::getDistance( TagUtilities::getClosestTag( &this->inputs->tags, 0 ) );
+                else
+                    this->prev_distance = 24.0;
                 break;
             }
             case PICKUP_FINAL_APPROACH:
