@@ -9,7 +9,6 @@ void RotationalCalibState::action( )
 
 void RotationalCalibState::onEnter( std::string prev_state )
 {
-    this->start_x = this->inputs->raw_odom.x;
     this->current_PWM = 0;
     forceTransition( ROTATIONALCALIB_INIT );
 }
@@ -111,6 +110,10 @@ void RotationalCalibState::forceTransition( RCState transition_to )
         switch( prev_state )
         {
             default: break;
+            case ROTATIONALCALIB_APPROACH_HOME:
+                this->start_x = this->inputs->raw_odom.x;
+                break;
+
         }
 
         /* onEnter bits */

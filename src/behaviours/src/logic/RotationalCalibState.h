@@ -6,7 +6,7 @@
 #include "../TagUtilities.h"
 #include "LogicMachine.h"
 
-#define MIN_ROT_DISTANCE 0.02
+#define MIN_ROT_DISTANCE 0.011
 #define CALIB_ROT_DURATION 1
 
 typedef enum
