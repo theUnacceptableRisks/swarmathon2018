@@ -274,7 +274,7 @@ void PickUpState::forceTransition( PUState transition_to )
 
                 r_params.left_output = this->inputs->calibration.motor_min + 5;
                 r_params.right_output = this->inputs->calibration.motor_min + 5;
-                r_params.duration = 0.2;
+                r_params.duration = 0.3;
 
                 this->raw = new RawOutputWaypoint( this->inputs, r_params );
                 this->outputs->current_waypoint = this->raw;
