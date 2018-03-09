@@ -86,7 +86,11 @@ void RotationalCalibState::internalAction()
             break;
         case ROTATIONALCALIB_CHECK:
         {
-            if( fabs( this->inputs->raw_odom.x - this->start_x ) > MIN_ROT_DISTANCE )
+            double difference = fabs( this->inputs->raw_odom.x - this->start_x );
+            std::cout << "raw  : " << this->inputs->raw_odom.x << std::endl;
+            std::cout << "start: " << this->start_x << std::endl;
+            std::cout << difference << std::endl;
+            if( difference > MIN_ROT_DISTANCE )
                 found_optimal = true;
             else
                 found_optimal = false;
