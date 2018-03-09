@@ -459,7 +459,6 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
     inputs.examiner.clear();
     if (message->detections.size() > 0)
     {
-        std::cout << "Iteration" << std::endl;
         for (int i = 0; i < message->detections.size(); i++)
         {
             // Package up the ROS AprilTag data into our own type that does not rely on ROS.
@@ -478,7 +477,6 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
                                                                   tagPose.pose.orientation.z,
                                                                   tagPose.pose.orientation.w ) );
             inputs.tags.push_back( loc );
-            std::cout << TagUtilities::getDistance( loc ) << std::endl;
         }
         inputs.examiner.loadTags( inputs.tags );
     }
