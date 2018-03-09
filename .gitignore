@@ -7,3 +7,5 @@ devel
 logs
 .catkin_tools
 .vscode*
+.idea*
+*cmake-build-debug*
