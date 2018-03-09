@@ -60,3 +60,39 @@ Tag TagUtilities::getClosestTag( std::vector<Tag> *tags, int id )
     return closest_tag;
 }
 
+Tag TagUtilities::getClosestTagSane( std::vector<Tag> *tags, int id, double tolerance )
+{
+    Tag selected_tag = TagUtilities::getClosestTag( tags, id );
+    double distance = TagUtilities::getDistance( selected_tag );
+
+    if( tags->size() > 1 )
+    {
+        std::vector<Tag> selection_of_tags;
+        for( int i = 0; i < tags->size(); i++ )
+        {
+            Tag current_tag = tags->at(i);
+            double current_distance = TagUtilities::getDistance( current_tag );
+
+            if( current_distance - distance < tolerance )
+                selection_of_tags.push_back( current_tag );
+        }
+        if( selection_of_tags.size() > 1 )
+        {
+            Tag curr_selection = selection_of_tags.at(0);
+            double curr_x = fabs( curr_selection.getPositionX() );
+
+            for( int i = 1; i < selection_of_tags.size(); i++ )
+            {
+                Tag new_tag = selection_of_tags.at(i);
+                double new_x = new_tag.getPositionX();
+                if( new_x <= curr_x )
+                {
+                    curr_x = new_x;
+                    curr_selection = new_tag;
+                }
+            }
+            selected_tag = curr_selection;
+        }
+    }
+    return selected_tag;
+}
