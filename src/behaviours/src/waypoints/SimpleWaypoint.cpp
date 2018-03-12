@@ -51,7 +51,6 @@ void SimpleWaypoint::internalAction()
 
             setOutputLeftPWM( (-1)*output );
             setOutputRightPWM( output );
-            std::cout << "rotational state" << std::endl;
             break;
         }
         case SIMPLE_SKID:
@@ -75,7 +74,6 @@ void SimpleWaypoint::internalAction()
 
             setOutputLeftPWM( linear_output - rotational_output );
             setOutputRightPWM( linear_output + rotational_output );
-            std::cout << "skid state" << std::endl;
             break;
         }
     }
