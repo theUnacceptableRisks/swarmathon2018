@@ -25,6 +25,7 @@ include_directories(
 add_executable(
   behaviours
   src/Tag.cpp
+  src/Cube.cpp
   src/ROSAdapter.cpp
   src/PID.cpp
   src/Gripper.cpp
