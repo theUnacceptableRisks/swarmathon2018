@@ -7,6 +7,7 @@
 #include "../Gripper.h"
 #include "../MotorController.h"
 #include "../TagExaminer.h"
+#include "../Cube.h"
 
 class Waypoint;
 
@@ -22,6 +23,7 @@ typedef struct logic_inputs
     geometry_msgs::Pose2D	odom_accel;
     geometry_msgs::Pose2D	odom_accel_gps;
     std::vector<Tag> 		tags;
+    std::vector<Cube>           cubes;
     double			us_left = 0.0;
     double			us_right = 0.0;
     double			us_center = 0.0;
