@@ -1,11 +1,17 @@
 #include "PID.h"
+#include <cmath>
 
 int PID::execute( PidInputs inputs )
 {
     double output = 0;
 
+    /* something has changed, and that means we need to clear this out. */
+    if( prev_goal != inputs.goal )
+        reset();
+
     double error = inputs.goal - inputs.measured;
     double dt = inputs.time - prev_time;
+
 
     addDerivative( ( error - prev_error ) / dt );
     addIntegral( ( error * dt ) );
@@ -21,6 +27,15 @@ int PID::execute( PidInputs inputs )
     output += getErrorDerivative() * params.Kd;
 
     prev_time = inputs.time;
+
+    /* check our maximum output limits */
+    if( fabs( output ) > inputs.max_output )
+    {
+        if( output < 0 )
+            output = (-1)*inputs.max_output;
+        else
+            output = inputs.max_output;
+    }
 
     return (int)output;
 }

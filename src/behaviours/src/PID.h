@@ -4,8 +4,8 @@
 #include <tuple>
 #include <vector>
 
-#define DERIV_MAX 20
-#define INTEG_MAX 20
+#define DERIV_MAX 5	/* the lower this number the more sensitive to sudden and rapid change the PID will be */
+#define INTEG_MAX 50	/* the higher this number, the more error is summed. This will lead to higher I term outputs */
 
 typedef struct pid_params
 {
@@ -20,6 +20,7 @@ typedef struct pid_inputs
     double measured;
     double goal;
     double time;
+    int max_output;
 } PidInputs;
 
 class PID
@@ -39,6 +40,7 @@ class PID
         PidParams params;
         std::vector<double> error_derivative;
         std::vector<double> error_integral;
+        double prev_goal;
         double prev_error;
         double prev_time;
 };
