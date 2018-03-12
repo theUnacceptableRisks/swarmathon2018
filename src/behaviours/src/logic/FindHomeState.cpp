@@ -82,11 +82,6 @@ void FindHomeState::internalAction()
             params.skid_steer_threshold = M_PI/12;
             params.arrived_threshold = 0.05;
 
-            params.dist_max_output = 60;
-            params.dist_deccel = 0.1;
-            params.yaw_max_output = 80;
-            params.yaw_deccel = M_PI/12;
-
             params.goal_x = 0.0;
             params.goal_y = 0.0;
 
