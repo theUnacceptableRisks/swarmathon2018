@@ -354,7 +354,7 @@ void runStateMachines(const ros::TimerEvent&)
          * State Machine Execution *
          ***************************/
         logic_machine.run();
-        std::cout << "current state is..." << logic_machine.getCurrentIdentifier() << std::endl;
+        //std::cout << "current state is..." << logic_machine.getCurrentIdentifier() << std::endl;
 
         /*****************
          * Drive Portion *
@@ -371,15 +371,15 @@ void runStateMachines(const ros::TimerEvent&)
             left = std::get<0>( output );
             right = std::get<1>( output );
 
-            std::cout << "Left is " << left << std::endl;
-            std::cout << "Right is " << right << std::endl;
+    //        std::cout << "Left is " << left << std::endl;
+  //          std::cout << "Right is " << right << std::endl;
 
             /* TODO: add else messaging */
             sendDriveCommand( left, right );
         }
         else
         {
-            std::cout << "Current Waypoint is null" << std::endl;
+//            std::cout << "Current Waypoint is null" << std::endl;
             sendDriveCommand( 0, 0 );
         }
         /*******************
@@ -456,9 +456,11 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
     std::stringstream ss;
 
     inputs.tags.clear();
+    inputs.cubes.clear();
     inputs.examiner.clear();
     if (message->detections.size() > 0)
     {
+        std::cout << "Round of Tags" << std::endl;
         for (int i = 0; i < message->detections.size(); i++)
         {
             // Package up the ROS AprilTag data into our own type that does not rely on ROS.
@@ -477,7 +479,28 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
                                                                   tagPose.pose.orientation.z,
                                                                   tagPose.pose.orientation.w ) );
             inputs.tags.push_back( loc );
+            std::cout << loc << std::endl;
         }
+        if( TagUtilities::hasTag( &inputs.tags, 0 ) )
+        {
+            for( int i = 0; i < inputs.tags.size(); i++ )
+            {
+                bool found = false;
+                for( int j = 0; j < inputs.cubes.size(); j++ )
+                {
+                    found = inputs.cubes.at(j).checkTag( inputs.tags.at(i) );
+                    if( found )
+                    {
+                        std::cout << "same cube!" << std::endl;
+                        break;
+                    }
+                }
+                if( !found )
+                    inputs.cubes.push_back( Cube( inputs.tags.at(i) ) );
+
+            }
+        }
+        std::cout << "Number of cubes " << inputs.cubes.size() << std::endl;
         inputs.examiner.loadTags( inputs.tags );
     }
 }
@@ -566,7 +589,7 @@ void joyCmdHandler(const sensor_msgs::Joy::ConstPtr& message)
 void publishStatusTimerEventHandler(const ros::TimerEvent&)
 {
     std_msgs::String msg;
-    msg.data = "online";
+    msg.data = "DTCC";
     status_publisher.publish(msg);
 }
 
