@@ -49,3 +49,44 @@ std::tuple<int,int> WaypointUtilities::executePid( PidParams &params, PidPackage
     return std::make_tuple( left, right );
 }
 */
+
+/* generate a linear output based on a linaer distance in meters from a target */
+PidParams WaypointUtilities::getDistancePIDParams()
+{
+    PidParams params;
+
+    params.Kp = 60.;
+    params.Ki = 0.;
+    params.Kd = 0.;
+    params.integration_point = 0.1;
+
+    return params;
+}
+
+/* generate a rotational output based on radian measurements from a target */
+PidParams WaypointUtilities::getRadianBasedRotationalPIDParams()
+{
+    PidParams params;
+
+    params.Kp = 60.;
+    params.Ki = 0.;
+    params.Kd = 0.;
+    params.integration_point = M_PI/12;
+
+    return params;
+}
+
+/* generate a rotational output based on meter measurements from a target */
+/* TODO: may need to break this up into camera and sonar distances but will try as one */
+PidParams WaypointUtilities::getLinearBasedRotationalPIDParams()
+{
+    PidParams params;
+
+    params.Kp = 60.;
+    params.Ki = 0.;
+    params.Kd = 0.;
+    params.integration_point = 0.1;
+
+    return params;
+}
+

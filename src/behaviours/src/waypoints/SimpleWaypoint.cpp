@@ -39,41 +39,43 @@ void SimpleWaypoint::internalAction()
             break;
         case SIMPLE_ROTATE:
         {
-            MotorParams m_params;
-            std::tuple<int,int> output;
+            PidInputs pid_inputs;
+            double output;
 
-            m_params.yaw_deccel_point = this->simple_params.yaw_deccel;
-            m_params.yaw_current = *this->driving_params.current_theta;
-            m_params.yaw_goal = WaypointUtilities::getGoalTheta( this->driving_params );
-            m_params.yaw_in_radians = true;
-            m_params.yaw_max_output = this->simple_params.yaw_max_output;
+            pid_inputs.measured = *driving_params.current_theta;
+            pid_inputs.goal = WaypointUtilities::getGoalTheta( driving_params );
+            pid_inputs.time = inputs->time.toSec();
+            pid_inputs.max_output = simple_params.rotational_max;
 
-            output = this->inputs->controller.generateRotationalOutput( m_params );
+            output = rotational_pid.execute( pid_inputs );
 
-            setOutputLeftPWM( std::get<0>( output ) );
-            setOutputRightPWM( std::get<1>( output ) );
+            setOutputLeftPWM( (-1)*output );
+            setOutputRightPWM( output );
+            std::cout << "rotational state" << std::endl;
             break;
         }
         case SIMPLE_SKID:
         {
-            MotorParams m_params;
-            std::tuple<int,int> output;
+            PidInputs pid_inputs;
+            double linear_output;
+            double rotational_output;
 
-            m_params.dist_deccel_point = this->simple_params.dist_deccel;
-            m_params.dist_current = WaypointUtilities::getDistance( this->driving_params );
-            m_params.dist_goal = this->simple_params.dist_goal;
-            m_params.dist_max_output = this->simple_params.dist_max_output;
+            pid_inputs.measured = WaypointUtilities::getDistance( driving_params );
+            pid_inputs.goal = 0; //trying to go a distance, why wouldn't you want to zero that distance?
+            pid_inputs.time = inputs->time.toSec();
+            pid_inputs.max_output = simple_params.linear_max;
 
-            m_params.yaw_deccel_point = this->simple_params.yaw_deccel;
-            m_params.yaw_current = *this->driving_params.current_theta;
-            m_params.yaw_goal = WaypointUtilities::getGoalTheta( this->driving_params );
-            m_params.yaw_in_radians = true;
-            m_params.yaw_max_output = this->simple_params.yaw_max_output;
+            linear_output = linear_pid.execute( pid_inputs );
 
-            output = this->inputs->controller.generateSkidOutput( m_params );
+            pid_inputs.measured = *driving_params.current_theta;
+            pid_inputs.goal = WaypointUtilities::getGoalTheta( driving_params );
+            pid_inputs.max_output = simple_params.skid_rotational_max;
 
-            setOutputLeftPWM( std::get<0>( output ) );
-            setOutputRightPWM( std::get<1>( output ) );
+            rotational_output = rotational_pid.execute( pid_inputs );
+
+            setOutputLeftPWM( linear_output - rotational_output );
+            setOutputRightPWM( linear_output + rotational_output );
+            std::cout << "skid state" << std::endl;
             break;
         }
     }

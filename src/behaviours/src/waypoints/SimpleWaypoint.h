@@ -2,7 +2,7 @@
 #define simplewaypoint_h
 
 #include "Waypoint.h"
-
+#include "../PID.h"
 //SimpleWaypointStates seperate .cpp/.h
 
 typedef enum
@@ -21,13 +21,10 @@ typedef struct simple_params
     double goal_x = 0;
     double goal_y = 0;
 
-    int dist_max_output = 60;
-    double dist_deccel = 0.2;
-    double dist_goal = 0.0;
+    int linear_max = 40;
+    int rotational_max = 80;
+    int skid_rotational_max = 120;
 
-    int yaw_max_output = 80;
-    double yaw_deccel = M_PI/6;
-    double yaw_goal = 0.0;
 } SimpleParams;
 
 
@@ -42,6 +39,9 @@ class SimpleWaypoint : public Waypoint
             driving_params.current_y = &inputs->odom_accel_gps.y;
             driving_params.current_theta = &inputs->odom_accel_gps.theta;
 
+            linear_pid = PID( WaypointUtilities::getDistancePIDParams() );
+            rotational_pid = PID( WaypointUtilities::getDistancePIDParams() );
+
         }
         virtual void run();
     private:
@@ -53,8 +53,8 @@ class SimpleWaypoint : public Waypoint
         SimpleParams simple_params;
         SWState internal_state;
 
-
-
+        PID linear_pid;
+        PID rotational_pid;
  };
 
 #endif
