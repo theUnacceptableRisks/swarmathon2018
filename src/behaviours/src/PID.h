@@ -1,51 +1,46 @@
-#ifndef PID_H
-#define PID_H
+#ifndef pid_h
+#define pid_h
 
+#include <tuple>
 #include <vector>
-#include <ros/ros.h>
 
-using namespace std;
+#define DERIV_MAX 20
+#define INTEG_MAX 20
 
-struct PIDConfig {
-  float Kp = 0;
-  float Ki = 0;
-  float Kd = 0;
-  float satUpper = 255;
-  float satLower = -255;
-  float antiWindup = satUpper/2;
-  int errorHistLength = 4;
-  bool alwaysIntegral = false;
-  bool resetOnSetpoint = true;
-  float feedForwardMultiplier = 0;
-  float integralDeadZone = 0.01;
-  float integralErrorHistoryLength = 10000;
-  float integralMax = 255/2;
-  float derivativeAlpha = 0.7;
-};
+typedef struct pid_params
+{
+    double Kp = 60.;
+    double Ki = 0.;
+    double Kd = 0.;
+    double integration_point = 0.;
+} PidParams;
+
+typedef struct pid_inputs
+{
+    double measured;
+    double goal;
+    double time;
+} PidInputs;
 
 class PID
 {
-public:
+    public:
+        PID() : prev_error(0), prev_time(0), params(PidParams()) {}
+        PID( PidParams p ) : prev_error(0), prev_time(0), params(p) {}
+        int execute( PidInputs inputs );
+        void setParams( PidParams new_params );
+        void reset();
+    private:
+        void addDerivative( double value );
+        void addIntegral( double value );
+        double getErrorDerivative();
+        double getErrorIntegral();
 
-
-
-  PIDConfig config;
-
-  PID();
-  PID(PIDConfig config);
-
-  float PIDOut(float calculatedError, float setPoint);
-
-  void SetConfiguration(PIDConfig config) {this->config = config;}
-
-private:
-
-  vector<float> Error;
-  float prevSetPoint = std::numeric_limits<float>::min();
-  vector<float> integralErrorHistArray;
-  int step = 0;
-  float hz = 10;	//Rate that PID is running at
-
+        PidParams params;
+        std::vector<double> error_derivative;
+        std::vector<double> error_integral;
+        double prev_error;
+        double prev_time;
 };
 
-#endif // PID_H
+#endif

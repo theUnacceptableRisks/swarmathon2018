@@ -1,179 +1,89 @@
 #include "PID.h"
 
-PID::PID() {   }
-
-PID::PID(PIDConfig config)
+int PID::execute( PidInputs inputs )
 {
-  this->config = config;
-  integralErrorHistArray.resize(config.integralErrorHistoryLength, 0.0);
+    double output = 0;
+
+    double error = inputs.goal - inputs.measured;
+    double dt = inputs.time - prev_time;
+
+    addDerivative( ( error - prev_error ) / dt );
+    addIntegral( ( error * dt ) );
+
+    /* Porportional */
+    output += error * params.Kp;
+
+    /* Integral */
+    if( params.Ki != 0 && error <= params.integration_point )
+        output += getErrorIntegral() * params.Ki;
+
+    /* Derivative */
+    output += getErrorDerivative() * params.Kd;
+
+    prev_time = inputs.time;
+
+    return (int)output;
 }
 
-float PID::PIDOut(float calculatedError, float setPoint)
+void PID::setParams( PidParams new_params )
 {
+    this->params = new_params;
+    this->reset();
+}
 
-  //cout << "ErrorSize:  " << Error.size() << endl;
+void PID::reset()
+{
+    error_derivative.clear();
+    error_integral.clear();
+    prev_error = 0.;
+    prev_time = 0.;
+}
 
-  if (Error.size() >= config.errorHistLength)
-  {
-    Error.pop_back();
-  }
-
-  Error.insert(Error.begin(), calculatedError); //insert new error into vector for history purposes.
-
-  float P = 0; //proportional yaw output
-  float I = 0; //Integral yaw output
-  float D = 0; //Derivative yaw output
-
-  if (setPoint != prevSetPoint && config.resetOnSetpoint)
-  {
-    Error.clear();
-    integralErrorHistArray.clear();
-    prevSetPoint = setPoint;
-    step = 0;
-    integralErrorHistArray.resize(config.integralErrorHistoryLength, 0.0);
-  }
-
-  //feed forward
-  //float FF = config.feedForwardMultiplier * setPoint;
-    float FF = (pow(setPoint, 3) * config.feedForwardMultiplier) + (setPoint * (config.feedForwardMultiplier / 4.6));
-
-    if (!config.alwaysIntegral && Error.size() > 1)
+void PID::addDerivative( double value )
+{
+    if( error_derivative.size() > DERIV_MAX )
     {
-        //check the change of sign to see if the rover overshot its goal
-        float sign_change = Error[0] / Error[1];
-        //if the sign has changed between the previous error and the current error
-        if(sign_change < 0)
-        {
-            //reset the integral history and values
-            integralErrorHistArray.clear();
-            integralErrorHistArray.resize(config.integralErrorHistoryLength, 0.0);
-            I = 0;
-            step = 0;
-
-
-            //Store error zero into temp variable
-            float error_zero = Error[0];
-
-            //clear the error history in order to prevent movement in the incorrect direction because of the sign change
-            Error.clear();
-
-            //put back into vector
-            Error.push_back(error_zero);
-        }
+        error_derivative.erase( error_derivative.begin() );
     }
+    error_derivative.push_back( value );
+}
 
-
-
-  //error averager
-  float avgError = 0;
-  if (Error.size() >= config.errorHistLength)
-  {
-    for (int i = 0; i < config.errorHistLength; i++)
+void PID::addIntegral( double value )
+{
+    if( error_integral.size() > INTEG_MAX )
     {
-      avgError += Error[i];
+        error_integral.erase( error_integral.begin() );
     }
-    avgError /= config.errorHistLength;//config.errorHistLength;
-  }
-  else
-  {
-    avgError = calculatedError;
-  }
+    error_integral.push_back( value );
+}
 
 
-  // ----- BEGIN PID CONTROLLER CODE -----
+//handling rate of change by averaging this way helps deal with noisy sensors
+double PID::getErrorDerivative()
+{
+    double ret = 0.0;
+    int size = error_derivative.size();
 
-
-  //GenPID ------------
-
-
-  //Proportional
-  P = config.Kp * (avgError);  //this is the proportional output
-  if (P > config.satUpper) //limit the max and minimum output of proportional
-    P = config.satUpper;
-  if (P < config.satLower)
-    P = config.satLower;
-  //Integral
-  bool integralOn = false;
-
-
-  //only use integral when error is larger than presumed noise.
-  if (fabs(Error.front()) > config.integralDeadZone)
-  {
-    integralErrorHistArray[step] = Error.front(); //add error into the error Array.
-    step++;
-
-    if (step >= config.integralErrorHistoryLength) step = 0;
-    if (!config.alwaysIntegral) {
-      integralOn = true;
-    }
-  }
-
-
-  float sum = 0;
-  for (int i= 0; i < integralErrorHistArray.size(); i++) //sum the array to get the error over time from t = 0 to present.
-  {
-    sum += integralErrorHistArray[i];
-  }
-
-  if (config.alwaysIntegral || integralOn){
-    I = config.Ki * sum; //this is integrated output
-  }
-  else {
-    integralErrorHistArray.clear();
-    integralErrorHistArray.resize(config.integralErrorHistoryLength, 0.0);
-    I = 0;
-    step = 0;
-  }
-
-  //anti windup
-  //anti windup reduces overshoot by limiting the acting time of the integral to areas where the
-  //proportional term is less than half its saturation point.
-
-  //if P is already commanding greater than half max PWM dont use the integral
-  if (fabs(I) > config.integralMax || fabs(P) > config.antiWindup) //reset the integral to 0 if it hits its cap of half max PWM
-  {
-    integralErrorHistArray.clear();
-    integralErrorHistArray.resize(config.integralErrorHistoryLength, 0.0);
-    I = 0;
-    step = 0;
-  }
-
-  //Derivative
-  if (Error.size() < 4 )//(fabs(P) < config.antiWindup)
-  {
-    float avgPrevError = 0;
-    for (int i = 1; i < Error.size(); i++)
+    if( size != 0 )
     {
-      avgPrevError += Error[i];
+        for( int i = 0; i < size; i++ )
+            ret += error_derivative.at(i);
+
+        ret /= size;
     }
-    if (Error.size() > 1)
+    return ret;
+}
+
+double PID::getErrorIntegral()
+{
+    double ret = 0.0;
+    int size = error_integral.size();
+
+    if( size != 0 )
     {
-      avgPrevError /= Error.size()-1;
-    }
-    else
-    {
-      avgPrevError = Error[0];
+        for( int i = 0; i < size; i++ )
+            ret += error_integral.at(i);
     }
 
-
-    D = config.Kd * ((Error[0]+Error[1])/2 - (Error[2]+Error[3])/2) * hz;
-
-    //cout << "PID Error[0]:  " << Error[0] << ", Error[1]:  " << Error[1] << ", Error[2]:  " << Error[2] << ", Error[3]:  " << Error[3] << endl;
-
-  }
-
-  float PIDOut = P + I + D + FF;
-
-  //cout << "PID P:  " << P << ",  I:  " << I << ", D:  " << D << ", FF:  " << FF << endl;
-
-  if (PIDOut > config.satUpper) //cap vel command
-  {
-    PIDOut = config.satUpper;
-  }
-  else if (PIDOut < config.satLower)
-  {
-    PIDOut = config.satLower;
-  }
-
-  return PIDOut;
+    return ret;
 }

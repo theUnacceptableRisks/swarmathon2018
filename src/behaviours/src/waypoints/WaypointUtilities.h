@@ -36,6 +36,7 @@ namespace WaypointUtilities
         PID yaw_pid;
     } PidPackage;
 
+/*
     typedef struct pid_params
     {
         float velocity_error = 0.0;	//the discrepency between current velocity and what you want to be at
@@ -44,8 +45,8 @@ namespace WaypointUtilities
         float angular_goal = 0.0;
         float saturation_point = 0.0;	//not quite sure what this is about... entirely...
     } PidParams;
-
-    std::tuple<int,int> executePid( PidParams &params, PidPackage &pids );
+*/
+/*    std::tuple<int,int> executePid( PidParams &params, PidPackage &pids ); */
 
 };
 
