@@ -249,8 +249,8 @@ void setupLogicMachine()
 {
     inputs.controller = MotorController( inputs.calibration.motor_min, inputs.calibration.rotational_min );
     /* add States */
-    logic_machine.addState( motorcalib_state.getIdentifier(), dynamic_cast<State *>(&motorcalib_state) );
-    logic_machine.addState( rotationalcalib_state.getIdentifier(), dynamic_cast<State *>(&rotationalcalib_state) );
+//    logic_machine.addState( motorcalib_state.getIdentifier(), dynamic_cast<State *>(&motorcalib_state) );
+//    logic_machine.addState( rotationalcalib_state.getIdentifier(), dynamic_cast<State *>(&rotationalcalib_state) );
     logic_machine.addState( search_state.getIdentifier(), dynamic_cast<State *>(&search_state) );
     logic_machine.addState( pickup_state.getIdentifier(), dynamic_cast<State *>(&pickup_state) );
     logic_machine.addState( findhome_state.getIdentifier(), dynamic_cast<State *>(&findhome_state) );
