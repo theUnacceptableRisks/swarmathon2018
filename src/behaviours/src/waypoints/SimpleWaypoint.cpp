@@ -60,7 +60,7 @@ void SimpleWaypoint::internalAction()
             double linear_output;
             double rotational_output;
 
-            pid_inputs.measured = WaypointUtilities::getDistance( driving_params );
+            pid_inputs.measured = (-1)*WaypointUtilities::getDistance( driving_params );
             pid_inputs.goal = 0; //trying to go a distance, why wouldn't you want to zero that distance?
             pid_inputs.time = inputs->time.toSec();
             pid_inputs.max_output = simple_params.linear_max;
