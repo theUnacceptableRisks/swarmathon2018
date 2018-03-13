@@ -39,6 +39,9 @@
 #include "logic/SearchState.h"
 #include "logic/PickUpState.h"
 #include "logic/FindHomeState.h"
+#include "logic/AvoidState.h"
+#include "logic/AvoidHomeState.h"
+#include "logic/AvoidCubeState.h"
 #include "logic/MotorCalibState.h"
 #include "logic/RotationalCalibState.h"
 #include "logic/DropOffState.h"
@@ -187,13 +190,6 @@ void setupSubscribers( ros::NodeHandle &ros_handle, string published_name )
     map_subscriber = ros_handle.subscribe((published_name + "/odom/ekf"), 10, odomAccelAndGPSHandler);
     rover_info_subscriber = ros_handle.subscribe("/roverInfo", 10, roverInfoHandler);
 
-    //Sonar Stuff
-    message_filters::Subscriber<sensor_msgs::Range> sonar_left_subscriber(ros_handle, (published_name + "/sonarLeft"), 10);
-    message_filters::Subscriber<sensor_msgs::Range> sonar_center_subscriber(ros_handle, (published_name + "/sonarCenter"), 10);
-    message_filters::Subscriber<sensor_msgs::Range> sonar_right_subscriber(ros_handle, (published_name + "/sonarRight"), 10);
-    typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Range, sensor_msgs::Range, sensor_msgs::Range> sonarSyncPolicy;
-    message_filters::Synchronizer<sonarSyncPolicy> sonarSync(sonarSyncPolicy(10), sonar_left_subscriber, sonar_center_subscriber, sonar_right_subscriber);
-    sonarSync.registerCallback(boost::bind(&sonarHandler, _1, _2, _3));
 }
 
 /**************
@@ -241,6 +237,9 @@ LogicMachine logic_machine( &iotable );
     SearchState search_state( &iotable );
     PickUpState pickup_state( &iotable );
     FindHomeState findhome_state( &iotable );
+    AvoidState avoid_state( &iotable );
+    AvoidHomeState avoidhome_state( &iotable );
+    AvoidCubeState avoidcube_state( &iotable );
     MotorCalibState motorcalib_state( &iotable );
     RotationalCalibState rotationalcalib_state( &iotable );
     DropOffState dropoff_state( &iotable );
@@ -255,6 +254,9 @@ void setupLogicMachine()
     logic_machine.addState( pickup_state.getIdentifier(), dynamic_cast<State *>(&pickup_state) );
     logic_machine.addState( findhome_state.getIdentifier(), dynamic_cast<State *>(&findhome_state) );
     logic_machine.addState( dropoff_state.getIdentifier(), dynamic_cast<State *>(&dropoff_state) );
+    logic_machine.addState( avoid_state.getIdentifier(), dynamic_cast<State *>(&avoid_state) );
+    logic_machine.addState( avoidhome_state.getIdentifier(), dynamic_cast<State *>(&avoidhome_state) );
+    logic_machine.addState( avoidcube_state.getIdentifier(), dynamic_cast<State *>(&avoidcube_state) );
     return;
 }
 
@@ -293,6 +295,16 @@ int main(int argc, char **argv)
     signal(SIGINT, sigintEventHandler);
 
     setupSubscribers( ros_handle, published_name );
+
+    //Sonar Stuff
+    message_filters::Subscriber<sensor_msgs::Range> sonar_left_subscriber(ros_handle, (published_name + "/sonarLeft"), 10);
+    message_filters::Subscriber<sensor_msgs::Range> sonar_center_subscriber(ros_handle, (published_name + "/sonarCenter"), 10);
+    message_filters::Subscriber<sensor_msgs::Range> sonar_right_subscriber(ros_handle, (published_name + "/sonarRight"), 10);
+    typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Range, sensor_msgs::Range, sensor_msgs::Range> sonarSyncPolicy;
+    message_filters::Synchronizer<sonarSyncPolicy> sonarSync(sonarSyncPolicy(10), sonar_left_subscriber, sonar_center_subscriber, sonar_right_subscriber);
+    sonarSync.registerCallback(boost::bind(&sonarHandler, _1, _2, _3));
+
+
     setupPublishers( ros_handle, published_name );
     setupTimerCallbacks( ros_handle );
     setupLogicMachine();
