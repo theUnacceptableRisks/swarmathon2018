@@ -29,6 +29,8 @@ SWState SimpleWaypoint::internalTransition()
 
 void SimpleWaypoint::internalAction()
 {
+    this->inputs->goal_x = this->driving_params.goal_x;
+    this->inputs->goal_y = this->driving_params.goal_y;
     switch( internal_state )
     {
         default: break;
