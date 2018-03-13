@@ -13,6 +13,7 @@ typedef struct pid_params
     double Ki = 0.;
     double Kd = 0.;
     double integration_point = 0.;
+    bool radians_mode = false;
 } PidParams;
 
 typedef struct pid_inputs

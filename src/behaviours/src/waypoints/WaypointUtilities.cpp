@@ -72,7 +72,7 @@ PidParams WaypointUtilities::getRadianBasedRotationalPIDParams()
     params.Ki = 0.;
     params.Kd = 0.;
     params.integration_point = M_PI/12;
-
+    params.radians_mode = true;
     return params;
 }
 

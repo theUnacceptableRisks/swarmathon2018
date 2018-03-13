@@ -1,5 +1,6 @@
 #include "PID.h"
 #include <cmath>
+#include <angles/angles.h>
 
 int PID::execute( PidInputs inputs )
 {
@@ -12,6 +13,10 @@ int PID::execute( PidInputs inputs )
     double error = inputs.goal - inputs.measured;
     double dt = inputs.time - prev_time;
 
+    if( params.radians_mode )
+    {
+        error = angles::shortest_angular_distance( inputs.measured, inputs.goal );
+    }
 
     addDerivative( ( error - prev_error ) / dt );
     addIntegral( ( error * dt ) );

@@ -350,7 +350,9 @@ void runStateMachines(const ros::TimerEvent&)
     inputs.time = ros::Time::now();
     if (currentMode == 2 || currentMode == 3)
     {
-        /***************************
+
+
+/*        /***************************
          * State Machine Execution *
          ***************************/
         logic_machine.run();
