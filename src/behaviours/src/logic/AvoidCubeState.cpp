@@ -25,9 +25,15 @@ void AvoidCubeState::onExit( std::string next_state )
 std::string AvoidCubeState::transition()
 {
     std::string transition_to = getIdentifier();
-    if(abs(this->inputs->odom_accel_gps.theta - initialTheta) < .2){
+
+    angleToGoal = atan2f(this->inputs->goal_y - this->inputs->odom_accel_gps.y, this->inputs->goal_x - this->inputs->odom_accel_gps.x);
+    angleToGoal = this->inputs->odom_accel_gps.theta - angleToGoal;
+
+    if(angleToGoal < 0 && angleToGoal > -1 && internal_state == AVOIDCUBE_DRIVE)
         transition_to = previousState;
-    }
+    if(wheelRatio >= 4)
+        transition_to = previousState;
+
     return transition_to;
 }
 
@@ -62,17 +68,18 @@ void AvoidCubeState::internalAction()
         case AVOIDCUBE_INIT:
         {
             wheelRatio = 1;
-            params.left_output = -40;
-            params.right_output = 40;
+            params.left_output = -80;
+            params.right_output = 80;
+            params.duration = .7;
             std::cout << "AVOID INIT" << endl;
             std::cout << "NEAREST US: " << getNearestUS() << endl;
            break;
         }
         case AVOIDCUBE_DRIVE:
         {
-            params.left_output = 40 * wheelRatio;
-            params.right_output = 40 * (1/wheelRatio);
-            wheelRatio += 0.02;
+            params.left_output = 60 * wheelRatio;
+            params.right_output = 60 * (1/wheelRatio);
+            wheelRatio += 0.04;
             std::cout << "AVOID DRIVE" << endl;
             std::cout << "NEAREST US: " << getNearestUS() << endl;
             break;

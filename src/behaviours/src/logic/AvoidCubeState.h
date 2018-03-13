@@ -21,6 +21,7 @@ class AvoidCubeState : public State
         virtual void onExit( std::string next_state );
         virtual std::string transition();
     private:
+        double angleToGoal = 0;
         double wheelRatio = 1;
         std::string previousState = "";
         double initialTheta = 0;
