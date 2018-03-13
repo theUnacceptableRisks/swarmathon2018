@@ -24,7 +24,15 @@ void AvoidHomeState::onExit( std::string next_state )
 
 std::string AvoidHomeState::transition()
 {
+   
     std::string transition_to = getIdentifier();
+    
+    angleToGoal = atan2f(this->inputs->goal_y - this->inputs->odom_accel_gps.y, this->inputs->goal_x - this->inputs->odom_accel_gps.x);
+    angleToGoal = this->inputs->odom_accel_gps.theta - angleToGoal;
+
+
+    if(angleToGoal < 0 && angleToGoal > -1 && internal_state == AVOID_DRIVE)
+        transition_to = previousState;
     if(wheelRatio >= 4.2){
         transition_to = previousState;
     }

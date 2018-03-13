@@ -30,10 +30,8 @@ std::string AvoidState::transition()
     //if( (internal_state == AVOID_DRIVE && wheelRatio < 3 && getNearestUS() > 1.5 && (this->inputs->odom_accel_gps.theta > initialTheta || this->inputs->odom_accel_gps.theta < initialTheta - 3.1415926 ))|| wheelRatio > 4)
     if(wheelRatio == 4)
         transition_to = previousState;
-    if(angleToGoal < 0 && angleToGoal > -1 && internal_state == AVOID_DRIVE){
+    if(angleToGoal < 0 && angleToGoal > -1 && internal_state == AVOID_DRIVE)
         transition_to = previousState;
-        cout << "ATTEMTPTING TO TRANISITION TO: " << previousState << endl;
-    }
     if(previousState == "search_state" && TagUtilities::hasTag( &this->inputs->tags, 0 ))
         transition_to = "pickup_state";
      return transition_to;
