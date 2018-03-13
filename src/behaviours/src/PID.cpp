@@ -1,7 +1,7 @@
 #include "PID.h"
 #include <cmath>
 #include <angles/angles.h>
-#include <iostream>
+
 int PID::execute( PidInputs inputs )
 {
     double output = 0;
