@@ -1,7 +1,7 @@
 #include "PID.h"
 #include <cmath>
 #include <angles/angles.h>
-
+#include <iostream>
 int PID::execute( PidInputs inputs )
 {
     double output = 0;
@@ -26,13 +26,15 @@ int PID::execute( PidInputs inputs )
 
     /* Integral */
     if( params.Ki != 0 && error <= params.integration_point )
+    {
         output += getErrorIntegral() * params.Ki;
+    }
 
     /* Derivative */
     output += getErrorDerivative() * params.Kd;
 
     prev_time = inputs.time;
-
+    prev_goal = inputs.goal;
     /* check our maximum output limits */
     if( fabs( output ) > inputs.max_output )
     {
