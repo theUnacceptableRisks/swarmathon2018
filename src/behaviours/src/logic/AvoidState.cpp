@@ -34,6 +34,8 @@ std::string AvoidState::transition()
         transition_to = previousState;
         cout << "ATTEMTPTING TO TRANISITION TO: " << previousState << endl;
     }
+    if(previousState == "search_state" && TagUtilities::hasTag( &this->inputs->tags, 0 ))
+        transition_to = "pickup_state";
      return transition_to;
 }
 
@@ -45,7 +47,7 @@ InternalState AvoidState::internalTransition()
     {
         default: break;
         case AVOID_INIT:
-            if(getNearestUS() > 1.5)
+            if(getNearestUS() > 1.0)
                 transition_to = AVOID_DRIVE;
             break;
         case AVOID_DRIVE:
@@ -68,8 +70,8 @@ void AvoidState::internalAction()
         case AVOID_INIT:
         {
             wheelRatio = 1;
-            params.left_output = -40;
-            params.right_output = 40;
+            params.left_output = -65;
+            params.right_output = 65;
             params.duration = .7;
             //std::cout << "AVOID INIT" << endl;
             //std::cout << "NEAREST US: " << getNearestUS() << endl;
