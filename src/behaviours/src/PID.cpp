@@ -19,7 +19,6 @@ int PID::execute( PidInputs inputs )
     }
 
     addDerivative( ( error - prev_error ) / dt );
-    addIntegral( ( error * dt ) );
 
     /* Porportional */
     output += error * params.Kp;
@@ -27,6 +26,7 @@ int PID::execute( PidInputs inputs )
     /* Integral */
     if( params.Ki != 0 && error <= params.integration_point )
     {
+        addIntegral( ( error * dt ) );
         output += getErrorIntegral() * params.Ki;
     }
 

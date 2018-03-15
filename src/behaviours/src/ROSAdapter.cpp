@@ -341,6 +341,8 @@ int main(int argc, char **argv)
     pid_params.radians_mode = true;
     radian.setParams( pid_params );
 
+    which_pid = LINEAR_ROTATION;
+
     swarmie_msgs::InfoMessage infoMsg;
     infoMsg.name = roverName;
     infoMsg.x = inputs.odom_accel_gps.x;
@@ -379,7 +381,7 @@ void runStateMachines(const ros::TimerEvent&)
     // time since timerStartTime was set to current time
     //timerTimeElapsed = time(0) - timerStartTime;
     // Robot is in automode
-    std::cout << "Kp:" << pid_params.Kp << " Ki:" << pid_params.Ki << " Kd:" << pid_params.Kd << " IP:" << pid_params.integration_point << " RadMode:" << pid_params.radians_mode << std::endl;
+    std::cout << "Kp:" << pid_params.Kp << " Ki:" << pid_params.Ki << " Kd:" << pid_params.Kd << " IP:" << pid_params.integration_point << " RadMode:" << pid_params.radians_mode << " PID mode:" << which_pid << std::endl;
     inputs.time = ros::Time::now();
     if (currentMode == 2 || currentMode == 3)
     {
@@ -394,7 +396,7 @@ void runStateMachines(const ros::TimerEvent&)
             case LINEAR:
                 pid_inputs.measured = inputs.raw_odom.x;
                 pid_inputs.goal = 1;
-                pid_inputs.max_output = 40;
+                pid_inputs.max_output = 160;
                 left = linear.execute( pid_inputs );
                 right = left;
                 break;
