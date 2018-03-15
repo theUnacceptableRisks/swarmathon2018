@@ -30,7 +30,7 @@ int PID::execute( PidInputs inputs )
     }
 
     /* Derivative */
-    output += ( error - prev_error ) / dt;
+    output += ( ( error - prev_error ) / dt ) * params.Kd;
 
     prev_time = inputs.time;
     prev_goal = inputs.goal;
