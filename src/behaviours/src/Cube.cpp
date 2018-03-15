@@ -24,3 +24,48 @@ bool Cube::checkTag( Tag tag )
     }
     return same_cube;
 }
+
+double Cube::getPositionX()
+{
+    double x = 0.0;
+    int size = tags.size();
+
+    for( int i = 0; i < size; i++ )
+        x += tags[i].getPositionX();
+
+    x /= (double)size;
+
+    return x;
+}
+
+double Cube::getPositionY()
+{
+    double y = 0.0;
+    int size = tags.size();
+
+    for( int i = 0; i < size; i++ )
+        y += tags[i].getPositionY();
+
+    y /= (double)size;
+
+    return y;
+}
+
+double Cube::getPositionZ()
+{
+    double z = 0.0;
+    int size = tags.size();
+
+    for( int i = 0; i < size; i++ )
+        z += tags[i].getPositionZ();
+
+    z /= (double)size;
+
+    return z;
+
+}
+
+double Cube::getDistance()
+{
+
+}
