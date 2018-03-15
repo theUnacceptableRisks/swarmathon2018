@@ -4,7 +4,7 @@
 #include <iostream>
 int PID::execute( PidInputs inputs )
 {
-    double output = 0;
+    double output = params.bias;
 
     /* something has changed, and that means we need to clear this out. */
     if( prev_goal != inputs.goal )
@@ -35,6 +35,7 @@ int PID::execute( PidInputs inputs )
 
     prev_time = inputs.time;
     prev_goal = inputs.goal;
+
     /* check our maximum output limits */
     if( fabs( output ) > inputs.max_output )
     {
