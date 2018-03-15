@@ -34,9 +34,7 @@ class PID
         void setParams( PidParams new_params );
         void reset();
     private:
-        void addDerivative( double value );
         void addIntegral( double value );
-        double getErrorDerivative();
         double getErrorIntegral();
 
         PidParams params;

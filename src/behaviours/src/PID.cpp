@@ -2,6 +2,7 @@
 #include <cmath>
 #include <angles/angles.h>
 #include <iostream>
+
 int PID::execute( PidInputs inputs )
 {
     double output = params.bias;
@@ -18,20 +19,20 @@ int PID::execute( PidInputs inputs )
         error = angles::shortest_angular_distance( inputs.measured, inputs.goal );
     }
 
-    addDerivative( ( error - prev_error ) / dt );
-
     /* Porportional */
     output += error * params.Kp;
 
     /* Integral */
-    if( params.Ki != 0 && error <= params.integration_point )
+    if( params.Ki != 0 && fabs( error ) <= params.integration_point )
     {
-        addIntegral( ( error * dt ) );
-        output += getErrorIntegral() * params.Ki;
+        addIntegral( fabs( error * dt ) );
+        std::cout << "Integ Sum: " << getErrorIntegral() << std::endl;
+
+        output += getErrorIntegral() * params.Ki * ( error / fabs( error ) );
     }
 
     /* Derivative */
-    output += getErrorDerivative() * params.Kd;
+    output += ( error - prev_error ) / dt;
 
     prev_time = inputs.time;
     prev_goal = inputs.goal;
@@ -62,15 +63,6 @@ void PID::reset()
     prev_time = 0.;
 }
 
-void PID::addDerivative( double value )
-{
-    if( error_derivative.size() > DERIV_MAX )
-    {
-        error_derivative.erase( error_derivative.begin() );
-    }
-    error_derivative.push_back( value );
-}
-
 void PID::addIntegral( double value )
 {
     if( error_integral.size() > INTEG_MAX )
@@ -78,23 +70,6 @@ void PID::addIntegral( double value )
         error_integral.erase( error_integral.begin() );
     }
     error_integral.push_back( value );
-}
-
-
-//handling rate of change by averaging this way helps deal with noisy sensors
-double PID::getErrorDerivative()
-{
-    double ret = 0.0;
-    int size = error_derivative.size();
-
-    if( size != 0 )
-    {
-        for( int i = 0; i < size; i++ )
-            ret += error_derivative.at(i);
-
-        ret /= size;
-    }
-    return ret;
 }
 
 double PID::getErrorIntegral()
