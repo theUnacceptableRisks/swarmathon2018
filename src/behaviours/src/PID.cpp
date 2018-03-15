@@ -4,7 +4,7 @@
 
 int PID::execute( PidInputs inputs )
 {
-    double output = params.bias;
+    double output = (double)params.bias;
 
     /* something has changed, and that means we need to clear this out. */
     if( prev_goal != inputs.goal )
