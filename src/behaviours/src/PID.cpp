@@ -23,11 +23,9 @@ int PID::execute( PidInputs inputs )
     output += error * params.Kp;
 
     /* Integral */
-    if( params.Ki != 0 && fabs( error ) <= params.integration_point )
+    if( params.Ki != 0 && fabs( error ) <= params.integration_point && prev_time != 0 )
     {
         addIntegral( fabs( error * dt ) );
-        std::cout << "Integ Sum: " << getErrorIntegral() << std::endl;
-
         output += getErrorIntegral() * params.Ki * ( error / fabs( error ) );
     }
 
