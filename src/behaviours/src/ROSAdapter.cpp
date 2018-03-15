@@ -403,7 +403,7 @@ void runStateMachines(const ros::TimerEvent&)
             case RADIAN_ROTATION:
                 pid_inputs.measured = inputs.odom_accel_gps.theta;
                 pid_inputs.goal = M_PI_2;
-                pid_inputs.max_output = 80;
+                pid_inputs.max_output = 160;
                 right = radian.execute( pid_inputs );
                 left = (-1)*right;
                 break;
@@ -412,7 +412,7 @@ void runStateMachines(const ros::TimerEvent&)
                 {
                     pid_inputs.measured = TagUtilities::getClosestTag( &inputs.tags, 0 ).getPositionX();
                     pid_inputs.goal = 0.023;
-                    pid_inputs.max_output = 60;
+                    pid_inputs.max_output = 160;
                     right = lin_rot.execute( pid_inputs );
                     left = (-1)*right;
                 }
