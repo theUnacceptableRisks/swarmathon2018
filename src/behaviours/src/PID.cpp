@@ -25,9 +25,10 @@ int PID::execute( PidInputs inputs )
     output += error * params.Kp;
 
     /* Integral */
-    if( params.Ki != 0 && error <= params.integration_point )
+    if( params.Ki != 0 && fabs( error ) <= params.integration_point && prev_time != 0 )
     {
-        output += getErrorIntegral() * params.Ki;
+        addIntegral( fabs( error * dt ) );
+        output += getErrorIntegral() * params.Ki * ( error / fabs( error ) );
     }
 
     /* Derivative */
