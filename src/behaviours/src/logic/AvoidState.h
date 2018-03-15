@@ -22,6 +22,10 @@ class AvoidState : public State
         virtual std::string transition();
     private:
         double wheelRatio = 1;
+        double driveSpeed = 65;
+        double rotateTimer = -1;
+        double detectionDist = .6;
+        double detectionMargin = .2;
         std::string previousState = "";
         double angleToGoal = 0;
         double getNearestUS ();

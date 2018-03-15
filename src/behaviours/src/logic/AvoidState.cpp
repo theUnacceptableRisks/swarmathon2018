@@ -45,11 +45,11 @@ InternalState AvoidState::internalTransition()
     {
         default: break;
         case AVOID_INIT:
-            if(getNearestUS() > 1.0)
+            if(getNearestUS() > detectionDist + detectionMargin)
                 transition_to = AVOID_DRIVE;
             break;
         case AVOID_DRIVE:
-            if(getNearestUS() < .4)
+            if(getNearestUS() < detectionDist - detectionMargin)
                 transition_to = AVOID_INIT;
             break;
     }
@@ -71,6 +71,7 @@ void AvoidState::internalAction()
             params.left_output = -65;
             params.right_output = 65;
             params.duration = .7;
+
             //std::cout << "AVOID INIT" << endl;
             //std::cout << "NEAREST US: " << getNearestUS() << endl;
            break;
