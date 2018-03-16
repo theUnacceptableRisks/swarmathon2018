@@ -46,6 +46,9 @@
 #include "Gripper.h"
 #include "MotorController.h"
 #include "TagUtilities.h"
+#include "LinearPID.h"
+#include "RadRotPID.h"
+#include "LinRotPID.h"
 
 // To handle shutdown signals so the node quits
 // properly in response to "rosnode kill"
@@ -131,9 +134,9 @@ typedef enum
 PIDType which_pid = LINEAR_DRIVE;
 
 PidParams pid_params;
-PID linear;
-PID lin_rot;
-PID radian;
+LinearPID linear;
+RadRotPID radian;
+LinRotPID lin_rot;
 
 /******************
  * ROS Publishers *
@@ -338,7 +341,6 @@ int main(int argc, char **argv)
     info_log_publisher.publish(msg);
     timerStartTime = time(0);
 
-    pid_params.radians_mode = true;
     radian.setParams( pid_params );
 
     which_pid = LINEAR_ROTATION;
@@ -381,13 +383,12 @@ void runStateMachines(const ros::TimerEvent&)
     // time since timerStartTime was set to current time
     //timerTimeElapsed = time(0) - timerStartTime;
     // Robot is in automode
-    std::cout << "Kp:" << pid_params.Kp << " Ki:" << pid_params.Ki << " Kd:" << pid_params.Kd << " IP:" << pid_params.integration_point << " RadMode:" << pid_params.radians_mode << " PID mode:" << which_pid << std::endl;
+    std::cout << "Kp:" << pid_params.Kp << " Ki:" << pid_params.Ki << " Kd:" << pid_params.Kd << " IP:" << pid_params.integration_point << " PID mode:" << which_pid << " Theta:" << inputs.odom_accel_gps.theta << std::endl;
     inputs.time = ros::Time::now();
     if (currentMode == 2 || currentMode == 3)
     {
         PidInputs pid_inputs;
-        int left = 0;
-        int right = 0;
+        std::tuple<int,int> output;
 
         pid_inputs.time = inputs.time.toSec();
         switch( which_pid )
@@ -397,15 +398,13 @@ void runStateMachines(const ros::TimerEvent&)
                 pid_inputs.measured = inputs.raw_odom.x;
                 pid_inputs.goal = 1;
                 pid_inputs.max_output = 160;
-                left = linear.execute( pid_inputs );
-                right = left;
+                output = linear.execute( pid_inputs );
                 break;
             case RADIAN_ROTATION:
                 pid_inputs.measured = inputs.odom_accel_gps.theta;
                 pid_inputs.goal = M_PI_2;
                 pid_inputs.max_output = 160;
-                right = radian.execute( pid_inputs );
-                left = (-1)*right;
+                output = radian.execute( pid_inputs );
                 break;
             case LINEAR_ROTATION:
                 if( inputs.tags.size() > 0 )
@@ -413,23 +412,23 @@ void runStateMachines(const ros::TimerEvent&)
                     pid_inputs.measured = TagUtilities::getClosestTag( &inputs.tags, 0 ).getPositionX();
                     pid_inputs.goal = 0.023;
                     pid_inputs.max_output = 160;
-                    right = lin_rot.execute( pid_inputs );
-                    left = (-1)*right;
+                    output = lin_rot.execute( pid_inputs );
                 }
                 break;
         }
 
-        std::cout << "Left is  " << left << std::endl;
-        std::cout << "Right is " << right << std::endl;
+        std::cout << "Left is  " << std::get<0>(output) << std::endl;
+        std::cout << "Right is " << std::get<1>(output) << std::endl;
 
         /* TODO: add else messaging */
-        sendDriveCommand( left, right );
+        sendDriveCommand( std::get<0>(output), std::get<1>(output) );
         sendGripperPosition( outputs.gripper_position );
     }
     else
     {
         sendGripperPosition( Gripper::HOVER_OPEN );
         /* some output about manual mode? */
+        sendDriveCommand( 0, 0 );
     }
 }
 
@@ -705,15 +704,12 @@ void pidModeHandler(const std_msgs::UInt8::ConstPtr& message )
     {
         default: break;
         case LINEAR_DRIVE:
-           pid_params.radians_mode = false;
            linear.setParams( pid_params );
            break;
         case RADIAN_ROTATION:
-           pid_params.radians_mode = true;
            radian.setParams( pid_params );
            break;
         case LINEAR_ROTATION:
-           pid_params.radians_mode = false;
            lin_rot.setParams( pid_params );
            break;
     }
