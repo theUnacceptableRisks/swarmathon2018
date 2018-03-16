@@ -26,6 +26,12 @@ typedef struct logic_inputs
     std::vector<Cube>           cubes;
     double          goal_x;
     double          goal_y;
+    bool            goalInObst = false;
+    bool            rotationFlag = false;
+    double          initialAvoidAngle;
+    double          initialAvoidX;
+    double          initialAvoidY;
+    std::string          prevState;
     double			us_left = 0.0;
     double			us_right = 0.0;
     double			us_center = 0.0;
