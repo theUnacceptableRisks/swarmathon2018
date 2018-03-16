@@ -366,7 +366,7 @@ void runStateMachines(const ros::TimerEvent&)
          * State Machine Execution *
          ***************************/
         logic_machine.run();
-        //std::cout << "current state is..." << logic_machine.getCurrentIdentifier() << std::endl;
+        std::cout << "current state is..." << logic_machine.getCurrentIdentifier() << std::endl;
 
         /*****************
          * Drive Portion *
@@ -383,9 +383,9 @@ void runStateMachines(const ros::TimerEvent&)
             left = std::get<0>( output );
             right = std::get<1>( output );
 
-            //std::cout << "Left is " << left << std::endl;
-            //std::cout << "Right is " << right << std::endl;
-
+            std::cout << "Left is " << left << std::endl;
+            std::cout << "Right is " << right << std::endl;
+            std::cout << "Right is " << inputs.goal_x << ", " << inputs.goal_y << std::endl;
             /* TODO: add else messaging */
             sendDriveCommand( left, right );
         }

@@ -26,7 +26,8 @@ class AvoidState : public State
         double rotateTimer = -1;
         double detectionDist = .6;
         double detectionMargin = .2;
-        std::string previousState = "";
+        double initialTheta = 0;
+        bool rotationFlag = false;
         double angleToGoal = 0;
         double getNearestUS ();
         InternalState internalTransition();

@@ -24,6 +24,9 @@ typedef struct logic_inputs
     std::vector<Tag> 		tags;
     double          goal_x;
     double          goal_y;
+    bool            goalInObst = false;
+    double          initialAvoidAngle;
+    std::string          prevState;
     double			us_left = 0.0;
     double			us_right = 0.0;
     double			us_center = 0.0;
