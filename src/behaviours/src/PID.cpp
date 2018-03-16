@@ -15,6 +15,8 @@ int PID::runPID( double error, double dt )
         addIntegral( error * dt );
         output += getErrorIntegral() * params.Ki;
     }
+    else
+        error_integral.clear();
 
     /* Derivative */
     output += ( ( error - prev_error ) / dt ) * params.Kd;

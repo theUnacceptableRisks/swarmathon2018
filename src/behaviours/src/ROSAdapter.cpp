@@ -10,7 +10,6 @@
 #include <message_filters/sync_policies/approximate_time.h>
 
 // ROS messages
-#include <std_msgs/Float64.h>
 #include <std_msgs/Float32.h>
 #include <std_msgs/Int16.h>
 #include <std_msgs/UInt8.h>
@@ -49,9 +48,6 @@
 #include "Gripper.h"
 #include "MotorController.h"
 #include "TagUtilities.h"
-#include "LinearPID.h"
-#include "RadRotPID.h"
-#include "LinRotPID.h"
 
 // To handle shutdown signals so the node quits
 // properly in response to "rosnode kill"
@@ -129,17 +125,6 @@ long int getROSTimeInMilliSecs();
  * END ALPHABET GLOBAL SOUP *
  ****************************/
 
-typedef enum
-{
-    LINEAR_DRIVE, RADIAN_ROTATION, LINEAR_ROTATION
-} PIDType;
-
-PIDType which_pid = LINEAR_DRIVE;
-
-PidParams pid_params;
-LinearPID linear;
-RadRotPID radian;
-LinRotPID lin_rot;
 
 /******************
  * ROS Publishers *
@@ -182,13 +167,6 @@ ros::Subscriber odometry_subscriber;
 ros::Subscriber map_subscriber;
 ros::Subscriber rover_info_subscriber;
 
-ros::Subscriber pid_mode_subscriber;
-ros::Subscriber kp_subscriber;
-ros::Subscriber ki_subscriber;
-ros::Subscriber kd_subscriber;
-ros::Subscriber ip_subscriber;
-
-
 /******************************************
  * ROS Callback Functions for Subscribers *
  ******************************************/
@@ -201,11 +179,6 @@ void odomAccelAndGPSHandler(const nav_msgs::Odometry::ConstPtr& message);
 void manualWaypointHandler(const swarmie_msgs::Waypoint& message);
 void sonarHandler(const sensor_msgs::Range::ConstPtr& sonarLeft, const sensor_msgs::Range::ConstPtr& sonarCenter, const sensor_msgs::Range::ConstPtr& sonarRight);
 void roverInfoHandler(const swarmie_msgs::InfoMessage& message);
-void pidModeHandler(const std_msgs::UInt8::ConstPtr& message );
-void kpHandler(const std_msgs::Float64::ConstPtr& message );
-void kiHandler(const std_msgs::Float64::ConstPtr& message );
-void kdHandler(const std_msgs::Float64::ConstPtr& message );
-void ipHandler(const std_msgs::Float64::ConstPtr& message );
 
 void setupSubscribers( ros::NodeHandle &ros_handle, string published_name )
 {
@@ -216,12 +189,6 @@ void setupSubscribers( ros::NodeHandle &ros_handle, string published_name )
     odometry_subscriber = ros_handle.subscribe((published_name + "/odom/filtered"), 10, odomAndAccelHandler);
     map_subscriber = ros_handle.subscribe((published_name + "/odom/ekf"), 10, odomAccelAndGPSHandler);
     rover_info_subscriber = ros_handle.subscribe("/roverInfo", 10, roverInfoHandler);
-    pid_mode_subscriber = ros_handle.subscribe((published_name + "/pidmode"), 10, pidModeHandler );
-    kp_subscriber = ros_handle.subscribe((published_name + "/kp"), 10, kpHandler);
-    ki_subscriber = ros_handle.subscribe((published_name + "/ki"), 10, kiHandler);
-    kd_subscriber = ros_handle.subscribe((published_name + "/kd"), 10, kdHandler);
-    ip_subscriber = ros_handle.subscribe((published_name + "/ip"), 10, ipHandler );
-
 
 }
 
@@ -279,7 +246,7 @@ LogicMachine logic_machine( &iotable );
 
 void setupLogicMachine()
 {
-    inputs.controller = MotorController( inputs.calibration.motor_min, inputs.calibration.rotational_min );
+//    inputs.controller = MotorController( inputs.calibration.motor_min, inputs.calibration.rotational_min );
     /* add States */
 //    logic_machine.addState( motorcalib_state.getIdentifier(), dynamic_cast<State *>(&motorcalib_state) );
 //    logic_machine.addState( rotationalcalib_state.getIdentifier(), dynamic_cast<State *>(&rotationalcalib_state) );
@@ -353,9 +320,6 @@ int main(int argc, char **argv)
     info_log_publisher.publish(msg);
     timerStartTime = time(0);
 
-    radian.setParams( pid_params );
-
-    which_pid = LINEAR_ROTATION;
 
     swarmie_msgs::InfoMessage infoMsg;
     infoMsg.name = roverName;
@@ -395,52 +359,49 @@ void runStateMachines(const ros::TimerEvent&)
     // time since timerStartTime was set to current time
     //timerTimeElapsed = time(0) - timerStartTime;
     // Robot is in automode
-    std::cout << "Kp:" << pid_params.Kp << " Ki:" << pid_params.Ki << " Kd:" << pid_params.Kd << " IP:" << pid_params.integration_point << " PID mode:" << which_pid << " Theta:" << inputs.odom_accel_gps.theta << std::endl;
     inputs.time = ros::Time::now();
     if (currentMode == 2 || currentMode == 3)
     {
-        PidInputs pid_inputs;
-        std::tuple<int,int> output;
+        /***************************
+         * State Machine Execution *
+         ***************************/
+        logic_machine.run();
+        std::cout << "Current State:" << logic_machine.getCurrentIdentifier() << std::endl;
 
-        pid_inputs.time = inputs.time.toSec();
-        switch( which_pid )
+        /*****************
+         * Drive Portion *
+         *****************/
+        if( outputs.current_waypoint )
         {
-            default:break;
-            case LINEAR:
-                pid_inputs.measured = inputs.raw_odom.x;
-                pid_inputs.goal = 1;
-                pid_inputs.max_output = 160;
-                output = linear.execute( pid_inputs );
-                break;
-            case RADIAN_ROTATION:
-                pid_inputs.measured = inputs.odom_accel_gps.theta;
-                pid_inputs.goal = M_PI_2;
-                pid_inputs.max_output = 160;
-                output = radian.execute( pid_inputs );
-                break;
-            case LINEAR_ROTATION:
-                if( inputs.tags.size() > 0 )
-                {
-                    pid_inputs.measured = TagUtilities::getClosestTag( &inputs.tags, 0 ).getPositionX();
-                    pid_inputs.goal = 0.023;
-                    pid_inputs.max_output = 160;
-                    output = lin_rot.execute( pid_inputs );
-                }
-                break;
+            int left = 0;
+            int right = 0;
+            std::tuple<int,int> output;
+
+            outputs.current_waypoint->run();
+
+            output = outputs.current_waypoint->getOutput();
+            left = std::get<0>( output );
+            right = std::get<1>( output );
+
+            std::cout << "Left is " << left << std::endl;
+            std::cout << "Right is " << right << std::endl;
+
+            sendDriveCommand( left, right );
         }
-
-        std::cout << "Left is  " << std::get<0>(output) << std::endl;
-        std::cout << "Right is " << std::get<1>(output) << std::endl;
-
-        /* TODO: add else messaging */
-        sendDriveCommand( std::get<0>(output), std::get<1>(output) );
+        else
+        {
+            std::cout << "Current Waypoint is null" << std::endl;
+            sendDriveCommand( 0, 0 );
+        }
+        /*******************
+         * Gripper Portion *
+         *******************/
         sendGripperPosition( outputs.gripper_position );
     }
     else
     {
         sendGripperPosition( Gripper::HOVER_OPEN );
         /* some output about manual mode? */
-        sendDriveCommand( 0, 0 );
     }
 }
 
@@ -510,6 +471,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
     inputs.examiner.clear();
     if (message->detections.size() > 0)
     {
+        std::cout << "Round of Tags" << std::endl;
         for (int i = 0; i < message->detections.size(); i++)
         {
             // Package up the ROS AprilTag data into our own type that does not rely on ROS.
@@ -528,6 +490,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
                                                                   tagPose.pose.orientation.z,
                                                                   tagPose.pose.orientation.w ) );
             inputs.tags.push_back( loc );
+            std::cout << loc << std::endl;
         }
         if( TagUtilities::hasTag( &inputs.tags, 0 ) )
         {
@@ -538,13 +501,17 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
                 {
                     found = inputs.cubes.at(j).checkTag( inputs.tags.at(i) );
                     if( found )
+                    {
+                        std::cout << "same cube!" << std::endl;
                         break;
+                    }
                 }
                 if( !found )
                     inputs.cubes.push_back( Cube( inputs.tags.at(i) ) );
 
             }
         }
+        std::cout << "Number of cubes " << inputs.cubes.size() << std::endl;
         inputs.examiner.loadTags( inputs.tags );
     }
 }
@@ -704,106 +671,3 @@ void humanTime() {
   }
   //cout << "System has been Running for :: " << hoursTime << " : hours " << minutesTime << " : minutes " << timeDiff << "." << frac << " : seconds" << endl; //you can remove or comment this out it just gives indication something is happening to the log file
 }
-
-void pidModeHandler(const std_msgs::UInt8::ConstPtr& message )
-{
-    PIDType value = (PIDType)message->data;
-
-    which_pid = value;
-    pid_params.integration_point = 0.1;
-
-    switch( value )
-    {
-        default: break;
-        case LINEAR_DRIVE:
-           linear.setParams( pid_params );
-           break;
-        case RADIAN_ROTATION:
-           radian.setParams( pid_params );
-           break;
-        case LINEAR_ROTATION:
-           lin_rot.setParams( pid_params );
-           break;
-    }
-}
-
-void kpHandler(const std_msgs::Float64::ConstPtr& message )
-{
-    double value = message->data;
-    pid_params.Kp = value;
-    switch( which_pid )
-    {
-        default: break;
-        case LINEAR_DRIVE:
-           linear.setParams( pid_params );
-           break;
-        case RADIAN_ROTATION:
-           radian.setParams( pid_params );
-           break;
-        case LINEAR_ROTATION:
-           lin_rot.setParams( pid_params );
-           break;
-    }
-
-}
-
-void kiHandler(const std_msgs::Float64::ConstPtr& message )
-{
-    double value = message->data;
-    pid_params.Ki = value;
-    switch( which_pid )
-    {
-        default: break;
-        case LINEAR_DRIVE:
-           linear.setParams( pid_params );
-           break;
-        case RADIAN_ROTATION:
-           radian.setParams( pid_params );
-           break;
-        case LINEAR_ROTATION:
-           lin_rot.setParams( pid_params );
-           break;
-    }
-
-}
-
-void kdHandler(const std_msgs::Float64::ConstPtr& message )
-{
-    double value = message->data;
-    pid_params.Kd = value;
-    switch( which_pid )
-    {
-        default: break;
-        case LINEAR_DRIVE:
-           linear.setParams( pid_params );
-           break;
-        case RADIAN_ROTATION:
-           radian.setParams( pid_params );
-           break;
-        case LINEAR_ROTATION:
-           lin_rot.setParams( pid_params );
-           break;
-    }
-
-}
-
-void ipHandler(const std_msgs::Float64::ConstPtr& message )
-{
-    double value = message->data;
-    pid_params.integration_point = value;
-    switch( which_pid )
-    {
-        default: break;
-        case LINEAR_DRIVE:
-           linear.setParams( pid_params );
-           break;
-        case RADIAN_ROTATION:
-           radian.setParams( pid_params );
-           break;
-        case LINEAR_ROTATION:
-           lin_rot.setParams( pid_params );
-           break;
-    }
-
-}
-

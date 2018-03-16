@@ -72,14 +72,14 @@ void SearchState::internalAction()
             for( double n = 1.0; n < SEARCH_SIZE; n += 1.0 )
             {
                 y += n * pow( (-1.0), ( n + 1.0 ) );
-                params.goal_x = 0;
-                params.goal_y = 0;
+                params.goal_x = x;
+                params.goal_y = y;
                 waypoint = new SimpleWaypoint( this->inputs, params );
                 this->waypoints.push_back( dynamic_cast<Waypoint*>( waypoint ) );
 
                 x += ( n + 1.0 ) * pow( (-1.0), ( n + 1.0 ) );
-                params.goal_x = 0;
-                params.goal_y = 0;
+                params.goal_x = x;
+                params.goal_y = y;
                 waypoint = new SimpleWaypoint( this->inputs, params );
                 this->waypoints.push_back( dynamic_cast<Waypoint*>( waypoint ) );
             }

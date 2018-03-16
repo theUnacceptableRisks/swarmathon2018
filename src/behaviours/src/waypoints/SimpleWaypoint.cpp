@@ -36,6 +36,7 @@ void SimpleWaypoint::internalAction()
         default: break;
         case SIMPLE_ARRIVED:
             this->has_arrived = true;
+            linear_pid.reset();
             setOutputLeftPWM( 0 );
             setOutputRightPWM( 0 );
             break;
@@ -61,20 +62,20 @@ void SimpleWaypoint::internalAction()
             std::tuple<int,int> linear_output;
             std::tuple<int,int> rotational_output;
 
-            pid_inputs.measured = (-1)*WaypointUtilities::getDistance( driving_params );
+            pid_inputs.measured = 0 - WaypointUtilities::getDistance( driving_params );
             pid_inputs.goal = 0; //trying to go a distance, why wouldn't you want to zero that distance?
             pid_inputs.time = inputs->time.toSec();
-            pid_inputs.max_output = simple_params.linear_max;
+            pid_inputs.max_output = simple_params.skid_max;
 
             linear_output = linear_pid.execute( pid_inputs );
 
             pid_inputs.measured = *driving_params.current_theta;
             pid_inputs.goal = WaypointUtilities::getGoalTheta( driving_params );
-            pid_inputs.max_output = simple_params.skid_rotational_max;
+            pid_inputs.max_output = simple_params.skid_max;
 
             rotational_output = rotational_pid.execute( pid_inputs );
 
-            setOutputLeftPWM( std::get<0>(linear_output) - std::get<0>(rotational_output) );
+            setOutputLeftPWM( std::get<0>(linear_output) + std::get<0>(rotational_output) );
             setOutputRightPWM( std::get<1>(linear_output) + std::get<1>(rotational_output) );
             break;
         }
