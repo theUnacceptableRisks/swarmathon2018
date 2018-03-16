@@ -490,7 +490,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
                                                                   tagPose.pose.orientation.z,
                                                                   tagPose.pose.orientation.w ) );
             inputs.tags.push_back( loc );
-            std::cout << loc << std::endl;
+//            std::cout << loc << std::endl;
         }
         if( TagUtilities::hasTag( &inputs.tags, 0 ) )
         {

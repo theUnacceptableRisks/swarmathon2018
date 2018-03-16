@@ -2,6 +2,7 @@
 #define tagutilities_h
 
 #include "Tag.h"
+#include "Cube.h"
 #include "PID.h"
 
 namespace TagUtilities
@@ -12,8 +13,7 @@ namespace TagUtilities
     int numberOfTags(std::vector<Tag> *tags, int id);
     Tag getClosestTag( std::vector<Tag> *tags, int id );
     Tag getClosestTagSane( std::vector<Tag> *tags, int id, double tolerance );
-    //pids specific to tag info
-    
+    Cube getClosestCube( std::vector<Cube> *cubes );
 };
 
 #endif

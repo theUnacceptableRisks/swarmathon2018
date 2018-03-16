@@ -16,6 +16,7 @@ class Cube
         double getPositionY();
         double getPositionZ();
         double getDistance();
+        double getGroundDistance();
     private:
         std::vector<Tag> tags;
 
