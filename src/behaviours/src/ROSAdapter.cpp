@@ -42,7 +42,6 @@
 #include "logic/AvoidState.h"
 #include "logic/AvoidHomeState.h"
 #include "logic/AvoidCubeState.h"
-#include "logic/OliverPickUpState.h"
 #include "logic/MotorCalibState.h"
 #include "logic/RotationalCalibState.h"
 #include "logic/DropOffState.h"
@@ -241,7 +240,6 @@ LogicMachine logic_machine( &iotable );
     AvoidState avoid_state( &iotable );
     AvoidHomeState avoidhome_state( &iotable );
     AvoidCubeState avoidcube_state( &iotable );
-    OliverPickUpState oliverpickup_state( &iotable );
     MotorCalibState motorcalib_state( &iotable );
     RotationalCalibState rotationalcalib_state( &iotable );
     DropOffState dropoff_state( &iotable );
@@ -259,7 +257,6 @@ void setupLogicMachine()
     logic_machine.addState( avoid_state.getIdentifier(), dynamic_cast<State *>(&avoid_state) );
     logic_machine.addState( avoidhome_state.getIdentifier(), dynamic_cast<State *>(&avoidhome_state) );
     logic_machine.addState( avoidcube_state.getIdentifier(), dynamic_cast<State *>(&avoidcube_state) );
-    logic_machine.addState( oliverpickup_state.getIdentifier(), dynamic_cast<State *>(&oliverpickup_state) );
     return;
 }
 
