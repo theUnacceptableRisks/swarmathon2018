@@ -14,10 +14,11 @@ void AvoidState::onEnter( std::string prev_state )
     if(prev_state != "avoidcube_state" && prev_state != "avoidhome_state"){
         this->inputs->prevState = prev_state;
         this->inputs->initialAvoidAngle = this->inputs->odom_accel_gps.theta;
+        this->inputs->initialAvoidX = this->inputs->odom_accel_gps.x;
+        this->inputs->initialAvoidY = this->inputs->odom_accel_gps.y;
     }
     if( waypoints.size() > 0 )
         outputs->current_waypoint = waypoints.front();
-    rotationFlag = false;
 }
 
 void AvoidState::onExit( std::string next_state )
@@ -30,7 +31,8 @@ std::string AvoidState::transition()
     std::string transition_to = getIdentifier();
     angleToGoal = atan2f(this->inputs->goal_y - this->inputs->odom_accel_gps.y, this->inputs->goal_x - this->inputs->odom_accel_gps.x);
     angleToGoal = this->inputs->odom_accel_gps.theta - angleToGoal;
-   
+    double distFromInitialLocation = hypot(this->inputs->odom_accel_gps.x - this->inputs->initialAvoidX, this->inputs->odom_accel_gps.y - this->inputs->initialAvoidY);
+
     if(angleToGoal < 0 && angleToGoal > -1 && internal_state == AVOID_DRIVE)
         transition_to = this->inputs->prevState;
     if( TagUtilities::hasTag( &this->inputs->tags, 0 ) ){
@@ -46,6 +48,12 @@ std::string AvoidState::transition()
         } else {
             transition_to = "avoidhome_state";
         }
+    }
+
+        
+    if( this->inputs->rotationFlag == true && abs(this->inputs->odom_accel_gps.theta) - abs(this->inputs->initialAvoidAngle) < .25 && distFromInitialLocation < .5){
+        this->inputs->goalInObst = true;
+        transition_to = this->inputs->prevState;
     }
 
 
@@ -93,7 +101,7 @@ void AvoidState::internalAction()
         case AVOID_DRIVE:
         {
             if(abs(this->inputs->odom_accel_gps.theta) - abs(this->inputs->initialAvoidAngle) > 1){
-                rotationFlag = true;
+                this->inputs->rotationFlag = true;
             }
             params.left_output = 60 * wheelRatio;
             params.right_output = 60 * (1/wheelRatio);

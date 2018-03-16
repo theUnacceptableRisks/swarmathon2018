@@ -385,7 +385,7 @@ void runStateMachines(const ros::TimerEvent&)
 
             std::cout << "Left is " << left << std::endl;
             std::cout << "Right is " << right << std::endl;
-            std::cout << "Right is " << inputs.goal_x << ", " << inputs.goal_y << std::endl;
+            std::cout << "Goal X, Y: " << inputs.goal_x << ", " << inputs.goal_y << std::endl;
             /* TODO: add else messaging */
             sendDriveCommand( left, right );
         }

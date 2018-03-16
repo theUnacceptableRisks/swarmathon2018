@@ -23,7 +23,6 @@ class AvoidHomeState : public State
     private:
         double angleToGoal = 0;
         double wheelRatio = 1;
-        bool rotationFlag = false;
         double getNearestUS ();
         InternalAvoidHomeState internalTransition();
         void internalAction();

@@ -27,7 +27,6 @@ class AvoidState : public State
         double detectionDist = .6;
         double detectionMargin = .2;
         double initialTheta = 0;
-        bool rotationFlag = false;
         double angleToGoal = 0;
         double getNearestUS ();
         InternalState internalTransition();

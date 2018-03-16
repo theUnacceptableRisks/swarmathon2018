@@ -25,7 +25,10 @@ typedef struct logic_inputs
     double          goal_x;
     double          goal_y;
     bool            goalInObst = false;
+    bool            rotationFlag = false;
     double          initialAvoidAngle;
+    double          initialAvoidX;
+    double          initialAvoidY;
     std::string          prevState;
     double			us_left = 0.0;
     double			us_right = 0.0;

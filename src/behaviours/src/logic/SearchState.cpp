@@ -18,6 +18,8 @@ void SearchState::onEnter( std::string prev_state )
         else
             this->outputs->current_waypoint = 0;
         this->inputs->goalInObst = false;
+        this->inputs->rotationFlag = false;
+        cout << "-----------------------------TEST----------------------------" << endl;
     }
     if( waypoints.size() > 0 )
         outputs->current_waypoint = waypoints.front();
