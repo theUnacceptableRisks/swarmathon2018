@@ -10,7 +10,7 @@
 
 typedef struct pid_params
 {
-    int bias = 0;
+    int bias = 15;
     double Kp = 60.;
     double Ki = 0.;
     double Kd = 0.;
