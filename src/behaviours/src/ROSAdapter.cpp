@@ -241,7 +241,7 @@ LogicMachine logic_machine( &iotable );
     AvoidState avoid_state( &iotable );
     AvoidHomeState avoidhome_state( &iotable );
     AvoidCubeState avoidcube_state( &iotable );
-    AvoidCubeState oliverpickup_state( &iotable );
+    OliverPickUpState oliverpickup_state( &iotable );
     MotorCalibState motorcalib_state( &iotable );
     RotationalCalibState rotationalcalib_state( &iotable );
     DropOffState dropoff_state( &iotable );

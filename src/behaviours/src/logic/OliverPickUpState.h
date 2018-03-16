@@ -8,19 +8,20 @@
 
 typedef enum
 {
-    PICKUP_INIT,
-    PICKUP_DRIVE
+    OLIVERPICKUP_INIT,
+    OLIVERPICKUP_DRIVE
 } InternalOliverPickUpState;
 
 class OliverPickUpState : public State
 {
     public:
-        OliverPickUpState( IOTable *io ) : State( "oliverpickup_state" ), inputs(io->inputs), outputs(io->outputs), internal_state( PICKUP_INIT ) {}
+        OliverPickUpState( IOTable *io ) : State( "oliverpickup_state" ), inputs(io->inputs), outputs(io->outputs), internal_state( OLIVERPICKUP_INIT ) {}
         virtual void action( void );
         virtual void onEnter( std::string prev_state );
         virtual void onExit( std::string next_state );
         virtual std::string transition();
     private:
+        double damper = 1;
         double angleToGoal = 0;
         double wheelRatio = 1;
         std::string previousState = "";

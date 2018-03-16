@@ -26,14 +26,6 @@ std::string OliverPickUpState::transition()
 {
     std::string transition_to = getIdentifier();
 
-    angleToGoal = atan2f(this->inputs->goal_y - this->inputs->odom_accel_gps.y, this->inputs->goal_x - this->inputs->odom_accel_gps.x);
-    angleToGoal = this->inputs->odom_accel_gps.theta - angleToGoal;
-
-    if(angleToGoal < 0 && angleToGoal > -1 && internal_state == PICKUP_DRIVE)
-        transition_to = previousState;
-    if(wheelRatio >= 4)
-        transition_to = previousState;
-
     return transition_to;
 }
 
@@ -44,13 +36,13 @@ InternalOliverPickUpState OliverPickUpState::internalTransition()
     switch( internal_state )
     {
         default: break;
-        case PICKUP_INIT:
-            if(!TagUtilities::hasTag(&this->inputs->tags , 0 ))
-                transition_to = PICKUP_DRIVE;
+        case OLIVERPICKUP_INIT:
+            //if(!TagUtilities::hasTag(&this->inputs->tags , 0 ))
+                //transition_to = OLIVERPICKUP_DRIVE;
             break;
-        case PICKUP_DRIVE:
+        case OLIVERPICKUP_DRIVE:
             if(TagUtilities::hasTag(&this->inputs->tags , 0 ))
-                transition_to = PICKUP_INIT;
+                transition_to = OLIVERPICKUP_INIT;
             break;
     }
 
@@ -65,24 +57,27 @@ void OliverPickUpState::internalAction()
     switch( internal_state )
     {
         default: break;
-        case PICKUP_INIT:
+        case OLIVERPICKUP_INIT:
         {
-            wheelRatio = 1;
-            params.left_output = -80;
-            params.right_output = 80;
-            params.duration = .7;
-           break;
+            if(TagUtilities::hasTag(&this->inputs->tags , 0 )){
+                
+            params.left_output = 60 * (-.02 - TagUtilities::getClosestTag(&this->inputs->tags, 0).getPositionX()) * damper;
+            params.left_output = -60 * (-.02 - TagUtilities::getClosestTag(&this->inputs->tags, 0).getPositionX()) * damper;
+            damper *= (-.02 - TagUtilities::getClosestTag(&this->inputs->tags, 0).getPositionX()) + .9;
+            std::cout << (-.02 - TagUtilities::getClosestTag(&this->inputs->tags, 0).getPositionX()) << endl;
+            }
+            break;
         }
-        case PICKUP_DRIVE:
+        case OLIVERPICKUP_DRIVE:
         {
-            params.left_output = 60 * wheelRatio;
-            params.right_output = 60 * (1/wheelRatio);
+            params.left_output = 0 * wheelRatio;
+            params.right_output = 0 * (1/wheelRatio);
             wheelRatio += 0.04;
             break;
         }
     }
     std::cout << "PICKUP INIT" << endl;
-    std::cout << TagUtilities::getClosestTag(this->inputs->tags, 0).getPositionX();
+    if(TagUtilities::hasTag(&this->inputs->tags , 0 ))
     waypoint = new RawOutputWaypoint( this->inputs, params );
     this->waypoints.push_back( dynamic_cast<Waypoint*>( waypoint ) );
     this->outputs->current_waypoint = waypoints.front();
