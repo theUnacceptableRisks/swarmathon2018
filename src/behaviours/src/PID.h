@@ -3,9 +3,10 @@
 
 #include <tuple>
 #include <vector>
+#include <cmath>
 
 #define DERIV_MAX 5	/* the lower this number the more sensitive to sudden and rapid change the PID will be */
-#define INTEG_MAX 50	/* the higher this number, the more error is summed. This will lead to higher I term outputs */
+#define INTEG_MAX 1000	/* the higher this number, the more error is summed. This will lead to higher I term outputs */
 
 typedef struct pid_params
 {
@@ -14,7 +15,6 @@ typedef struct pid_params
     double Ki = 0.;
     double Kd = 0.;
     double integration_point = 0.;
-    bool radians_mode = false;
 } PidParams;
 
 typedef struct pid_inputs
@@ -30,13 +30,12 @@ class PID
     public:
         PID() : prev_error(0), prev_time(0), params(PidParams()) {}
         PID( PidParams p ) : prev_error(0), prev_time(0), params(p) {}
-        int execute( PidInputs inputs );
+        virtual std::tuple<int,int> execute( PidInputs inputs ) { return std::make_tuple( 0, 0 ); }
         void setParams( PidParams new_params );
         void reset();
-    private:
-        void addDerivative( double value );
+    protected:
+        int runPID( double error, double dt );
         void addIntegral( double value );
-        double getErrorDerivative();
         double getErrorIntegral();
 
         PidParams params;

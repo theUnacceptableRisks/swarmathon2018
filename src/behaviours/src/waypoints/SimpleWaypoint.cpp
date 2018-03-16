@@ -42,7 +42,7 @@ void SimpleWaypoint::internalAction()
         case SIMPLE_ROTATE:
         {
             PidInputs pid_inputs;
-            double output;
+            std::tuple<int,int> output;
 
             pid_inputs.measured = *driving_params.current_theta;
             pid_inputs.goal = WaypointUtilities::getGoalTheta( driving_params );
@@ -51,15 +51,15 @@ void SimpleWaypoint::internalAction()
 
             output = rotational_pid.execute( pid_inputs );
 
-            setOutputLeftPWM( (-1)*output );
-            setOutputRightPWM( output );
+            setOutputLeftPWM( std::get<0>(output) );
+            setOutputRightPWM( std::get<1>(output) );
             break;
         }
         case SIMPLE_SKID:
         {
             PidInputs pid_inputs;
-            double linear_output;
-            double rotational_output;
+            std::tuple<int,int> linear_output;
+            std::tuple<int,int> rotational_output;
 
             pid_inputs.measured = (-1)*WaypointUtilities::getDistance( driving_params );
             pid_inputs.goal = 0; //trying to go a distance, why wouldn't you want to zero that distance?
@@ -74,8 +74,8 @@ void SimpleWaypoint::internalAction()
 
             rotational_output = rotational_pid.execute( pid_inputs );
 
-            setOutputLeftPWM( linear_output - rotational_output );
-            setOutputRightPWM( linear_output + rotational_output );
+            setOutputLeftPWM( std::get<0>(linear_output) - std::get<0>(rotational_output) );
+            setOutputRightPWM( std::get<1>(linear_output) + std::get<1>(rotational_output) );
             break;
         }
     }

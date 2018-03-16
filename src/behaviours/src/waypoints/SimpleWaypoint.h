@@ -2,7 +2,9 @@
 #define simplewaypoint_h
 
 #include "Waypoint.h"
-#include "../PID.h"
+#include "../RadRotPID.h"
+#include "../LinearPID.h"
+
 //SimpleWaypointStates seperate .cpp/.h
 
 typedef enum
@@ -39,8 +41,8 @@ class SimpleWaypoint : public Waypoint
             driving_params.current_y = &inputs->odom_accel.y; // _gps.y;
             driving_params.current_theta = &inputs->odom_accel.theta; // _gps.theta;
 
-            linear_pid = PID( WaypointUtilities::getDistancePIDParams() );
-            rotational_pid = PID( WaypointUtilities::getRadianBasedRotationalPIDParams() );
+            linear_pid = LinearPID( WaypointUtilities::getDistancePIDParams() );
+            rotational_pid = RadRotPID( WaypointUtilities::getRadianBasedRotationalPIDParams() );
 
         }
         virtual void run();
@@ -53,8 +55,8 @@ class SimpleWaypoint : public Waypoint
         SimpleParams simple_params;
         SWState internal_state;
 
-        PID linear_pid;
-        PID rotational_pid;
+        LinearPID linear_pid;
+        RadRotPID rotational_pid;
  };
 
 #endif

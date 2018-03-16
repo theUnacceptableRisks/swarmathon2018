@@ -2,7 +2,7 @@
 
 void LinearWaypoint::run()
 {
-    int output;
+    std::tuple<int,int> output;
     double current_distance = fabs( this->original_x - this->inputs->raw_odom.x );
 
     if( current_distance >= l_params.distance )
@@ -19,11 +19,8 @@ void LinearWaypoint::run()
 
         output = linear_pid.execute( pid_inputs );
 
-        if( !this->l_params.reverse )
-            output *= -1;
-
-        setOutputLeftPWM( output );
-        setOutputRightPWM( output );
+        setOutputLeftPWM( std::get<0>(output) );
+        setOutputRightPWM( std::get<1>(output) );
     }
     else
     {
