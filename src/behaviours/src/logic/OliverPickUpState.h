@@ -1,5 +1,5 @@
-#ifndef pickupstate_h
-#define pickupstate_h
+#ifndef oliverpickupstate_h
+#define oliverpickupstate_h
 
 #include "../state_machine/State.h"
 #include "LogicMachine.h"
@@ -10,12 +10,12 @@ typedef enum
 {
     PICKUP_INIT,
     PICKUP_DRIVE
-} InternalOliverPickupState;
+} InternalOliverPickUpState;
 
-class OliverPickupState : public State
+class OliverPickUpState : public State
 {
     public:
-        OliverPickupState( IOTable *io ) : State( "pickup_state" ), inputs(io->inputs), outputs(io->outputs), internal_state( PICKUP_INIT ) {}
+        OliverPickUpState( IOTable *io ) : State( "oliverpickup_state" ), inputs(io->inputs), outputs(io->outputs), internal_state( PICKUP_INIT ) {}
         virtual void action( void );
         virtual void onEnter( std::string prev_state );
         virtual void onExit( std::string next_state );
@@ -26,14 +26,14 @@ class OliverPickupState : public State
         std::string previousState = "";
         double initialTheta = 0;
         double getNearestUS ();
-        InternalOliverPickupState internalTransition();
+        InternalOliverPickUpState internalTransition();
         void internalAction();
-        void forceTransition( InternalOliverPickupState transition_to );
+        void forceTransition( InternalOliverPickUpState transition_to );
 
         std::vector<Waypoint *> waypoints;
         LogicInputs *inputs;
         LogicOutputs *outputs;
-        InternalOliverPickupState internal_state;
+        InternalOliverPickUpState internal_state;
 
 };
 

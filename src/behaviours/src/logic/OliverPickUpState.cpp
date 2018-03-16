@@ -82,7 +82,7 @@ void OliverPickUpState::internalAction()
         }
     }
     std::cout << "PICKUP INIT" << endl;
-    std::cout << TagUtilities::getClosestTag(this->inputs->tags, 0).x;
+    std::cout << TagUtilities::getClosestTag(this->inputs->tags, 0).getPositionX();
     waypoint = new RawOutputWaypoint( this->inputs, params );
     this->waypoints.push_back( dynamic_cast<Waypoint*>( waypoint ) );
     this->outputs->current_waypoint = waypoints.front();
