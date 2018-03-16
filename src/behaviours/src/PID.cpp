@@ -19,6 +19,8 @@ int PID::runPID( double error, double dt )
     /* Derivative */
     output += ( ( error - prev_error ) / dt ) * params.Kd;
 
+    std::cout << "PidOutput:" << output << std::endl;
+
     return (int)output;
 }
 

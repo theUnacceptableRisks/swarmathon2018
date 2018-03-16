@@ -246,7 +246,7 @@ LogicMachine logic_machine( &iotable );
 
 void setupLogicMachine()
 {
-    inputs.controller = MotorController( inputs.calibration.motor_min, inputs.calibration.rotational_min );
+//    inputs.controller = MotorController( inputs.calibration.motor_min, inputs.calibration.rotational_min );
     /* add States */
 //    logic_machine.addState( motorcalib_state.getIdentifier(), dynamic_cast<State *>(&motorcalib_state) );
 //    logic_machine.addState( rotationalcalib_state.getIdentifier(), dynamic_cast<State *>(&rotationalcalib_state) );
@@ -366,6 +366,7 @@ void runStateMachines(const ros::TimerEvent&)
          * State Machine Execution *
          ***************************/
         logic_machine.run();
+        std::cout << "Current State:" << logic_machine.getCurrentIdentifier() << std::endl;
 
         /*****************
          * Drive Portion *
