@@ -28,6 +28,9 @@ add_executable(
   src/Cube.cpp
   src/ROSAdapter.cpp
   src/PID.cpp
+  src/LinearPID.cpp
+  src/RadRotPID.cpp
+  src/LinRotPID.cpp
   src/Gripper.cpp
   src/MotorController.cpp
   src/TagUtilities.cpp
