@@ -29,7 +29,7 @@ class ApproachCube : public Waypoint
         ApproachCube( LogicInputs *i, CubeParams cp ) : Waypoint( i ), c_params(cp)
         {
             linear_pid = LinearPID( WaypointUtilities::getDistancePIDParams() );
-            linear_rot_pid = RadRotPID( WaypointUtilities::getLinearBasedRotationalPIDParams() );
+            linear_rot_pid = LinRotPID( WaypointUtilities::getLinearBasedRotationalPIDParams() );
         }
         virtual void run();
     private:

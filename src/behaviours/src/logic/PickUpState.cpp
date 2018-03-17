@@ -82,37 +82,19 @@ PUState PickUpState::internalTransition()
                 delete this->approach;
                 this->approach = 0;
 
-                transition_to = PICKUP_FINAL_CAMERA_DRIVE;
+                transition_to = PICKUP_FINAL_APPROACH;
             }
             else if( attempts > MAX_ATTEMPTS )
             {
                 transition_to = PICKUP_COMPLETE_FAILURE;
             }
             break;
-        case PICKUP_FINAL_CAMERA_DRIVE:
-            if( linear && linear->hasArrived() )
-            {
-                outputs->current_waypoint = 0;
-                delete this->linear;
-                this->linear = 0;
-
-                transition_to = PICKUP_FAIL;
-            }
-            else if( this->inputs->tags.size() == 0 || fabs( prev_distance - TagUtilities::getDistance( TagUtilities::getClosestTag( &this->inputs->tags, 0 ) ) ) > MAX_DISTANCE_CHANGE )
-            {
-                outputs->current_waypoint = 0;
-                delete this->linear;
-                this->linear = 0;
-
-                transition_to = PICKUP_FINAL_APPROACH;
-            }
-            break;
         case PICKUP_FINAL_APPROACH:
-            if( this->raw && this->raw->hasArrived() )
+            if( this->linear && this->linear->hasArrived() )
             {
                 outputs->current_waypoint = 0;
-                delete this->raw;
-                this->raw = 0;
+                delete this->linear;
+                this->linear = 0;
 
                 this->timer = this->inputs->time.toSec();
                 transition_to = PICKUP_CLAW_CLOSE;
@@ -142,6 +124,7 @@ PUState PickUpState::internalTransition()
             {
                 transition_to = PICKUP_FAIL;
             }
+            break;
         case PICKUP_COMPLETE:
             break;
         case PICKUP_FAIL:
@@ -159,24 +142,19 @@ void PickUpState::internalAction()
     switch( internal_state )
     {
         case PICKUP_INIT:
-            if( TagUtilities::hasTag( &inputs->tags, 0 ) )
+            if( inputs->cubes.size() > 0 )
             {
-                TagParams t_params;
+                CubeParams c_params;
 
-                t_params.desired_tag = 0;
+                c_params.dist_goal = 0.24;
+                c_params.dist_max_output = 10;
 
-                t_params.dist_deccel = 0.05;
-                t_params.dist_goal = 0.24;
-                t_params.dist_max_output = 10;
+                c_params.yaw_goal = CAMERA_OFFSET;
+                c_params.yaw_max_output = 80;
 
-                t_params.yaw_deccel = 0.2;
-                t_params.yaw_goal = 0.0;
-                t_params.yaw_max_output = 5;
+                c_params.skid_rotate_threshold = 0.05;
 
-                t_params.skid_rotate_threshold = 0.02;
-                t_params.type = CLOSEST;
-
-                approach = new ApproachTagWaypoint( inputs, t_params );
+                approach = new ApproachCube( inputs, c_params );
                 outputs->current_waypoint = approach;
             }
             else
@@ -194,11 +172,6 @@ void PickUpState::internalAction()
             else
                 this->attempts++;
             break;
-        case PICKUP_FINAL_CAMERA_DRIVE:
-            outputs->gripper_position = Gripper::DOWN_OPEN;
-            if( this->inputs->tags.size() > 0 )
-                this->prev_distance = TagUtilities::getDistance( TagUtilities::getClosestTag( &this->inputs->tags, 0 ) );
-            break;
         case PICKUP_FINAL_APPROACH:
             outputs->gripper_position = Gripper::DOWN_OPEN;
             break;
@@ -209,8 +182,6 @@ void PickUpState::internalAction()
             outputs->gripper_position = Gripper::UP_CLOSED;
             break;
         case PICKUP_CONFIRM:
-  //          if( this->inputs->us_center < 0.13 )
-    //            cube_secured = true;
             if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && TagUtilities::getDistance( TagUtilities::getClosestTag( &this->inputs->tags, 0 ) ) < 0.15 )
                 cube_secured = true;
             break;
@@ -244,7 +215,7 @@ void PickUpState::forceTransition( PUState transition_to )
         switch( internal_state )
         {
             default: break;
-            case PICKUP_FINAL_CAMERA_DRIVE:
+            case PICKUP_FINAL_APPROACH:
             {
                 if( this->linear )
                 {
@@ -254,32 +225,11 @@ void PickUpState::forceTransition( PUState transition_to )
                 /* on Enter */
                 LinearParams l_params;
 
-                l_params.distance = 0.12;
-                l_params.max_output = 20;
+                l_params.distance = TagUtilities::getClosestCube( &inputs->cubes ).getGroundDistance();
+                l_params.max_output = 25;
 
                 this->linear = new LinearWaypoint( this->inputs, l_params );
                 this->outputs->current_waypoint = this->linear;
-                if( this->inputs->tags.size() > 0 )
-                    this->prev_distance = TagUtilities::getDistance( TagUtilities::getClosestTag( &this->inputs->tags, 0 ) );
-                else
-                    this->prev_distance = 24.0;
-                break;
-            }
-            case PICKUP_FINAL_APPROACH:
-            {
-                if( this->raw )
-                {
-                    delete this->raw;
-                    this->raw = 0;
-                }
-                RawOutputParams r_params;
-
-                r_params.left_output = this->inputs->calibration.motor_min + 5;
-                r_params.right_output = this->inputs->calibration.motor_min + 5;
-                r_params.duration = 0.3;
-
-                this->raw = new RawOutputWaypoint( this->inputs, r_params );
-                this->outputs->current_waypoint = this->raw;
                 break;
             }
             case PICKUP_FAIL:
@@ -294,7 +244,7 @@ void PickUpState::forceTransition( PUState transition_to )
 
                 LinearParams l_params;
 
-                l_params.distance = .2;
+                l_params.distance = (-0.3);
                 l_params.max_output = 20;
                 l_params.reverse = true;
 

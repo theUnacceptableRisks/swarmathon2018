@@ -45,16 +45,16 @@ void ApproachCube::run()
                     pid_inputs.measured = x_average;
                 }
 
-                pid_inputs.goal = CAMERA_OFFSET;
+                pid_inputs.goal = c_params.yaw_goal;
                 pid_inputs.time = inputs->time.toSec();
                 pid_inputs.max_output = c_params.yaw_max_output;
 
                 rotational_output = linear_rot_pid.execute( pid_inputs );
 
-                pid_inputs.measured = distance;
+                pid_inputs.measured = c_params.dist_goal - distance;
                 pid_inputs.goal = c_params.dist_goal;
                 pid_inputs.time = inputs->time.toSec();
-                pid_inputs.max_output = c_params.disT_max_output;
+                pid_inputs.max_output = c_params.dist_max_output;
 
                 linear_output = linear_pid.execute( pid_inputs );
 
