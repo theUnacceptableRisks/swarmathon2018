@@ -226,7 +226,7 @@ void PickUpState::forceTransition( PUState transition_to )
                 /* on Enter */
                 LinearParams l_params;
 
-                l_params.distance = TagUtilities::getClosestCube( &inputs->cubes ).getGroundDistance() - 0.05;
+                l_params.distance = TagUtilities::getClosestCube( &inputs->cubes ).getDistance();
                 l_params.max_output = 25;
 
                 this->linear = new LinearWaypoint( this->inputs, l_params );
