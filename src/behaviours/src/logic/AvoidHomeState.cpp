@@ -11,10 +11,14 @@ void AvoidHomeState::action()
 
 void AvoidHomeState::onEnter( std::string prev_state )
 {
-    previousState = prev_state;
+    if(prev_state != "avoidcube_state" && prev_state != "avoid_state"){
+        this->inputs->prevState = prev_state;
+        this->inputs->initialAvoidAngle = this->inputs->odom_accel_gps.theta;
+        this->inputs->initialAvoidX = this->inputs->odom_accel_gps.x;
+        this->inputs->initialAvoidY = this->inputs->odom_accel_gps.y;
+    }
     if( waypoints.size() > 0 )
         outputs->current_waypoint = waypoints.front();
-    initialTheta = this->inputs->odom_accel_gps.theta;
 }
 
 void AvoidHomeState::onExit( std::string next_state )
@@ -29,13 +33,29 @@ std::string AvoidHomeState::transition()
 
     angleToGoal = atan2f(this->inputs->goal_y - this->inputs->odom_accel_gps.y, this->inputs->goal_x - this->inputs->odom_accel_gps.x);
     angleToGoal = this->inputs->odom_accel_gps.theta - angleToGoal;
-
+    double distFromInitialLocation = hypot(this->inputs->odom_accel_gps.x - this->inputs->initialAvoidX, this->inputs->odom_accel_gps.y - this->inputs->initialAvoidY);
 
     if(angleToGoal < 0 && angleToGoal > -1 && internal_state == AVOIDHOME_DRIVE)
-        transition_to = previousState;
-    if(wheelRatio >= 4.2){
-        transition_to = previousState;
+        transition_to = this->inputs->prevState;
+
+
+    if( TagUtilities::hasTag( &this->inputs->tags, 0 ) ){
+        if(this->inputs->prevState == "search_state"){
+            transition_to = "pickup_state";
+        } else {
+            transition_to = "avoidcube_state";
+        }
     }
+
+    if( this->inputs->us_center < .4 || this->inputs->us_left < .4 ||  this->inputs->us_right < .4 ){
+        transition_to = "avoid_state";
+    }
+        
+    if( this->inputs->rotationFlag == true && abs(this->inputs->odom_accel_gps.theta) - abs(this->inputs->initialAvoidAngle) < .25 && distFromInitialLocation < .5){
+        this->inputs->goalInObst = true;
+        transition_to = this->inputs->prevState;
+    }
+
     return transition_to;
 }
 
@@ -51,6 +71,9 @@ InternalAvoidHomeState AvoidHomeState::internalTransition()
                 transition_to = AVOIDHOME_DRIVE;
             break;
         case AVOIDHOME_DRIVE:
+            if(abs(this->inputs->odom_accel_gps.theta) - abs(this->inputs->initialAvoidAngle) > 1){
+                this->inputs->rotationFlag = true;
+            }
             if(TagUtilities::hasTag(&this->inputs->tags , 256 ))
                 transition_to = AVOIDHOME_INIT;
             break;
@@ -73,8 +96,6 @@ void AvoidHomeState::internalAction()
             params.left_output = -65;
             params.right_output = 65;
             params.duration = 1.5;
-            std::cout << "AVOID INIT" << endl;
-            std::cout << "NEAREST US: " << getNearestUS() << endl;
            break;
         }
         case AVOIDHOME_DRIVE:
@@ -83,14 +104,9 @@ void AvoidHomeState::internalAction()
             params.right_output = 60 * (1/wheelRatio);
             wheelRatio += 0.04;
             wheelRatio = min(wheelRatio, 4.3);
-            std::cout << "AVOID DRIVE" << endl;
-            std::cout << "NEAREST US: " << getNearestUS() << endl;
             break;
         }
     }
-    std::cout << "INITIAL THETA: " << initialTheta << endl;
-    std::cout << "CURRENT THETA: " << this->inputs->odom_accel_gps.theta  << endl;
-    std::cout << "WheelRatio: " << wheelRatio << endl;
     waypoint = new RawOutputWaypoint( this->inputs, params );
     this->waypoints.push_back( dynamic_cast<Waypoint*>( waypoint ) );
     this->outputs->current_waypoint = waypoints.front();

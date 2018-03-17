@@ -35,6 +35,11 @@ std::string FindHomeState::transition()
         forceTransition( FINDHOME_COMPLETE );
         transition_to = "dropoff_state";
     }
+    if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && !TagUtilities::hasTag(&this->inputs->tags, 256))
+        transition_to = "avoidcube_state";
+    if( this->inputs->us_center < .4 || this->inputs->us_left < .4 ||  this->inputs->us_right < .4 )
+        transition_to = "avoid_state";
+
 
     return transition_to;
 }

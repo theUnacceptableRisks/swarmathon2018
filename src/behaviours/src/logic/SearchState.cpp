@@ -11,6 +11,16 @@ void SearchState::action()
 
 void SearchState::onEnter( std::string prev_state )
 {
+    if(this->inputs->goalInObst){
+        waypoints.erase( waypoints.begin() );
+        if( waypoints.size() != 0 )
+            this->outputs->current_waypoint = waypoints.front();
+        else
+            this->outputs->current_waypoint = 0;
+        this->inputs->goalInObst = false;
+        this->inputs->rotationFlag = false;
+        cout << "-----------------------------TEST----------------------------" << endl;
+    }
     if( waypoints.size() > 0 )
         outputs->current_waypoint = waypoints.front();
 }
