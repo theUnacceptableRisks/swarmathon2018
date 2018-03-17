@@ -22,8 +22,16 @@ void LinearWaypoint::run()
 
         output = linear_pid.execute( pid_inputs );
 
-        setOutputLeftPWM( std::get<0>(output) );
-        setOutputRightPWM( std::get<1>(output) );
+        if( l_params.reverse )
+        {
+            setOutputLeftPWM( (-1)*std::get<0>(output) );
+            setOutputRightPWM( (-1)*std::get<1>(output) );
+        }
+        else
+        {
+            setOutputLeftPWM( std::get<0>(output) );
+            setOutputRightPWM( std::get<1>(output) );
+        }
     }
     else
     {

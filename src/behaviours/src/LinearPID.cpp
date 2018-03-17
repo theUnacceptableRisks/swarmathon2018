@@ -22,9 +22,5 @@ std::tuple<int,int> LinearPID::execute( PidInputs inputs )
     if( output > inputs.max_output )
         output = inputs.max_output;
 
-    /* see if we need to back up instead */
-    if( error > 0 )
-        output *= (-1);
-
     return std::make_tuple ( output, output );
 }
