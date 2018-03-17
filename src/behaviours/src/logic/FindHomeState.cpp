@@ -12,12 +12,17 @@ void FindHomeState::onEnter( std::string prev_state )
 {
     if( this->internal_state == FINDHOME_COMPLETE )
     {
-        forceTransition( FINDHOME_INIT );
-        while( this->waypoints.front() )
+        if( waypoints.size() > 0 )
         {
-            delete this->waypoints.front();
-            this->waypoints.erase( waypoints.begin() );
+            while( this->waypoints.front() )
+            {
+                Waypoint *wp = this->waypoints.front();
+                this->waypoints.erase( waypoints.begin() );
+                if( wp )
+                    delete wp;
+            }
         }
+        forceTransition( FINDHOME_INIT );
     }
 }
 
@@ -33,7 +38,7 @@ std::string FindHomeState::transition()
     if( TagUtilities::hasTag( &this->inputs->tags, 256 ) )
     {
         forceTransition( FINDHOME_COMPLETE );
-        transition_to = "dropoff_state";
+        transition_to = "search_state";
     }
     if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && !TagUtilities::hasTag(&this->inputs->tags, 256))
         transition_to = "avoidcube_state";
