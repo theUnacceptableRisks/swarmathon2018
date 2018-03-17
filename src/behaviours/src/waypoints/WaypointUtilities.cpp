@@ -55,9 +55,9 @@ PidParams WaypointUtilities::getDistancePIDParams()
 {
     PidParams params;
 
-    params.Kp = 45.;
+    params.Kp = 50.;
     params.Ki = 5.;
-    params.Kd = 0.;
+    params.Kd = 5.;
     params.integration_point = 0.15;
 
     return params;
