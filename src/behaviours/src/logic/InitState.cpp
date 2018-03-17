@@ -87,14 +87,22 @@ void InitState::internalAction()
         case INIT_APPROACH:
             break;
         case INIT_CALIBRATE:
-            /* in sim */
-            outputs->offset_x = DISTANCE_TO_CENTER * cos( inputs->odom_accel.theta ) + inputs->odom_accel.x;
-            outputs->offset_y = DISTANCE_TO_CENTER * sin( inputs->odom_accel.theta ) + inputs->odom_accel.y;
-            /* irl */
-            //outputs->offset_x = DISTANCE_TO_CENTER * cos( inputs->odom_accel_gps.theta ) + inputs->odom_accel_gps.x;
-            //outputs->offset_y = DISTANCE_TO_CENTER * sin( inputs->odom_accel_gps.theta ) + inputs->odom_accel_gps.y;
-            calibration_complete = true;
+        {
+            if( inputs->tags.size() > 0 )
+            {
+                Tag closest_tag = TagUtilities::getClosestTag( &inputs->tags, 256 );
+                double dist = sin(1.13466)*closest_tag.getPositionZ() + DISTANCE_TO_CENTER;
+
+                /* in sim */
+                outputs->offset_x = dist * cos( inputs->odom_accel.theta ) + inputs->odom_accel.x;
+                outputs->offset_y = dist * sin( inputs->odom_accel.theta ) + inputs->odom_accel.y;
+                /* irl */
+                //outputs->offset_x = dist * cos( inputs->odom_accel_gps.theta ) + inputs->odom_accel_gps.x;
+                //outputs->offset_y = dist * sin( inputs->odom_accel_gps.theta ) + inputs->odom_accel_gps.y;
+                calibration_complete = true;
+            }
             break;
+        }
         case INIT_BACKUP:
             break;
         case INIT_COMPLETE:
