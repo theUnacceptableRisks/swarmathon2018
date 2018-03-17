@@ -77,7 +77,7 @@ void SearchState::internalAction()
             double y = 0.0;
             /* the constant bits of the params, tuning parts */
             params.skid_steer_threshold = M_PI/6;
-            params.arrived_threshold = 0.05;
+            params.arrived_threshold = 0.15;
 
             for( double n = 1.0; n < SEARCH_SIZE; n += 1.0 )
             {
