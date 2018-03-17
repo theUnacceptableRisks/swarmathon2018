@@ -20,7 +20,7 @@ typedef enum
 class InitState : public State
 {
     public:
-        InitState( IOTable *io ) : State( "init_state" ), internal_state(INIT_APPROACH), inputs(io->inputs), outputs(io->outputs)
+        InitState( IOTable *io ) : State( "init_state" ), internal_state(INIT_APPROACH), inputs(io->inputs), outputs(io->outputs), calibration_complete(false),
         {
             RawOutputParams params;
 
@@ -39,6 +39,7 @@ class InitState : public State
         void forceTransition( IState transition_to );
 
         RawOutputWaypoint *drive;
+        bool calibration_complete;
 
         LogicInputs *inputs;
         LogicOutputs *outputs;
