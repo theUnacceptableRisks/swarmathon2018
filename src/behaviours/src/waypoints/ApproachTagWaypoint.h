@@ -26,14 +26,16 @@ typedef struct tag_params
 {
     int desired_tag = 0;
 
+    double dist_deccel = 0;
     double dist_goal = 0.15;
     int dist_max_output = 130;
 
+    double yaw_deccel = 0;
     double yaw_goal = -0.023;
     int yaw_max_output = 60;
 
     double skid_rotate_threshold = 0.05;
-
+    ApproachType type = CLOSEST;
 } TagParams;
 
 class ApproachTagWaypoint : public Waypoint
