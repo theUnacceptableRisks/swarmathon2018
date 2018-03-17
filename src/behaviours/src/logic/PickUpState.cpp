@@ -147,7 +147,7 @@ void PickUpState::internalAction()
                 CubeParams c_params;
 
                 c_params.dist_goal = 0.26;
-                c_params.dist_max_output = 30;
+                c_params.dist_max_output = 40;
 
                 c_params.yaw_goal = CAMERA_OFFSET;
                 c_params.yaw_max_output = 80;
@@ -226,7 +226,7 @@ void PickUpState::forceTransition( PUState transition_to )
                 /* on Enter */
                 LinearParams l_params;
 
-                l_params.distance = TagUtilities::getClosestCube( &inputs->cubes ).getDistance();
+                l_params.distance = 0.12;
                 l_params.max_output = 25;
 
                 this->linear = new LinearWaypoint( this->inputs, l_params );
