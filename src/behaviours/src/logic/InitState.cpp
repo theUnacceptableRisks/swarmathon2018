@@ -20,6 +20,7 @@ std::string InitState::transition()
             transition_to = "findhome_state";
             break;
     }
+    return transition_to;
 }
 
 IState InitState::internalTransition()
@@ -28,6 +29,12 @@ IState InitState::internalTransition()
     switch( internal_state )
     {
         default:break;
+        case INIT_START:
+            if( drive )
+            {
+                transition_to = INIT_APPROACH;
+            }
+            break;
         case INIT_APPROACH:
             if( drive && drive->hasArrived() )
             {
@@ -41,7 +48,13 @@ IState InitState::internalTransition()
         case INIT_CALIBRATE:
             if( calibration_complete )
             {
-               transition_to = INIT_COMPLETE;
+               transition_to = INIT_BACKUP;
+            }
+            break;
+        case INIT_BACKUP:
+            if( drive && drive->hasArrived() )
+            {
+                transition_to = INIT_COMPLETE;
             }
             break;
         case INIT_COMPLETE:
@@ -58,6 +71,19 @@ void InitState::internalAction()
     switch( internal_state )
     {
         default:break;
+        case INIT_START:
+        {
+            RawOutputParams params;
+
+            params.left_output = PWM_OUTPUT;
+            params.right_output = PWM_OUTPUT;
+            params.duration = GIVE_UP_TIME;
+
+            drive = new RawOutputWaypoint( inputs, params );
+            outputs->current_waypoint = dynamic_cast<Waypoint*>( drive );
+            start_time = inputs->time.toSec();
+            break;
+        }
         case INIT_APPROACH:
             break;
         case INIT_CALIBRATE:
@@ -68,6 +94,8 @@ void InitState::internalAction()
             //outputs->offset_x = DISTANCE_TO_CENTER * cos( inputs->odom_accel_gps.theta ) + inputs->odom_accel_gps.x;
             //outputs->offset_y = DISTANCE_TO_CENTER * sin( inputs->odom_accel_gps.theta ) + inputs->odom_accel_gps.y;
             calibration_complete = true;
+            break;
+        case INIT_BACKUP:
             break;
         case INIT_COMPLETE:
             break;
@@ -88,12 +116,38 @@ void InitState::forceTransition( IState transition_to )
         switch( prev_state )
         {
             default:break;
+            case INIT_APPROACH:
+                if( drive )
+                {
+                    delete drive;
+                    drive = 0;
+                    outputs->current_waypoint = 0;
+                }
+                break;
         }
 
         /* onEnter bits */
         switch( internal_state )
         {
             default:break;
+            case INIT_BACKUP:
+            {
+                if( drive )
+                {
+                    delete drive;
+                    drive = 0;
+                }
+
+                RawOutputParams params;
+
+                params.left_output = -PWM_OUTPUT;
+                params.right_output = -PWM_OUTPUT;
+                params.duration = inputs->time.toSec() - start_time;;
+
+                drive = new RawOutputWaypoint( inputs, params );
+                outputs->current_waypoint = dynamic_cast<Waypoint*>( drive );
+                break;
+            }
         }
     }
 }
