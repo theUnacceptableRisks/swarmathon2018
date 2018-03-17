@@ -55,7 +55,7 @@ PidParams WaypointUtilities::getDistancePIDParams()
 {
     PidParams params;
 
-    params.Kp = 40.;
+    params.Kp = 45.;
     params.Ki = 5.;
     params.Kd = 0.;
     params.integration_point = 0.15;
@@ -81,8 +81,8 @@ PidParams WaypointUtilities::getLinearBasedRotationalPIDParams()
 {
     PidParams params;
 
-    params.Kp = 180.;
-    params.Ki = 40.;
+    params.Kp = 200.;
+    params.Ki = 42.;
     params.Kd = 20.;
     params.integration_point = 0.1;
 
