@@ -45,6 +45,7 @@
 #include "logic/MotorCalibState.h"
 #include "logic/RotationalCalibState.h"
 #include "logic/DropOffState.h"
+#include "logic/InitState.h"
 #include "Gripper.h"
 #include "MotorController.h"
 #include "TagUtilities.h"
@@ -240,16 +241,15 @@ LogicMachine logic_machine( &iotable );
     AvoidState avoid_state( &iotable );
     AvoidHomeState avoidhome_state( &iotable );
     AvoidCubeState avoidcube_state( &iotable );
-    MotorCalibState motorcalib_state( &iotable );
-    RotationalCalibState rotationalcalib_state( &iotable );
+//    MotorCalibState motorcalib_state( &iotable );
+//    RotationalCalibState rotationalcalib_state( &iotable );
     DropOffState dropoff_state( &iotable );
+    InitState init_state( &iotable );
 
 void setupLogicMachine()
 {
-//    inputs.controller = MotorController( inputs.calibration.motor_min, inputs.calibration.rotational_min );
     /* add States */
-//    logic_machine.addState( motorcalib_state.getIdentifier(), dynamic_cast<State *>(&motorcalib_state) );
-//    logic_machine.addState( rotationalcalib_state.getIdentifier(), dynamic_cast<State *>(&rotationalcalib_state) );
+    logic_machine.addState( init_state.getIdentifier(), dynamic_cast<State *>(&init_state) );
     logic_machine.addState( search_state.getIdentifier(), dynamic_cast<State *>(&search_state) );
     logic_machine.addState( pickup_state.getIdentifier(), dynamic_cast<State *>(&pickup_state) );
     logic_machine.addState( findhome_state.getIdentifier(), dynamic_cast<State *>(&findhome_state) );
@@ -538,8 +538,8 @@ void odomHandler(const nav_msgs::Odometry::ConstPtr& message)
 void odomAndAccelHandler(const nav_msgs::Odometry::ConstPtr& message)
 {
     //Get (x,y) location directly from pose
-    inputs.odom_accel.x = message->pose.pose.position.x;
-    inputs.odom_accel.y = message->pose.pose.position.y;
+    inputs.odom_accel.x = message->pose.pose.position.x - outputs.offset_x;
+    inputs.odom_accel.y = message->pose.pose.position.y - outputs.offset_y;
 
     //Get theta rotation by converting quaternion orientation to pitch/roll/yaw
     tf::Quaternion q(message->pose.pose.orientation.x, message->pose.pose.orientation.y, message->pose.pose.orientation.z, message->pose.pose.orientation.w);
@@ -555,8 +555,8 @@ void odomAndAccelHandler(const nav_msgs::Odometry::ConstPtr& message)
 void odomAccelAndGPSHandler(const nav_msgs::Odometry::ConstPtr& message)
 {
   //Get (x,y) location directly from pose
-  inputs.odom_accel_gps.x = message->pose.pose.position.x;
-  inputs.odom_accel_gps.y = message->pose.pose.position.y;
+  inputs.odom_accel_gps.x = message->pose.pose.position.x - outputs.offset_x;
+  inputs.odom_accel_gps.y = message->pose.pose.position.y - outputs.offset_y;
 
   //Get theta rotation by converting quaternion orientation to pitch/roll/yaw
   tf::Quaternion q(message->pose.pose.orientation.x, message->pose.pose.orientation.y, message->pose.pose.orientation.z, message->pose.pose.orientation.w);
