@@ -6,6 +6,6 @@ devel
 *.swp
 logs
 .catkin_tools
-.vscode*
-.idea*
+*.vscode*
+*.idea*
 *cmake-build-debug*
