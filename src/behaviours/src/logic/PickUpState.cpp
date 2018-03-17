@@ -146,7 +146,7 @@ void PickUpState::internalAction()
             {
                 CubeParams c_params;
 
-                c_params.dist_goal = 0.24;
+                c_params.dist_goal = 0.26;
                 c_params.dist_max_output = 10;
 
                 c_params.yaw_goal = CAMERA_OFFSET;
