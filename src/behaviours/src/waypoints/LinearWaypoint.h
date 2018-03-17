@@ -8,7 +8,6 @@ typedef struct linear_params
 {
     double distance;
     int max_output;
-    bool reverse = false;
 } LinearParams;
 
 class LinearWaypoint : public Waypoint

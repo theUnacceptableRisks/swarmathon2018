@@ -189,6 +189,7 @@ void PickUpState::internalAction()
             outputs->gripper_position = Gripper::HOVER_CLOSED;
             break;
         case PICKUP_FAIL:
+            std::cout << "In Pickup Fail" << std::endl;
             outputs->gripper_position = Gripper::DOWN_OPEN;
             break;
 
@@ -246,7 +247,6 @@ void PickUpState::forceTransition( PUState transition_to )
 
                 l_params.distance = (-0.3);
                 l_params.max_output = 20;
-                l_params.reverse = true;
 
                 this->linear = new LinearWaypoint( this->inputs, l_params );
                 this->outputs->current_waypoint = this->linear;

@@ -15,7 +15,7 @@ void LinearWaypoint::run()
     {
         PidInputs pid_inputs;
 
-        pid_inputs.measured = current_distance;
+        pid_inputs.measured = l_params.distance - current_distance;
         pid_inputs.goal = 0;
         pid_inputs.time = inputs->time.toSec();
         pid_inputs.max_output = l_params.max_output;

@@ -23,40 +23,47 @@ void ApproachCube::run()
                 PidInputs pid_inputs;
                 std::tuple<int,int> linear_output;
                 std::tuple<int,int> rotational_output;
+                double x_position = 0;
 
                 /* if we haven't arrived, it's time to do the work to try and arrive */
 
                 if( distance <= OPTIMAL_LOCK_DISTANCE )
                 {
                     /* close enough where we shouldn't lose the cube, just approach the closest */
-                    pid_inputs.measured = closest.getPositionX();
+                    x_position = closest.getPositionX();
                 }
                 else
                 {
                     /* average Xs of all cubes */
-                    double x_average = 0.0;
                     int num_cubes = inputs->cubes.size();
 
                     for( int i = 0; i < num_cubes; i++ )
-                        x_average += inputs->cubes.at(i).getPositionX();
+                        x_position += inputs->cubes.at(i).getPositionX();
 
-                    x_average /= num_cubes;
+                    x_position /= num_cubes;
 
-                    pid_inputs.measured = x_average;
                 }
 
+                pid_inputs.measured = x_position;
                 pid_inputs.goal = c_params.yaw_goal;
                 pid_inputs.time = inputs->time.toSec();
                 pid_inputs.max_output = c_params.yaw_max_output;
 
                 rotational_output = linear_rot_pid.execute( pid_inputs );
 
-                pid_inputs.measured = c_params.dist_goal - distance;
-                pid_inputs.goal = c_params.dist_goal;
-                pid_inputs.time = inputs->time.toSec();
-                pid_inputs.max_output = c_params.dist_max_output;
+                if( distance <= OPTIMAL_LOCK_DISTANCE && fabs( x_position ) > c_params.skid_rotate_threshold )
+                {
+                    linear_output = std::make_tuple( 0, 0 );
+                }
+                else
+                {
+                    pid_inputs.measured = distance;
+                    pid_inputs.goal = c_params.dist_goal;
+                    pid_inputs.time = inputs->time.toSec();
+                    pid_inputs.max_output = c_params.dist_max_output;
 
-                linear_output = linear_pid.execute( pid_inputs );
+                    linear_output = linear_pid.execute( pid_inputs );
+                }
 
                 setOutputLeftPWM( std::get<0>(linear_output) + std::get<0>(rotational_output ) );
                 setOutputRightPWM( std::get<1>(linear_output) + std::get<1>(rotational_output ) );

@@ -9,7 +9,7 @@
 #include "../LinRotPID.h"
 #include "../Cube.h"
 
-#define OPTIMAL_LOCK_DISTANCE 0.25
+#define OPTIMAL_LOCK_DISTANCE 0.35
 #define CAMERA_OFFSET -0.023
 
 typedef struct approach_cube_params

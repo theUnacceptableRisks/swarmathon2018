@@ -81,7 +81,7 @@ PidParams WaypointUtilities::getLinearBasedRotationalPIDParams()
 {
     PidParams params;
 
-    params.Kp = 80.;
+    params.Kp = 100.;
     params.Ki = 5.;
     params.Kd = 0.;
     params.integration_point = 0.1;
