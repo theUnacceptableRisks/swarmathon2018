@@ -3,10 +3,10 @@
 void LinearWaypoint::run()
 {
     std::tuple<int,int> output;
-    /* real world */
-//    double current_distance = fabs( this->original_x - this->inputs->raw_odom.x );
-    /* sim world */
-    double current_distance = hypot( original_x - inputs->raw_odom.x, original_y - inputs->raw_odom.y );
+    /* irl */
+    double current_distance = fabs( this->original_x - this->inputs->raw_odom.x );
+    /* in sim */
+//    double current_distance = hypot( original_x - inputs->raw_odom.x, original_y - inputs->raw_odom.y );
 
     if( current_distance >= l_params.distance )
         this->has_arrived = true;
