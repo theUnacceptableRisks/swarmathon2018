@@ -43,6 +43,8 @@ typedef struct logic_outputs
 {
     Gripper::Position gripper_position = Gripper::HOVER_OPEN;
     Waypoint *current_waypoint = 0;
+    double offset_x = 0.;
+    double offset_y = 0.;
 } LogicOutputs;
 
 typedef struct io_table
