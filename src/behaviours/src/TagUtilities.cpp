@@ -99,7 +99,7 @@ Tag TagUtilities::getClosestTagSane( std::vector<Tag> *tags, int id, double tole
 
 Cube TagUtilities::getClosestCube( std::vector<Cube> *cubes )
 {
-    Cube &closest_cube = cubes->at(0);
+    Cube closest_cube = cubes->at(0);
     double closest_dist = closest_cube.getDistance();
 
     for( int i = 1; i < cubes->size(); i++ )
