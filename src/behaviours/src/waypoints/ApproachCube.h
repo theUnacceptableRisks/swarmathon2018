@@ -9,13 +9,16 @@
 #include "../LinRotPID.h"
 #include "../Cube.h"
 
+#define OPTIMAL_LOCK_DISTANCE 0.25
+#define CAMERA_OFFSET -0.023
+
 typedef struct approach_cube_params
 {
     double dist_goal = 0.15;
-    double dist_max_output = 60;
+    double dist_max_output = 30;
 
     double yaw_goal = -0.023;
-    double yaw_max_output = 60;
+    double yaw_max_output = 80;
 
     double skid_rotate_threshold = 0.05;
 } CubeParams;
@@ -23,10 +26,16 @@ typedef struct approach_cube_params
 class ApproachCube : public Waypoint
 {
     public:
-        ApproachCube( LogicInputs *i, CubeParams cp ) : Waypoint( i ), c_params(cp) {}
+        ApproachCube( LogicInputs *i, CubeParams cp ) : Waypoint( i ), c_params(cp)
+        {
+            linear_pid = LinearPID( WaypointUtilities::getDistancePIDParams() );
+            linear_rot_pid = RadRotPID( WaypointUtilities::getLinearBasedRotationalPIDParams() );
+        }
         virtual void run();
     private:
         CubeParams c_params;
+        LinearPID linear_pid;
+        LinRotPID linear_rot_pid;
 };
 
 #endif
