@@ -43,6 +43,7 @@ add_executable(
   src/waypoints/LinearWaypoint.cpp
   src/waypoints/RawOutputWaypoint.cpp
   src/logic/LogicMachine.cpp
+  src/logic/InitState.cpp
   src/logic/SearchState.cpp
   src/logic/PickUpState.cpp
   src/logic/FindHomeState.cpp
