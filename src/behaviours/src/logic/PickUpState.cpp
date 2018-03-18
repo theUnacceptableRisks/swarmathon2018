@@ -99,6 +99,13 @@ PUState PickUpState::internalTransition()
                 this->timer = this->inputs->time.toSec();
                 transition_to = PICKUP_CLAW_CLOSE;
             }
+            else if( ( inputs->time.toSec() - timer ) >= APPROACH_TIME )
+            {
+                outputs->current_waypoint = 0;
+                delete this->linear;
+                this->linear = 0;
+                transition_to = PICKUP_FAIL;
+            }
             break;
         case PICKUP_CLAW_CLOSE:
             if( ( this->inputs->time.toSec() - this->timer ) >= CLOSE_TIME )
@@ -243,6 +250,7 @@ void PickUpState::forceTransition( PUState transition_to )
 
                 this->linear = new LinearWaypoint( this->inputs, l_params );
                 this->outputs->current_waypoint = this->linear;
+                timer = inputs->time.toSec();
                 break;
             }
             case PICKUP_FAIL:

@@ -73,7 +73,7 @@ DOState DropOffState::internalTransition()
                 transition_to = DROPOFF_ENTER;
             }
         case DROPOFF_ENTER:
-            if( ( enter && enter->hasArrived() ) || ( inputs->time.toSec() - timer >= 10 ) )
+            if( ( enter && enter->hasArrived() ) || ( inputs->time.toSec() - timer >= DROPOFF_TIME ) )
             {
                 delete enter;
                 enter = 0;

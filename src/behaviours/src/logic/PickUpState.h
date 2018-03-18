@@ -12,6 +12,7 @@
 #define UP_TIME 1.25
 #define CONFIRM_TIME 2.00
 #define MAX_DISTANCE_CHANGE 0.02
+#define APPROACH_TIME 20
 
 typedef enum
 {
