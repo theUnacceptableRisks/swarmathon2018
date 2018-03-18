@@ -57,9 +57,9 @@ PidParams WaypointUtilities::getDistPIDParams()
 {
     PidParams params;
 
-    params.Kp = 50.;
+    params.Kp = 40.;
     params.Ki = 5.;
-    params.Kd = 5.;
+    params.Kd = 1.;
     params.integration_point = 0.15;
 
     return params;
@@ -72,7 +72,7 @@ PidParams WaypointUtilities::getRadianRotPIDParams()
 {
     PidParams params;
 
-    params.Kp = 130.;
+    params.Kp = 120.;
     params.Ki = 15.;
     params.Kd = 5.;
     params.integration_point = 0.15;
@@ -85,9 +85,9 @@ PidParams WaypointUtilities::getLinearRotPIDParams()
 {
     PidParams params;
 
-    params.Kp = 100.;
-    params.Ki = 5.;
-    params.Kd = 0.;
+    params.Kp = 180.;
+    params.Ki = 40.;
+    params.Kd = 20.;
     params.integration_point = 0.1;
 
     return params;
@@ -99,10 +99,10 @@ PidParams WaypointUtilities::getDistSkidBasedPIDParams()
 {
     PidParams params;
 
-    params.Kp = 60.;
+    params.Kp = 50.;
     params.Ki = 5.;
-    params.Kd = 0.;
-    params.integration_point = 0.2;
+    params.Kd = 5.;
+    params.integration_point = 0.15;
 
     return params;
 
@@ -114,10 +114,10 @@ PidParams WaypointUtilities::getRadianRotSkidBasedPIDParams()
 {
     PidParams params;
 
-    params.Kp = 80.;
-    params.Ki = 5.;
-    params.Kd = 0.;
-    params.integration_point = M_PI/12;
+    params.Kp = 130.;
+    params.Ki = 15.;
+    params.Kd = 5.;
+    params.integration_point = 0.15;
     return params;
 }
 
