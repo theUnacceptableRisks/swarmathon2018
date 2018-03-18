@@ -5,8 +5,8 @@
 
 typedef struct rawoutputparams
 {
-    int left_output;
-    int right_output;
+    int left_output = 0;
+    int right_output = 0;
     double duration = 0.;
 } RawOutputParams;
 

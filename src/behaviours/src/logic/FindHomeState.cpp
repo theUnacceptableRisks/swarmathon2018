@@ -38,7 +38,7 @@ std::string FindHomeState::transition()
     if( TagUtilities::hasTag( &this->inputs->tags, 256 ) )
     {
         forceTransition( FINDHOME_COMPLETE );
-        transition_to = "search_state";
+        transition_to = "dropoff_state";
     }
     if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && !TagUtilities::hasTag(&this->inputs->tags, 256))
         transition_to = "avoidcube_state";

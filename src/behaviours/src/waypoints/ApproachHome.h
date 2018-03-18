@@ -16,7 +16,7 @@ typedef struct approach_home_params
     double dist_goal = 0.25;
     double dist_max_output = 30;
 
-    double yaw_goal = -0.023;
+    double yaw_goal = CAMERA_OFFSET;
     double yaw_max_output = 80;
 } HomeParams;
 
@@ -27,7 +27,7 @@ class ApproachHome : public Waypoint
     public:
         ApproachHome( LogicInputs *i, HomeParams hp ) : Waypoint( i ), h_params(hp)
         {
-            linear_pid = LinearPID( WaypointUtilities::getDistSkidBasedParams() );
+            linear_pid = LinearPID( WaypointUtilities::getDistSkidBasedPIDParams() );
             linear_rot_pid = LinRotPID( WaypointUtilities::getLinearRotSkidBasedPIDParams() );
         }
         virtual void run();
