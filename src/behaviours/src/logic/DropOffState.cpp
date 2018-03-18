@@ -208,7 +208,7 @@ void DropOffState::forceTransition( DOState transition_to )
                 LinearParams l_params;
 
                 l_params.distance = .5;
-                l_params.max_output = 25;
+                l_params.max_output = 35;
 
                 if( this->enter )
                 {

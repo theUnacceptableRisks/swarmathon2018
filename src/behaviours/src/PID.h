@@ -28,8 +28,8 @@ typedef struct pid_inputs
 class PID
 {
     public:
-        PID() : prev_error(0), prev_time(0), params(PidParams()) {}
-        PID( PidParams p ) : prev_error(0), prev_time(0), params(p) {}
+        PID() : prev_error(0), prev_time(0), error_inf(0), params(PidParams()) {}
+        PID( PidParams p ) : prev_error(0), prev_time(0), params(p), error_inf(0) {}
         virtual std::tuple<int,int> execute( PidInputs inputs ) { return std::make_tuple( 0, 0 ); }
         void setParams( PidParams new_params );
         void reset();
@@ -41,6 +41,7 @@ class PID
         PidParams params;
         std::vector<double> error_derivative;
         std::vector<double> error_integral;
+        double error_inf;
         double prev_goal;
         double prev_error;
         double prev_time;
