@@ -36,9 +36,16 @@ namespace WaypointUtilities
         PID yaw_pid;
     } PidPackage;
 
-    PidParams getDistancePIDParams();
-    PidParams getRadianBasedRotationalPIDParams();
-    PidParams getLinearBasedRotationalPIDParams();
+    /* linear */
+    PidParams getDistPIDParams();
+    /* rotation */
+    PidParams getRadianRotPIDParams();
+    PidParams getLinearRotPIDParams();
+    /* skid linear */
+    PidParams getDistSkidBasedPIDParams();
+    /* skid rotation */
+    PidParams getRadianRotSkidBasedPIDParams();
+    PidParams getLinearRotSkidBasedPIDParams();
 
 /*
     typedef struct pid_params

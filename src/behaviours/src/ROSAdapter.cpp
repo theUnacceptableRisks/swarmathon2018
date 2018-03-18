@@ -493,6 +493,13 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
             inputs.tags.push_back( loc );
 //            std::cout << loc << std::endl;
         }
+/*        double average_yaw = 0.0;
+        for( int i = 0; i < inputs.tags.size(); i++ )
+        {
+            average_yaw += inputs.tags.at(i).calcYaw();
+        }
+        average_yaw /= inputs.tags.size();
+        std::cout << "Average Yaw: " << average_yaw << std::endl; */
         if( TagUtilities::hasTag( &inputs.tags, 0 ) )
         {
             for( int i = 0; i < inputs.tags.size(); i++ )
@@ -513,6 +520,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
             }
         }
         std::cout << "Number of cubes " << inputs.cubes.size() << std::endl;
+        std::cout << "Closest Tag Dist:" << TagUtilities::getDistance( TagUtilities::getClosestTag( &inputs.tags, 256 ) ) << std::endl;
         inputs.examiner.loadTags( inputs.tags );
     }
 }

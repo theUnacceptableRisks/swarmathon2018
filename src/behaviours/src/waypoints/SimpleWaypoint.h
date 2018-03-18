@@ -41,8 +41,8 @@ class SimpleWaypoint : public Waypoint
             driving_params.current_y = &inputs->odom_accel.y; // _gps.y;
             driving_params.current_theta = &inputs->odom_accel.theta; // _gps.theta;
 
-            linear_pid = LinearPID( WaypointUtilities::getDistancePIDParams() );
-            rotational_pid = RadRotPID( WaypointUtilities::getRadianBasedRotationalPIDParams() );
+            linear_pid = LinearPID( WaypointUtilities::getDistSkidBasedPIDParams() );
+            rotational_pid = RadRotPID( WaypointUtilities::getRadianRotSkidBasedPIDParams() );
 
         }
         virtual void run();
