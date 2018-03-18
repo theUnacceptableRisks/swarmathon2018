@@ -9,7 +9,8 @@
 typedef enum
 {
     AVOIDCUBE_INIT,
-    AVOIDCUBE_DRIVE
+    AVOIDCUBE_DRIVE,
+    AVOIDCUBE_ESCAPE
 } InternalAvoidCubeState;
 
 class AvoidCubeState : public State
@@ -21,6 +22,7 @@ class AvoidCubeState : public State
         virtual void onExit( std::string next_state );
         virtual std::string transition();
     private:
+        double initialTime = 0;
         double angleToGoal = 0;
         double wheelRatio = 1;
         double initialTheta = 0;
