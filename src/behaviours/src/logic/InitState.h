@@ -8,7 +8,7 @@
 
 #define GIVE_UP_TIME 10
 #define DISTANCE_TO_CENTER .508
-#define PWM_OUTPUT 25
+#define PWM_OUTPUT 35
 
 typedef enum
 {
