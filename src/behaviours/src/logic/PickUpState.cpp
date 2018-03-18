@@ -117,12 +117,21 @@ PUState PickUpState::internalTransition()
         case PICKUP_CONFIRM:
             if( cube_secured )
             {
-                transition_to = PICKUP_COMPLETE;
+                transition_to = PICKUP_BACKUP;
                 this->timer = this->inputs->time.toSec();
             }
             else if( ( this->inputs->time.toSec() - this->timer ) >= CONFIRM_TIME )
             {
                 transition_to = PICKUP_FAIL;
+            }
+            break;
+        case PICKUP_BACKUP:
+            if( backup && backup->hasArrived() )
+            {
+                transition_to = PICKUP_COMPLETE;
+                outputs->current_waypoint = 0;
+                delete this->backup;
+                this->backup = 0;
             }
             break;
         case PICKUP_COMPLETE:
@@ -185,6 +194,9 @@ void PickUpState::internalAction()
             if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && TagUtilities::getDistance( TagUtilities::getClosestTag( &this->inputs->tags, 0 ) ) < 0.15 )
                 cube_secured = true;
             break;
+        case PICKUP_BACKUP:
+            outputs->gripper_position = Gripper::UP_CLOSED;
+            break;
         case PICKUP_COMPLETE:
             outputs->gripper_position = Gripper::HOVER_CLOSED;
             break;
@@ -246,12 +258,29 @@ void PickUpState::forceTransition( PUState transition_to )
                 LinearParams l_params;
 
                 l_params.distance = 0.3;
-                l_params.max_output = 20;
+                l_params.max_output = 25;
                 l_params.reverse = true;
 
                 this->linear = new LinearWaypoint( this->inputs, l_params );
                 this->outputs->current_waypoint = this->linear;
                 break;
+            }
+            case PICKUP_BACKUP:
+            {
+                if( this->backup )
+                {
+                    delete this->backup;
+                    this->backup = 0;
+                }
+
+                LinearParams b_params;
+
+                b_params.distance = 0.3;
+                b_params.max_output = 25;
+                b_params.reverse = true;
+
+                this->backup = new LinearWaypoint( this->inputs, b_params );
+                this->outputs->current_waypoint = this->backup;
             }
         }
     }

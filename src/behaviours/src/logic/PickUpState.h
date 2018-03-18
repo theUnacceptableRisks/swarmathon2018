@@ -22,7 +22,7 @@ typedef enum
     PICKUP_CLAW_CLOSE,
     PICKUP_CLAW_UP,
     PICKUP_CONFIRM,
-    PICKUP_HOVER_CLOSE,
+    PICKUP_BACKUP,
     PICKUP_COMPLETE,
     PICKUP_FAIL
 } PUState;
@@ -43,6 +43,7 @@ class PickUpState : public State
 
         ApproachCube *approach;
         LinearWaypoint *linear;
+        LinearWaypoint *backup;
 
         double timer;
 
