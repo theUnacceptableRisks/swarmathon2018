@@ -24,6 +24,10 @@ void FindHomeState::onEnter( std::string prev_state )
         }
         forceTransition( FINDHOME_INIT );
     }
+    else if( waypoints.size() > 0 )
+    {
+        outputs->current_waypoint = waypoints.front();
+    }
 }
 
 void FindHomeState::onExit( std::string next_state )
