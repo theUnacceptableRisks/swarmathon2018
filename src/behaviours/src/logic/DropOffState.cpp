@@ -29,8 +29,10 @@ std::string DropOffState::transition()
         default:break;
         case DROPOFF_COMPLETE:
             transition_to = "search_state";
+            break;
         case DROPOFF_FAIL:
             transition_to = "findhome_state";
+            break;
     }
 
     return transition_to;
@@ -73,7 +75,19 @@ DOState DropOffState::internalTransition()
         case DROPOFF_ENTER:
             if( enter && enter->hasArrived() )
             {
+                delete enter;
+                enter = 0;
+                outputs->current_waypoint = 0;
                 transition_to = DROPOFF_EXIT_BACKUP;
+            }
+            break;
+        case DROPOFF_EXIT_BACKUP:
+            if( exit && exit->hasArrived() )
+            {
+                delete exit;
+                exit = 0;
+                outputs->current_waypoint = 0;
+                transition_to = DROPOFF_COMPLETE;
             }
             break;
     }
@@ -135,6 +149,8 @@ void DropOffState::internalAction()
         case DROPOFF_ENTER:
             break;
         case DROPOFF_EXIT_BACKUP:
+            outputs->gripper_position = Gripper::HOVER_OPEN;
+            break;
     }
 }
 
@@ -201,10 +217,27 @@ void DropOffState::forceTransition( DOState transition_to )
                 }
 
                 enter = new LinearWaypoint( inputs, l_params );
-                outputs->current-waypoint = dynamic_cast<Waypoint*>( enter );
+                outputs->current_waypoint = dynamic_cast<Waypoint*>( enter );
                 break;
             }
-            
+            case DROPOFF_EXIT_BACKUP:
+            {
+                LinearParams l_params;
+
+                l_params.distance = 0.6;
+                l_params.max_output = 25;
+                l_params.reverse = true;
+
+                if( this->exit )
+                {
+                    delete this->exit;
+                    this->exit = 0;
+                }
+
+                exit = new LinearWaypoint( inputs, l_params );
+                outputs->current_waypoint = dynamic_cast<Waypoint*>( exit );
+                break;
+            }
         }
     }
 }
