@@ -106,7 +106,7 @@ void DropOffState::internalAction()
             if( TagUtilities::hasTag( &inputs->tags, 256 ) )
             {
                 HomeParams h_params; /* default values should be fine */
-
+                h_params.dist_goal = 0.35;
                 this->approach = new ApproachHome( this->inputs, h_params );
                 this->outputs->current_waypoint = this->approach;
                 this->attempts = 0;
