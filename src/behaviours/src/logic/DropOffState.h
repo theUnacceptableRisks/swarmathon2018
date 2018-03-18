@@ -50,6 +50,7 @@ class DropOffState : public State
         LogicOutputs *outputs;
         DOState internal_state;
 
+        double timer;
         int attempts;
         double yaw_average;
 

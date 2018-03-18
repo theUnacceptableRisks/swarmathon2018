@@ -73,7 +73,7 @@ DOState DropOffState::internalTransition()
                 transition_to = DROPOFF_ENTER;
             }
         case DROPOFF_ENTER:
-            if( enter && enter->hasArrived() )
+            if( ( enter && enter->hasArrived() ) || ( inputs->time.toSec() - timer >= 10 )
             {
                 delete enter;
                 enter = 0;
@@ -208,7 +208,7 @@ void DropOffState::forceTransition( DOState transition_to )
                 LinearParams l_params;
 
                 l_params.distance = .5;
-                l_params.max_output = 35;
+                l_params.max_output = 30;
 
                 if( this->enter )
                 {
@@ -218,6 +218,7 @@ void DropOffState::forceTransition( DOState transition_to )
 
                 enter = new LinearWaypoint( inputs, l_params );
                 outputs->current_waypoint = dynamic_cast<Waypoint*>( enter );
+                timer = inputs->time.toSec();
                 break;
             }
             case DROPOFF_EXIT_BACKUP:
