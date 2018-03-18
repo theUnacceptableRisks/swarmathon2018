@@ -1,5 +1,5 @@
-#ifndef approachcube_h
-#define approachcube_h
+#ifndef approachhome_h
+#define approachhome_h
 
 #include "../TagUtilities.h"
 #include "../logic/LogicTypes.h"
@@ -9,31 +9,30 @@
 #include "../LinRotPID.h"
 #include "../Cube.h"
 
-#define OPTIMAL_LOCK_DISTANCE 0.35
 #define CAMERA_OFFSET -0.023
 
-typedef struct approach_cube_params
+typedef struct approach_home_params
 {
-    double dist_goal = 0.15;
+    double dist_goal = 0.25;
     double dist_max_output = 30;
 
-    double yaw_goal = -0.023;
+    double yaw_goal = CAMERA_OFFSET;
     double yaw_max_output = 80;
+} HomeParams;
 
-    double skid_rotate_threshold = 0.05;
-} CubeParams;
 
-class ApproachCube : public Waypoint
+
+class ApproachHome : public Waypoint
 {
     public:
-        ApproachCube( LogicInputs *i, CubeParams cp ) : Waypoint( i ), c_params(cp)
+        ApproachHome( LogicInputs *i, HomeParams hp ) : Waypoint( i ), h_params(hp)
         {
             linear_pid = LinearPID( WaypointUtilities::getDistSkidBasedPIDParams() );
             linear_rot_pid = LinRotPID( WaypointUtilities::getLinearRotSkidBasedPIDParams() );
         }
         virtual void run();
     private:
-        CubeParams c_params;
+        HomeParams h_params;
         LinearPID linear_pid;
         LinRotPID linear_rot_pid;
 };

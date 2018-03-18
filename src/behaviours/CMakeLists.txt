@@ -42,6 +42,7 @@ add_executable(
   src/waypoints/ApproachCube.cpp
   src/waypoints/LinearWaypoint.cpp
   src/waypoints/RawOutputWaypoint.cpp
+  src/waypoints/ApproachHome.cpp
   src/logic/LogicMachine.cpp
   src/logic/InitState.cpp
   src/logic/SearchState.cpp

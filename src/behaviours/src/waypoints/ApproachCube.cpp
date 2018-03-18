@@ -51,6 +51,7 @@ void ApproachCube::run()
 
                 rotational_output = linear_rot_pid.execute( pid_inputs );
 
+                /* does rotation only, quick hack that shouldn't be used anymore */
                 if( distance <= OPTIMAL_LOCK_DISTANCE && fabs( x_position ) > c_params.skid_rotate_threshold )
                 {
                     linear_output = std::make_tuple( 0, 0 );

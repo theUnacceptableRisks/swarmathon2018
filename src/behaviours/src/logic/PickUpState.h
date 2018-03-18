@@ -12,6 +12,7 @@
 #define UP_TIME 1.25
 #define CONFIRM_TIME 2.00
 #define MAX_DISTANCE_CHANGE 0.02
+#define APPROACH_TIME 20
 
 typedef enum
 {
@@ -22,7 +23,7 @@ typedef enum
     PICKUP_CLAW_CLOSE,
     PICKUP_CLAW_UP,
     PICKUP_CONFIRM,
-    PICKUP_HOVER_CLOSE,
+    PICKUP_BACKUP,
     PICKUP_COMPLETE,
     PICKUP_FAIL
 } PUState;
@@ -43,6 +44,7 @@ class PickUpState : public State
 
         ApproachCube *approach;
         LinearWaypoint *linear;
+        LinearWaypoint *backup;
 
         double timer;
 

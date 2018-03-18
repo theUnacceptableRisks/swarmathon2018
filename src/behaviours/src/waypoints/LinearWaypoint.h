@@ -16,7 +16,7 @@ class LinearWaypoint : public Waypoint
     public:
         LinearWaypoint( LogicInputs *i, LinearParams lp ) : Waypoint( i ), l_params(lp), original_x(i->raw_odom.x), original_y(i->raw_odom.y)
         {
-            linear_pid = LinearPID( WaypointUtilities::getDistancePIDParams() );
+            linear_pid = LinearPID( WaypointUtilities::getDistPIDParams() );
         }
         virtual void run();
     private:

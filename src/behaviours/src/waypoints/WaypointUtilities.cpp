@@ -50,8 +50,10 @@ std::tuple<int,int> WaypointUtilities::executePid( PidParams &params, PidPackage
 }
 */
 
+/* linear */
+
 /* generate a linear output based on a linaer distance in meters from a target */
-PidParams WaypointUtilities::getDistancePIDParams()
+PidParams WaypointUtilities::getDistPIDParams()
 {
     PidParams params;
 
@@ -63,8 +65,10 @@ PidParams WaypointUtilities::getDistancePIDParams()
     return params;
 }
 
+/* rotation */
+
 /* generate a rotational output based on radian measurements from a target */
-PidParams WaypointUtilities::getRadianBasedRotationalPIDParams()
+PidParams WaypointUtilities::getRadianRotPIDParams()
 {
     PidParams params;
 
@@ -77,7 +81,47 @@ PidParams WaypointUtilities::getRadianBasedRotationalPIDParams()
 
 /* generate a rotational output based on meter measurements from a target */
 /* TODO: may need to break this up into camera and sonar distances but will try as one */
-PidParams WaypointUtilities::getLinearBasedRotationalPIDParams()
+PidParams WaypointUtilities::getLinearRotPIDParams()
+{
+    PidParams params;
+
+    params.Kp = 100.;
+    params.Ki = 5.;
+    params.Kd = 0.;
+    params.integration_point = 0.1;
+
+    return params;
+}
+
+/* skid linear */
+
+PidParams WaypointUtilities::getDistSkidBasedPIDParams()
+{
+    PidParams params;
+
+    params.Kp = 60.;
+    params.Ki = 5.;
+    params.Kd = 0.;
+    params.integration_point = 0.2;
+
+    return params;
+
+}
+
+/* skid rotation */
+
+PidParams WaypointUtilities::getRadianRotSkidBasedPIDParams()
+{
+    PidParams params;
+
+    params.Kp = 80.;
+    params.Ki = 5.;
+    params.Kd = 0.;
+    params.integration_point = M_PI/12;
+    return params;
+}
+
+PidParams WaypointUtilities::getLinearRotSkidBasedPIDParams()
 {
     PidParams params;
 

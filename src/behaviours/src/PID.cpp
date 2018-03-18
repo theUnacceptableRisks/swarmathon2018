@@ -12,11 +12,16 @@ int PID::runPID( double error, double dt )
     /* Integral */
     if( params.Ki != 0 && error <= params.integration_point && prev_time != 0 )
     {
-        addIntegral( error * dt );
-        output += getErrorIntegral() * params.Ki;
+        error_inf += (error * dt);
+        output += error_inf * params.Ki;
+//        addIntegral( error * dt );
+//        output += getErrorIntegral() * params.Ki;
     }
     else
-        error_integral.clear();
+    {
+        error_inf = 0;
+     //   error_integral.clear();
+    }
 
     /* Derivative */
     output += ( ( error - prev_error ) / dt ) * params.Kd;
@@ -34,6 +39,7 @@ void PID::reset()
 {
     error_derivative.clear();
     error_integral.clear();
+    error_inf = 0;
     prev_error = 0.;
     prev_time = 0.;
 }

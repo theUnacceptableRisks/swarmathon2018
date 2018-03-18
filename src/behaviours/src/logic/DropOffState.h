@@ -2,12 +2,17 @@
 #define dropoffstate_h
 
 #include "../state_machine/State.h"
-#include "../waypoints/ApproachTagWaypoint.h"
+#include "../waypoints/ApproachHome.h"
 #include "../waypoints/LinearWaypoint.h"
 #include "../waypoints/RawOutputWaypoint.h"
+#include "../TagExaminer.h"
 #include "LogicTypes.h"
 
 #define DROPOFF_MAX_ATTEMPTS 20
+#define DROPOFF_TIME 15
+#define ROTATION_SPEED 20
+#define YAW_LOW_RANGE 2.1
+#define YAW_HIGH_RANGE 2.4
 
 typedef enum
 {
@@ -26,7 +31,7 @@ typedef enum
 class DropOffState : public State
 {
     public:
-        DropOffState( IOTable *io ) : State( "dropoff_state" ), internal_state(DROPOFF_INIT), inputs(io->inputs), outputs(io->outputs), attempts(0) {}
+        DropOffState( IOTable *io ) : State( "dropoff_state" ), internal_state(DROPOFF_INIT), inputs(io->inputs), outputs(io->outputs), attempts(0), yaw_average(0) {}
         virtual void action( void );
         virtual void onEnter( std::string prev_state );
         virtual void onExit( std::string next_state );
@@ -37,17 +42,18 @@ class DropOffState : public State
         void internalAction();
         void forceTransition( DOState transition_to );
 
-        ApproachTagWaypoint *approach;
+        ApproachHome *approach;
         RawOutputWaypoint *alignment;
-        RawOutputWaypoint *wiggle_left;
-        RawOutputWaypoint *wiggle_right;
         LinearWaypoint *enter;
+        LinearWaypoint *exit;
 
         LogicInputs *inputs;
         LogicOutputs *outputs;
         DOState internal_state;
 
+        double timer;
         int attempts;
+        double yaw_average;
 
 };
 

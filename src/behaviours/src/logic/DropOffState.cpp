@@ -29,8 +29,10 @@ std::string DropOffState::transition()
         default:break;
         case DROPOFF_COMPLETE:
             transition_to = "search_state";
+            break;
         case DROPOFF_FAIL:
             transition_to = "findhome_state";
+            break;
     }
 
     return transition_to;
@@ -61,6 +63,33 @@ DOState DropOffState::internalTransition()
             else if( attempts > DROPOFF_MAX_ATTEMPTS )
                 transition_to = DROPOFF_FAIL;
             break;
+        case DROPOFF_ADJUST:
+            if( yaw_average > YAW_LOW_RANGE && yaw_average < YAW_HIGH_RANGE )
+            {
+                delete alignment;
+                alignment = 0;
+                outputs->current_waypoint = 0;
+
+                transition_to = DROPOFF_ENTER;
+            }
+        case DROPOFF_ENTER:
+            if( ( enter && enter->hasArrived() ) || ( inputs->time.toSec() - timer >= DROPOFF_TIME ) )
+            {
+                delete enter;
+                enter = 0;
+                outputs->current_waypoint = 0;
+                transition_to = DROPOFF_EXIT_BACKUP;
+            }
+            break;
+        case DROPOFF_EXIT_BACKUP:
+            if( exit && exit->hasArrived() )
+            {
+                delete exit;
+                exit = 0;
+                outputs->current_waypoint = 0;
+                transition_to = DROPOFF_COMPLETE;
+            }
+            break;
     }
 
     return transition_to;
@@ -75,22 +104,9 @@ void DropOffState::internalAction()
         {
             if( TagUtilities::hasTag( &inputs->tags, 256 ) )
             {
-                TagParams t_params;
+                HomeParams h_params; /* default values should be fine */
 
-                t_params.desired_tag = 256;
-
-                t_params.dist_deccel = 0.05;
-                t_params.dist_goal = 0.40;
-                t_params.dist_max_output = 10;
-
-                t_params.yaw_deccel = 0.10;
-                t_params.yaw_goal = 0.0;
-                t_params.yaw_max_output = 5;
-
-                t_params.type = CLOSEST;
-                t_params.skid_rotate_threshold = 0.02;
-
-                this->approach = new ApproachTagWaypoint( this->inputs, t_params );
+                this->approach = new ApproachHome( this->inputs, h_params );
                 this->outputs->current_waypoint = this->approach;
                 this->attempts = 0;
             }
@@ -112,7 +128,28 @@ void DropOffState::internalAction()
             }
             break;
         case DROPOFF_ADJUST:
-            std::cout << "Made it to adjust" << std::endl;
+        {
+            int count = 0;
+            yaw_average = 0;
+            if( TagUtilities::hasTag( &inputs->tags, 256 ) )
+            {
+                for( int i = 0; i < inputs->tags.size(); i++ )
+                {
+                    Tag curr_tag = inputs->tags.at(i);
+                    if( curr_tag.getID() == 256 )
+                    {
+                        yaw_average += curr_tag.calcYaw();
+                        count++;
+                    }
+                }
+                yaw_average /= (double)count;
+            }
+            break;
+        }
+        case DROPOFF_ENTER:
+            break;
+        case DROPOFF_EXIT_BACKUP:
+            outputs->gripper_position = Gripper::HOVER_OPEN;
             break;
     }
 }
@@ -142,6 +179,66 @@ void DropOffState::forceTransition( DOState transition_to )
                     this->approach = 0;
                 }
                 break;
+            case DROPOFF_ADJUST:
+            {
+                RawOutputParams r_params;
+
+                if( this->alignment )
+                {
+                    delete this->alignment;
+                    this->alignment = 0;
+                }
+                if( inputs->examiner.determineTurning() == TagExaminer::LEFT )
+                {
+                    r_params.left_output = -ROTATION_SPEED;
+                    r_params.right_output = ROTATION_SPEED;
+                }
+                else
+                {
+                    r_params.left_output = ROTATION_SPEED;
+                    r_params.right_output = -ROTATION_SPEED;
+                }
+
+                alignment = new RawOutputWaypoint( inputs, r_params );
+                outputs->current_waypoint = dynamic_cast<Waypoint*>( alignment );
+                break;
+            }
+            case DROPOFF_ENTER:
+            {
+                LinearParams l_params;
+
+                l_params.distance = .5;
+                l_params.max_output = 30;
+
+                if( this->enter )
+                {
+                    delete this->enter;
+                    this->enter = 0;
+                }
+
+                enter = new LinearWaypoint( inputs, l_params );
+                outputs->current_waypoint = dynamic_cast<Waypoint*>( enter );
+                timer = inputs->time.toSec();
+                break;
+            }
+            case DROPOFF_EXIT_BACKUP:
+            {
+                LinearParams l_params;
+
+                l_params.distance = 0.6;
+                l_params.max_output = 25;
+                l_params.reverse = true;
+
+                if( this->exit )
+                {
+                    delete this->exit;
+                    this->exit = 0;
+                }
+
+                exit = new LinearWaypoint( inputs, l_params );
+                outputs->current_waypoint = dynamic_cast<Waypoint*>( exit );
+                break;
+            }
         }
     }
 }
