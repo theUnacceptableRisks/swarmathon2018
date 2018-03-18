@@ -111,6 +111,7 @@ void SearchState::internalAction()
                         this->outputs->current_waypoint = 0;
                 }
             }
+            outputs->gripper_position = Gripper::HOVER_OPEN;
             break;
         }
     }
