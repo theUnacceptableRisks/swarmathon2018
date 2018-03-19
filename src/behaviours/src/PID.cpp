@@ -10,7 +10,7 @@ int PID::runPID( double error, double dt )
     output += error * params.Kp;
 
     /* Integral */
-    if( params.Ki != 0 && error <= params.integration_point && prev_time != 0 )
+    if( params.Ki != 0 && ( error <= params.integration_point || params.integration_point == 0 ) && prev_time != 0 )
     {
         error_inf += (error * dt);
         output += error_inf * params.Ki;

@@ -26,7 +26,32 @@ void SearchState::onEnter( std::string prev_state )
 
 void SearchState::onExit( std::string next_state )
 {
+    if( next_state == "pickup_state" )
+    {
+        SimpleWaypoint *wp;
+        SimpleParams params;
 
+        params.skid_steer_threshold = M_PI/12;
+
+        params.linear_max = 40;
+        params.rotational_max = 80;
+        params.skid_max = 60;
+
+        /* in sim */
+        params.arrived_threshold = 0.05;
+        params.goal_x = inputs->odom_accel.x;
+        params.goal_y = inputs->odom_accel.y;
+
+
+       /* in irl */
+//        params.arrived_Threshold = 0.25;
+//        params.goal_x = inputs->odom_accel_gps.x;
+//        params.goal_y = inputs->odom_accel_gps.y;
+
+        wp = new SimpleWaypoint( inputs, params );
+        waypoints.insert( waypoints.begin(), dynamic_cast<Waypoint*>( wp ) );
+
+    }
 }
 
 std::string SearchState::transition()

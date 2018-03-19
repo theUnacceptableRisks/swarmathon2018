@@ -17,6 +17,24 @@ typedef struct calibration_nums
     int rotational_min = 15;
 } CalibNums;
 
+struct roverInfo {
+    int id;
+    string name;
+    float x;
+    float y;
+    float sonar_left;
+    float sonar_right;
+    float sonar_center;
+    string state;
+    int number_of_cubes;
+    int number_of_base_tags;
+
+    bool operator < ( const roverInfo& sec ) const
+    {
+        return ( name < sec.name );
+    }
+};
+
 typedef struct logic_inputs
 {
     geometry_msgs::Pose2D	raw_odom;
@@ -43,6 +61,7 @@ typedef struct logic_inputs
     MotorController		controller;
     CalibNums			calibration;
     TagExaminer                 examiner;
+    std::vector<roverInfo>	infoVector;
 } LogicInputs;
 
 typedef struct logic_outputs
