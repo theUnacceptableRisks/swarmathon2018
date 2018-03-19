@@ -125,9 +125,9 @@ PidParams WaypointUtilities::getLinearRotSkidBasedPIDParams()
 {
     PidParams params;
 
-    params.Kp = 170.;
+    params.Kp = 160.;
     params.Ki = 45.;
-    params.Kd = 10.;
+    params.Kd = 5.;
     params.integration_point = 0.1;
 
     return params;

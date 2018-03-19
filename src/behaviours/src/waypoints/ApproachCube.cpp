@@ -12,7 +12,7 @@ void ApproachCube::run()
             double distance = closest.getDistance();
 
             /* now let's get down to business, check to see if we've arrived */
-            if( distance <= this->c_params.dist_goal )
+            if( distance <= this->c_params.dist_goal && fabs( c_params.yaw_goal - closest.getPositionX() ) < 0.01 )
             {
                 this->has_arrived = true;
                 setOutputLeftPWM( 0 );
@@ -54,8 +54,10 @@ void ApproachCube::run()
                 /* does rotation only, quick hack that shouldn't be used anymore */
                 if( distance <= OPTIMAL_LOCK_DISTANCE && fabs( c_params.yaw_goal - x_position ) > 0.01 )
                 {
+                    linear_rot_pid.reset();
                     linear_output = std::make_tuple( 0, 0 );
                     rotational_output = final_rot_pid.execute( pid_inputs );
+                    std::cout << "doing final rot" << std::endl;
                 }
                 else
                 {
@@ -65,6 +67,7 @@ void ApproachCube::run()
                     pid_inputs.max_output = c_params.dist_max_output;
 
                     linear_output = linear_pid.execute( pid_inputs );
+                    std::cout << "not doing final rot" << std::endl;
                 }
 
                 setOutputLeftPWM( std::get<0>(linear_output) + std::get<0>(rotational_output ) );

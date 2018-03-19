@@ -233,7 +233,7 @@ LogicMachine logic_machine( &iotable );
 void setupLogicMachine()
 {
     /* add States */
-    logic_machine.addState( init_state.getIdentifier(), dynamic_cast<State *>(&init_state) );
+//    logic_machine.addState( init_state.getIdentifier(), dynamic_cast<State *>(&init_state) );
     logic_machine.addState( search_state.getIdentifier(), dynamic_cast<State *>(&search_state) );
     logic_machine.addState( pickup_state.getIdentifier(), dynamic_cast<State *>(&pickup_state) );
     logic_machine.addState( findhome_state.getIdentifier(), dynamic_cast<State *>(&findhome_state) );
@@ -350,7 +350,7 @@ void runStateMachines(const ros::TimerEvent&)
          * State Machine Execution *
          ***************************/
         logic_machine.run();
-        std::cout << "current state is..." << logic_machine.getCurrentIdentifier() << std::endl;
+        //std::cout << "current state is..." << logic_machine.getCurrentIdentifier() << std::endl;
 
         /*****************
          * Drive Portion *
@@ -367,15 +367,15 @@ void runStateMachines(const ros::TimerEvent&)
             left = std::get<0>( output );
             right = std::get<1>( output );
 
-            std::cout << "Left is " << left << std::endl;
-            std::cout << "Right is " << right << std::endl;
-            std::cout << "Goal X, Y: " << inputs.goal_x << ", " << inputs.goal_y << std::endl;
+            //std::cout << "Left is " << left << std::endl;
+            //std::cout << "Right is " << right << std::endl;
+            //std::cout << "Goal X, Y: " << inputs.goal_x << ", " << inputs.goal_y << std::endl;
             /* TODO: add else messaging */
             sendDriveCommand( left, right );
         }
         else
         {
-            std::cout << "Current Waypoint is null" << std::endl;
+            //std::cout << "Current Waypoint is null" << std::endl;
             sendDriveCommand( 0, 0 );
         }
         /*******************
@@ -388,12 +388,12 @@ void runStateMachines(const ros::TimerEvent&)
         sendGripperPosition( Gripper::HOVER_OPEN );
         /* some output about manual mode? */
     }
-
+/*
     for( int i = 0; i < inputs.infoVector.size(); i++ )
     {
         std::cout << i << ":" << inputs.infoVector.at(i).name << std::endl;
     }
-
+*/
 }
 
 void sendDriveCommand(double left, double right)
@@ -464,7 +464,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
     inputs.examiner.clear();
     if (message->detections.size() > 0)
     {
-        std::cout << "Round of Tags" << std::endl;
+        //std::cout << "Round of Tags" << std::endl;
         for (int i = 0; i < message->detections.size(); i++)
         {
             // Package up the ROS AprilTag data into our own type that does not rely on ROS.
@@ -502,7 +502,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
                     found = inputs.cubes.at(j).checkTag( inputs.tags.at(i) );
                     if( found )
                     {
-                        std::cout << "same cube!" << std::endl;
+                        //std::cout << "same cube!" << std::endl;
                         break;
                     }
                 }
@@ -511,8 +511,8 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
 
             }
         }
-        std::cout << "Number of cubes " << inputs.cubes.size() << std::endl;
-        std::cout << "Closest Tag Dist:" << TagUtilities::getDistance( TagUtilities::getClosestTag( &inputs.tags, 256 ) ) << std::endl;
+        //std::cout << "Number of cubes " << inputs.cubes.size() << std::endl;
+        //std::cout << "Closest Tag Dist:" << TagUtilities::getDistance( TagUtilities::getClosestTag( &inputs.tags, 256 ) ) << std::endl;
         inputs.examiner.loadTags( inputs.tags );
     }
 }

@@ -33,8 +33,9 @@ class ApproachCube : public Waypoint
 
             PidParams params;
 
+	    params.bias = 40;
             params.Kp = 0.;
-            params.Ki = 20.;
+            params.Ki = 5.;
             params.Kd = 0.;
             params.integration_point = 0;
             final_rot_pid = LinRotPID( params );
