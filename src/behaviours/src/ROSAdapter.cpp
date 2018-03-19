@@ -137,7 +137,6 @@ ros::Publisher wrist_angle_publish;
 ros::Publisher info_log_publisher;
 ros::Publisher drive_control_publish;
 ros::Publisher heartbeat_publisher;
-ros::Publisher tag_x;
 ros::Publisher rover_info_publisher;
 ros::Publisher rover_info_timer_publisher;
 
@@ -151,8 +150,7 @@ void setupPublishers( ros::NodeHandle &ros_handle, string published_name )
     drive_control_publish = ros_handle.advertise<geometry_msgs::Twist>((published_name + "/driveControl"), 10);
     heartbeat_publisher = ros_handle.advertise<std_msgs::String>((published_name + "/behaviour/heartbeat"), 1, true);
     rover_info_timer_publisher = ros_handle.advertise<std_msgs::String>((published_name + "/infoTimer"), 1, true);
-    tag_x = ros_handle.advertise<std_msgs::String>((published_name + "/tag_x"), 1, true );
-    rover_info_publisher = ros_handle.advertise<swarmie_msgs::InfoMessage>(("roverInfo"), 1, true);
+    rover_info_publisher = ros_handle.advertise<swarmie_msgs::InfoMessage>(("roverInfo"), 6, true);
 
     roverName = published_name;
 }
@@ -404,6 +402,9 @@ void runStateMachines(const ros::TimerEvent&)
         sendGripperPosition( Gripper::HOVER_OPEN );
         /* some output about manual mode? */
     }
+
+    
+
 }
 
 void sendDriveCommand(double left, double right)

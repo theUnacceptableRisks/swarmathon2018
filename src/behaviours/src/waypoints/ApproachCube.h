@@ -30,12 +30,21 @@ class ApproachCube : public Waypoint
         {
             linear_pid = LinearPID( WaypointUtilities::getDistSkidBasedPIDParams() );
             linear_rot_pid = LinRotPID( WaypointUtilities::getLinearRotSkidBasedPIDParams() );
+
+            PidParams params;
+
+            params.Kp = 0.;
+            params.Ki = 20.;
+            params.Kd = 0.;
+            params.integration_point = 0;
+            final_rot_pid = LinRotPID( params );
         }
         virtual void run();
     private:
         CubeParams c_params;
         LinearPID linear_pid;
         LinRotPID linear_rot_pid;
+        LinRotPID final_rot_pid;
 };
 
 #endif
