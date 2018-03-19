@@ -58,6 +58,8 @@ class DropOffState : public State
         int attempts;
         double yaw_average;
 
+        TagExaminer::Turns orientation;
+
 };
 
 #endif

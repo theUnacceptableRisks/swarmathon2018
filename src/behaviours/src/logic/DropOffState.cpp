@@ -64,7 +64,8 @@ DOState DropOffState::internalTransition()
                 transition_to = DROPOFF_FAIL;
             break;
         case DROPOFF_ADJUST:
-            if( yaw_average > YAW_LOW_RANGE && yaw_average < YAW_HIGH_RANGE )
+//            if( yaw_average > YAW_LOW_RANGE && yaw_average < YAW_HIGH_RANGE )
+            if( orientation == TagExaminer::CORNER || orientation == TagExaminer::STRAIGHT )
             {
                 delete alignment;
                 alignment = 0;
@@ -130,7 +131,7 @@ void DropOffState::internalAction()
             break;
         case DROPOFF_ADJUST:
         {
-            int count = 0;
+/*            int count = 0;
             yaw_average = 0;
             if( TagUtilities::hasTag( &inputs->tags, 256 ) )
             {
@@ -144,7 +145,8 @@ void DropOffState::internalAction()
                     }
                 }
                 yaw_average /= (double)count;
-            }
+            } */
+            orientation = inputs->examiner.determineTurning();
             break;
         }
         case DROPOFF_ENTER:

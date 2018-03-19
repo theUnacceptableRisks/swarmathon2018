@@ -10,39 +10,25 @@ void ApproachCube::run()
         {
             Cube closest = TagUtilities::getClosestCube( &inputs->cubes );
             double distance = closest.getDistance();
+            double x_position = 0;
+            std::tuple<int,int> linear_output;
+            std::tuple<int,int> rotational_output;
 
-            /* now let's get down to business, check to see if we've arrived */
-            if( distance <= this->c_params.dist_goal && fabs( c_params.yaw_goal - closest.getPositionX() ) < 0.01 )
+
+            if( distance >= OPTIMAL_LOCK_DISTANCE )
             {
-                this->has_arrived = true;
-                setOutputLeftPWM( 0 );
-                setOutputRightPWM( 0 );
-            }
-            else
-            {
+                std::cout << "NonOptimal Lock" << std::endl;
                 PidInputs pid_inputs;
-                std::tuple<int,int> linear_output;
-                std::tuple<int,int> rotational_output;
-                double x_position = 0;
 
-                /* if we haven't arrived, it's time to do the work to try and arrive */
+                /* average */
+                int num_cubes = inputs->cubes.size();
 
-                if( distance <= OPTIMAL_LOCK_DISTANCE )
-                {
-                    /* close enough where we shouldn't lose the cube, just approach the closest */
-                    x_position = closest.getPositionX();
-                }
-                else
-                {
-                    /* average Xs of all cubes */
-                    int num_cubes = inputs->cubes.size();
+                for( int i = 0; i < num_cubes; i++ )
+                    x_position += inputs->cubes.at(i).getPositionX();
 
-                    for( int i = 0; i < num_cubes; i++ )
-                        x_position += inputs->cubes.at(i).getPositionX();
+                x_position /= num_cubes;
 
-                    x_position /= num_cubes;
-
-                }
+                /* rotational first, no specific reason */
 
                 pid_inputs.measured = x_position;
                 pid_inputs.goal = c_params.yaw_goal;
@@ -51,28 +37,66 @@ void ApproachCube::run()
 
                 rotational_output = linear_rot_pid.execute( pid_inputs );
 
-                /* does rotation only, quick hack that shouldn't be used anymore */
-                if( distance <= OPTIMAL_LOCK_DISTANCE && fabs( c_params.yaw_goal - x_position ) > 0.01 )
+                /* linear second */
+                pid_inputs.measured = distance;
+                pid_inputs.goal = c_params.dist_goal;
+                pid_inputs.time = inputs->time.toSec();
+                pid_inputs.max_output = c_params.dist_max_output;
+
+                linear_output = linear_pid.execute( pid_inputs );
+            }
+            else if( distance >= c_params.dist_goal )
+            {
+                std::cout << "Optimal Lock" << std::endl;
+                PidInputs pid_inputs;
+
+                x_position = closest.getPositionX();
+
+                /* rotational first, no specific reason */
+
+                pid_inputs.measured = x_position;
+                if( pid_inputs.measured >= 0 )
+                    pid_inputs.goal = CAMERA_OFFSET*2;
+                else
+                    pid_inputs.goal = 0.023;
+                pid_inputs.time = inputs->time.toSec();
+                pid_inputs.max_output = c_params.yaw_max_output;
+
+                rotational_output = linear_rot_pid.execute( pid_inputs );
+
+                /* linear second */
+                pid_inputs.measured = distance;
+                pid_inputs.goal = c_params.dist_goal;
+                pid_inputs.time = inputs->time.toSec();
+                pid_inputs.max_output = c_params.dist_max_output;
+
+                linear_output = linear_pid.execute( pid_inputs );
+            }
+            else
+            {
+/*                std::cout << "Final Rotation" << std::endl;
+                PidInputs pid_inputs;
+
+                x_position = closest.getPositionX();
+                if( fabs( c_params.yaw_goal - x_position ) > 0.002 )
                 {
-                    linear_rot_pid.reset();
+                    pid_inputs.measured = x_position;
+                    pid_inputs.goal = c_params.yaw_goal;
+                    pid_inputs.time = inputs->time.toSec();
+                    pid_inputs.max_output = c_params.yaw_max_output;
+
                     linear_output = std::make_tuple( 0, 0 );
                     rotational_output = final_rot_pid.execute( pid_inputs );
-                    std::cout << "doing final rot" << std::endl;
                 }
                 else
-                {
-                    pid_inputs.measured = distance;
-                    pid_inputs.goal = c_params.dist_goal;
-                    pid_inputs.time = inputs->time.toSec();
-                    pid_inputs.max_output = c_params.dist_max_output;
-
-                    linear_output = linear_pid.execute( pid_inputs );
-                    std::cout << "not doing final rot" << std::endl;
-                }
-
-                setOutputLeftPWM( std::get<0>(linear_output) + std::get<0>(rotational_output ) );
-                setOutputRightPWM( std::get<1>(linear_output) + std::get<1>(rotational_output ) );
+                { */
+                    has_arrived = true;
+                    linear_output = std::make_tuple( 0, 0 );
+                    rotational_output = std::make_tuple( 0, 0 );
+               // }
             }
+            setOutputLeftPWM( std::get<0>(linear_output) + std::get<0>(rotational_output ) );
+            setOutputRightPWM( std::get<1>(linear_output) + std::get<1>(rotational_output ) );
         }
         else
         {

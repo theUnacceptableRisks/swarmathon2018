@@ -9,7 +9,7 @@
 #include "../LinRotPID.h"
 #include "../Cube.h"
 
-#define OPTIMAL_LOCK_DISTANCE 0.35
+#define OPTIMAL_LOCK_DISTANCE 0.40
 #define CAMERA_OFFSET -0.023
 
 typedef struct approach_cube_params
@@ -33,9 +33,9 @@ class ApproachCube : public Waypoint
 
             PidParams params;
 
-	    params.bias = 40;
+	    params.bias = 30;
             params.Kp = 0.;
-            params.Ki = 5.;
+            params.Ki = 60.;
             params.Kd = 0.;
             params.integration_point = 0;
             final_rot_pid = LinRotPID( params );

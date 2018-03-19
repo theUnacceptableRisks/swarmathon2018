@@ -350,7 +350,7 @@ void runStateMachines(const ros::TimerEvent&)
          * State Machine Execution *
          ***************************/
         logic_machine.run();
-        //std::cout << "current state is..." << logic_machine.getCurrentIdentifier() << std::endl;
+        std::cout << "current state is..." << logic_machine.getCurrentIdentifier() << std::endl;
 
         /*****************
          * Drive Portion *
@@ -491,7 +491,22 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
             average_yaw += inputs.tags.at(i).calcYaw();
         }
         average_yaw /= inputs.tags.size();
-        std::cout << "Average Yaw: " << average_yaw << std::endl; */
+
+        double average_roll = 0.0;
+        for( int i = 0; i < inputs.tags.size(); i++ )
+        {
+            average_roll += inputs.tags.at(i).calcRoll();
+        }
+        average_roll /= inputs.tags.size();
+
+        double average_pitch = 0.0;
+        for( int i = 0; i < inputs.tags.size(); i++ )
+        {
+            average_pitch += inputs.tags.at(i).calcPitch();
+        }
+        average_pitch /= inputs.tags.size();
+
+        std::cout << "Average R/P/Y:" << average_roll << "/" << average_pitch << "/" << average_yaw << std::endl; */
         if( TagUtilities::hasTag( &inputs.tags, 0 ) )
         {
             for( int i = 0; i < inputs.tags.size(); i++ )
@@ -514,6 +529,9 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
         //std::cout << "Number of cubes " << inputs.cubes.size() << std::endl;
         //std::cout << "Closest Tag Dist:" << TagUtilities::getDistance( TagUtilities::getClosestTag( &inputs.tags, 256 ) ) << std::endl;
         inputs.examiner.loadTags( inputs.tags );
+//        double z = inputs.cubes.at(0).getPositionZ();
+
+  //      std::cout << "Distance to Cube:" << sqrt( ( z * z ) - ( 0.145 * 0.145 ) ) << std::endl;
     }
 }
 

@@ -104,7 +104,9 @@ PUState PickUpState::internalTransition()
                 outputs->current_waypoint = 0;
                 delete this->linear;
                 this->linear = 0;
-                transition_to = PICKUP_FAIL;
+
+                this->timer = this->inputs->time.toSec();
+                transition_to = PICKUP_CLAW_CLOSE;
             }
             break;
         case PICKUP_CLAW_CLOSE:
@@ -209,7 +211,7 @@ void PickUpState::internalAction()
             break;
         case PICKUP_FAIL:
             std::cout << "In Pickup Fail" << std::endl;
-            outputs->gripper_position = Gripper::DOWN_OPEN;
+            outputs->gripper_position = Gripper::UP_OPEN;
             break;
 
     }
@@ -249,7 +251,8 @@ void PickUpState::forceTransition( PUState transition_to )
                 {
                     Cube closest_cube = TagUtilities::getClosestCube( &inputs->cubes );
                     double z = closest_cube.getPositionZ();
-                    l_params.distance = sqrt( ( z * z ) - ( 0.195 * 0.195 ) );
+                    l_params.distance = sqrt( ( z * z ) - ( 0.145 * 0.145 ) ) - 0.1;
+                    
 //TagUtilities::getClosestCube( &inputs->cubes ).getGroundDistance() - 0.05;
                 }
                 else
@@ -275,8 +278,8 @@ void PickUpState::forceTransition( PUState transition_to )
 
                 LinearParams l_params;
 
-                l_params.distance = 0.4;
-                l_params.max_output = 30;
+                l_params.distance = 0.5;
+                l_params.max_output = 45;
                 l_params.reverse = true;
 
                 this->linear = new LinearWaypoint( this->inputs, l_params );
@@ -293,8 +296,8 @@ void PickUpState::forceTransition( PUState transition_to )
 
                 LinearParams b_params;
 
-                b_params.distance = 0.3;
-                b_params.max_output = 25;
+                b_params.distance = 0.4;
+                b_params.max_output = 45;
                 b_params.reverse = true;
 
                 this->backup = new LinearWaypoint( this->inputs, b_params );

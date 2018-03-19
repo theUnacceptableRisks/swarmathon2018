@@ -20,7 +20,7 @@ public:
 	
     // margin suggests how close tags
 	// have to be to be considered straight
-	const double margin = 0.008;
+	const double margin = 0.012;
 	const double minDistance = .25;
 	
     vector<Tag> tags;
