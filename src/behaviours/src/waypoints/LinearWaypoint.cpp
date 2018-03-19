@@ -3,7 +3,7 @@
 void LinearWaypoint::run()
 {
     std::tuple<int,int> output;
-    /* irl */
+    /* in irl */
     double current_distance = fabs( this->original_x - this->inputs->raw_odom.x );
     /* in sim */
 //    double current_distance = hypot( original_x - inputs->raw_odom.x, original_y - inputs->raw_odom.y );
