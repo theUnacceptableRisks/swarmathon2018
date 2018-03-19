@@ -32,7 +32,11 @@ std::string AvoidCubeState::transition()
     angleToGoal = atan2f(this->inputs->goal_y - this->inputs->odom_accel_gps.y, this->inputs->goal_x - this->inputs->odom_accel_gps.x);
     angleToGoal = this->inputs->odom_accel_gps.theta - angleToGoal;
 
-    if(internal_state == AVOIDCUBE_ESCAPE && this->inputs->time.toSec() - initialTime > 2.5)
+
+    if(wheelRatio > 2)
+        transition_to = this->inputs->prevState;
+
+    if(internal_state == AVOIDCUBE_ESCAPE && this->inputs->time.toSec() - initialTime > 3)
         transition_to = this->inputs->prevState;
 
     if(angleToGoal < 0 && angleToGoal > -1 && internal_state == AVOIDCUBE_DRIVE)
@@ -48,7 +52,6 @@ std::string AvoidCubeState::transition()
     if( this->inputs->us_center < .4 || this->inputs->us_left < .4 ||  this->inputs->us_right < .4 ){
         transition_to = "avoid_state";
     }
-    
     if(transition_to != getIdentifier())
         initialTime = -99;
         
@@ -111,7 +114,7 @@ void AvoidCubeState::internalAction()
         {
             params.left_output = -80;
             params.right_output = -80;
-            params.duration = 2.5;
+            params.duration = 3;
             cout << "----ESCAPE------" << endl;
         }
     }

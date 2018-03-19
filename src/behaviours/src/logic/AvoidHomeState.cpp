@@ -39,7 +39,7 @@ std::string AvoidHomeState::transition()
     double distFromInitialLocation = hypot(this->inputs->odom_accel_gps.x - this->inputs->initialAvoidX, this->inputs->odom_accel_gps.y - this->inputs->initialAvoidY);
 
 
-    if(internal_state == AVOIDHOME_ESCAPE && this->inputs->time.toSec() - initialTime > 2.5)
+    if(internal_state == AVOIDHOME_ESCAPE && this->inputs->time.toSec() - initialTime > 3.0)
         transition_to = this->inputs->prevState;
 
 
@@ -125,9 +125,9 @@ void AvoidHomeState::internalAction()
         }
         case AVOIDHOME_ESCAPE:
         {
-            params.left_output = -80;
-            params.right_output = -80;
-            params.duration = 2.5;
+            params.left_output = 80;
+            params.right_output = 80;
+            params.duration = 3;
             cout << "----ESCAPE------" << endl;
         }
     }
