@@ -2,10 +2,10 @@
 #include  <angles/angles.h>
 #include <iostream>
 
-std::tuple<int,int> MotorController::generateLinearOutput( MotorParams params )
+double VelocityController::generateVelocity( VelocityParams params )
 {
     double constant = 0.0;
-    int vel_output = 0;
+    double vel_output = 0;
     double dist_error = params.dist_current - params.dist_goal;
 
     if( fabs( dist_error ) > params.dist_deccel_point )

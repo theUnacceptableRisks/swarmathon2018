@@ -42,8 +42,6 @@
 #include "logic/AvoidState.h"
 #include "logic/AvoidHomeState.h"
 #include "logic/AvoidCubeState.h"
-#include "logic/MotorCalibState.h"
-#include "logic/RotationalCalibState.h"
 #include "logic/DropOffState.h"
 #include "logic/InitState.h"
 #include "Gripper.h"
@@ -557,8 +555,8 @@ void odomAndAccelHandler(const nav_msgs::Odometry::ConstPtr& message)
     m.getRPY(roll, pitch, yaw);
     inputs.odom_accel.theta = yaw;
 
-    inputs.linear_vel_odom_accel = message->twist.twist.linear.x;
-    inputs.angular_vel_odom_accel = message->twist.twist.angular.z;
+    inputs.linear_vel = message->twist.twist.linear.x;
+    inputs.angular_vel = message->twist.twist.angular.z;
 }
 
 void odomAccelAndGPSHandler(const nav_msgs::Odometry::ConstPtr& message)
@@ -573,9 +571,6 @@ void odomAccelAndGPSHandler(const nav_msgs::Odometry::ConstPtr& message)
   double roll, pitch, yaw;
   m.getRPY(roll, pitch, yaw);
   inputs.odom_accel_gps.theta = yaw;
-
-  inputs.linear_vel_odom_accel_gps = message->twist.twist.linear.x;
-  inputs.angular_vel_odom_accel_gps = message->twist.twist.angular.z;
 }
 
 void joyCmdHandler(const sensor_msgs::Joy::ConstPtr& message)

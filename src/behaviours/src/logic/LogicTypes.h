@@ -35,10 +35,8 @@ typedef struct logic_inputs
     double			us_left = 0.0;
     double			us_right = 0.0;
     double			us_center = 0.0;
-    double			linear_vel_odom_accel = 0.0;
-    double			linear_vel_odom_accel_gps = 0.0;
-    double			angular_vel_odom_accel = 0.0;
-    double			angular_vel_odom_accel_gps = 0.0;
+    double			linear_vel = 0.0;
+    double			angular_vel = 0.0;
     ros::Time			time;
     MotorController		controller;
     CalibNums			calibration;

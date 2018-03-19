@@ -32,13 +32,12 @@ add_executable(
   src/RadRotPID.cpp
   src/LinRotPID.cpp
   src/Gripper.cpp
-  src/MotorController.cpp
+  src/Velocity.cpp
   src/TagUtilities.cpp
   src/state_machine/Error.cpp
   src/waypoints/Waypoint.cpp
   src/waypoints/WaypointUtilities.cpp
   src/waypoints/SimpleWaypoint.cpp
-  src/waypoints/ApproachTagWaypoint.cpp
   src/waypoints/ApproachCube.cpp
   src/waypoints/LinearWaypoint.cpp
   src/waypoints/RawOutputWaypoint.cpp
@@ -51,8 +50,6 @@ add_executable(
   src/logic/AvoidState.cpp
   src/logic/AvoidHomeState.cpp
   src/logic/AvoidCubeState.cpp
-  src/logic/MotorCalibState.cpp
-  src/logic/RotationalCalibState.cpp
   src/logic/DropOffState.cpp
   src/TagExaminer.cpp
 )
