@@ -45,7 +45,7 @@ void SearchState::onExit( std::string next_state )
 
 
        /* in irl */
-        params.arrived_Threshold = 0.25;
+        params.arrived_threshold = 0.25;
         params.goal_x = inputs->odom_accel_gps.x;
         params.goal_y = inputs->odom_accel_gps.y;
 
