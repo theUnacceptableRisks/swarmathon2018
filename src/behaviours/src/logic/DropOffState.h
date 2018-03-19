@@ -13,7 +13,7 @@
 /* in sim */
 //#define ROTATION_SPEED 30
 /* in irl */
-#define ROTATION_SPEED 55
+#define ROTATION_SPEED 65
 #define YAW_LOW_RANGE 2.1
 #define YAW_HIGH_RANGE 2.4
 
