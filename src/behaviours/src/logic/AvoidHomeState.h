@@ -9,7 +9,8 @@
 typedef enum
 {
     AVOIDHOME_INIT,
-    AVOIDHOME_DRIVE
+    AVOIDHOME_DRIVE,
+    AVOIDHOME_ESCAPE
 } InternalAvoidHomeState;
 
 class AvoidHomeState : public State
@@ -21,6 +22,7 @@ class AvoidHomeState : public State
         virtual void onExit( std::string next_state );
         virtual std::string transition();
     private:
+        double initialTime = 0;
         double angleToGoal = 0;
         double wheelRatio = 1;
         double getNearestUS ();

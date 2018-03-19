@@ -16,6 +16,9 @@ void AvoidHomeState::onEnter( std::string prev_state )
         this->inputs->initialAvoidAngle = this->inputs->odom_accel_gps.theta;
         this->inputs->initialAvoidX = this->inputs->odom_accel_gps.x;
         this->inputs->initialAvoidY = this->inputs->odom_accel_gps.y;
+        initialTime = this->inputs->time.toSec();
+        for(int i = 0; i < 1000; i ++)
+            cout << "ENTERING AVOIDHOME" << endl;
     }
     if( waypoints.size() > 0 )
         outputs->current_waypoint = waypoints.front();
@@ -34,6 +37,11 @@ std::string AvoidHomeState::transition()
     angleToGoal = atan2f(this->inputs->goal_y - this->inputs->odom_accel_gps.y, this->inputs->goal_x - this->inputs->odom_accel_gps.x);
     angleToGoal = this->inputs->odom_accel_gps.theta - angleToGoal;
     double distFromInitialLocation = hypot(this->inputs->odom_accel_gps.x - this->inputs->initialAvoidX, this->inputs->odom_accel_gps.y - this->inputs->initialAvoidY);
+
+
+    if(internal_state == AVOIDHOME_ESCAPE && this->inputs->time.toSec() - initialTime > 3.0)
+        transition_to = this->inputs->prevState;
+
 
     if(angleToGoal < 0 && angleToGoal > -1 && internal_state == AVOIDHOME_DRIVE)
         transition_to = this->inputs->prevState;
@@ -63,12 +71,20 @@ InternalAvoidHomeState AvoidHomeState::internalTransition()
 {
     InternalAvoidHomeState transition_to = internal_state;
 
+    if(initialTime == -99){
+        internal_state = AVOIDHOME_INIT;
+        initialTime = this->inputs->time.toSec();
+    }
     switch( internal_state )
     {
         default: break;
         case AVOIDHOME_INIT:
             if(!TagUtilities::hasTag(&this->inputs->tags , 256 ))
                 transition_to = AVOIDHOME_DRIVE;
+            if(this->inputs->time.toSec() - initialTime > 5){
+                transition_to = AVOIDHOME_ESCAPE;
+                initialTime = this->inputs->time.toSec();
+            }
             break;
         case AVOIDHOME_DRIVE:
             if(abs(this->inputs->odom_accel_gps.theta) - abs(this->inputs->initialAvoidAngle) > 1){
@@ -77,6 +93,7 @@ InternalAvoidHomeState AvoidHomeState::internalTransition()
             if(TagUtilities::hasTag(&this->inputs->tags , 256 ))
                 transition_to = AVOIDHOME_INIT;
             break;
+
     }
 
     return transition_to;
@@ -105,6 +122,13 @@ void AvoidHomeState::internalAction()
             wheelRatio += 0.04;
             wheelRatio = min(wheelRatio, 4.3);
             break;
+        }
+        case AVOIDHOME_ESCAPE:
+        {
+            params.left_output = 80;
+            params.right_output = 80;
+            params.duration = 3;
+            cout << "----ESCAPE------" << endl;
         }
     }
     waypoint = new RawOutputWaypoint( this->inputs, params );
