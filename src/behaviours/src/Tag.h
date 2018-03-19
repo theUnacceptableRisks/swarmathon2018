@@ -52,6 +52,7 @@ public:
 	// Allow writing of tag data to an output stream by  extending ostream.
 	friend std::ostream& operator<<(std::ostream&, const Tag&);
 
+        double getGroundDistance( int id );
 
 
 private:

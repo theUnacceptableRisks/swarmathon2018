@@ -9,10 +9,9 @@ void DropOffState::action()
 
 void DropOffState::onEnter( std::string prev_state )
 {
-    if( prev_state == "findhome_state" )
-    {
-        forceTransition( DROPOFF_INIT );
-    }
+    forceTransition( DROPOFF_INIT );
+    adjusted = false;
+    orientation = TagExaminer::INIT;
 }
 
 void DropOffState::onExit( std::string nexst_state )
@@ -64,13 +63,8 @@ DOState DropOffState::internalTransition()
                 transition_to = DROPOFF_FAIL;
             break;
         case DROPOFF_ADJUST:
-//            if( yaw_average > YAW_LOW_RANGE && yaw_average < YAW_HIGH_RANGE )
-            if( orientation == TagExaminer::CORNER || orientation == TagExaminer::STRAIGHT )
+            if( adjusted )
             {
-                delete alignment;
-                alignment = 0;
-                outputs->current_waypoint = 0;
-
                 transition_to = DROPOFF_ENTER;
             }
             break;
@@ -131,22 +125,42 @@ void DropOffState::internalAction()
             break;
         case DROPOFF_ADJUST:
         {
-/*            int count = 0;
-            yaw_average = 0;
-            if( TagUtilities::hasTag( &inputs->tags, 256 ) )
+            if( !alignment || ( alignment && alignment->hasArrived() ) )
             {
-                for( int i = 0; i < inputs->tags.size(); i++ )
+                RawOutputParams r_params;
+                TagExaminer::Turns desired;
+
+                r_params.duration = 0.15;
+                if( this->alignment )
                 {
-                    Tag curr_tag = inputs->tags.at(i);
-                    if( curr_tag.getID() == 256 )
-                    {
-                        yaw_average += curr_tag.calcYaw();
-                        count++;
-                    }
+                    delete this->alignment;
+                    this->alignment = 0;
+                    outputs->current_waypoint = 0;
                 }
-                yaw_average /= (double)count;
-            } */
-            orientation = inputs->examiner.determineTurning();
+                desired = inputs->examiner.determineTurning();
+                if( orientation == TagExaminer::INIT )
+                    orientation = desired;
+
+                if( orientation != desired )
+                {
+                    adjusted = true;
+                }
+                else
+                {
+                    if( desired == TagExaminer::LEFT )
+                    {
+                        r_params.left_output = -ROTATION_SPEED;
+                        r_params.right_output = ROTATION_SPEED;
+                    }
+                    else
+                    {
+                        r_params.left_output = ROTATION_SPEED;
+                        r_params.right_output = -ROTATION_SPEED;
+                    }
+                    alignment = new RawOutputWaypoint( inputs, r_params );
+                    outputs->current_waypoint = dynamic_cast<Waypoint*>( alignment );
+                }
+            }
             break;
         }
         case DROPOFF_ENTER:
@@ -184,26 +198,11 @@ void DropOffState::forceTransition( DOState transition_to )
                 break;
             case DROPOFF_ADJUST:
             {
-                RawOutputParams r_params;
-
-                if( this->alignment )
+                if( alignment )
                 {
-                    delete this->alignment;
-                    this->alignment = 0;
+                    delete alignment;
+                    alignment = 0;
                 }
-                if( inputs->examiner.determineTurning() == TagExaminer::LEFT )
-                {
-                    r_params.left_output = -ROTATION_SPEED;
-                    r_params.right_output = ROTATION_SPEED;
-                }
-                else
-                {
-                    r_params.left_output = ROTATION_SPEED;
-                    r_params.right_output = -ROTATION_SPEED;
-                }
-
-                alignment = new RawOutputWaypoint( inputs, r_params );
-                outputs->current_waypoint = dynamic_cast<Waypoint*>( alignment );
                 break;
             }
             case DROPOFF_ENTER:
@@ -211,14 +210,13 @@ void DropOffState::forceTransition( DOState transition_to )
                 LinearParams l_params;
 
                 l_params.distance = .5;
-                l_params.max_output = 30;
+                l_params.max_output = 45;
 
                 if( this->enter )
                 {
                     delete this->enter;
                     this->enter = 0;
                 }
-
                 enter = new LinearWaypoint( inputs, l_params );
                 outputs->current_waypoint = dynamic_cast<Waypoint*>( enter );
                 timer = inputs->time.toSec();

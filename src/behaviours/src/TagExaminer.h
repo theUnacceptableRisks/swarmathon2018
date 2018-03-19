@@ -10,6 +10,7 @@ public:
 	TagExaminer();
 
     enum Turns{
+                INIT,
 		LEFT,
 		RIGHT,
 		STRAIGHT,

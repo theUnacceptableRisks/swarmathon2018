@@ -34,7 +34,7 @@ typedef enum
 class DropOffState : public State
 {
     public:
-        DropOffState( IOTable *io ) : State( "dropoff_state" ), internal_state(DROPOFF_INIT), inputs(io->inputs), outputs(io->outputs), attempts(0), yaw_average(0) {}
+        DropOffState( IOTable *io ) : State( "dropoff_state" ), internal_state(DROPOFF_INIT), inputs(io->inputs), outputs(io->outputs), attempts(0), yaw_average(0), orientation(TagExaminer::INIT) {}
         virtual void action( void );
         virtual void onEnter( std::string prev_state );
         virtual void onExit( std::string next_state );
@@ -59,6 +59,7 @@ class DropOffState : public State
         double yaw_average;
 
         TagExaminer::Turns orientation;
+        bool adjusted;
 
 };
 

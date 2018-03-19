@@ -17,8 +17,8 @@ void AvoidHomeState::onEnter( std::string prev_state )
         this->inputs->initialAvoidX = this->inputs->odom_accel_gps.x;
         this->inputs->initialAvoidY = this->inputs->odom_accel_gps.y;
         initialTime = this->inputs->time.toSec();
-        for(int i = 0; i < 1000; i ++)
-            cout << "ENTERING AVOIDHOME" << endl;
+//        for(int i = 0; i < 1000; i ++)
+  //          cout << "ENTERING AVOIDHOME" << endl;
     }
     if( waypoints.size() > 0 )
         outputs->current_waypoint = waypoints.front();
@@ -47,7 +47,7 @@ std::string AvoidHomeState::transition()
         transition_to = this->inputs->prevState;
 
 
-    if( TagUtilities::hasTag( &this->inputs->tags, 0 ) ){
+    if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && !TagUtilities::hasTag( &this->inputs->tags, 256 )){
         if(this->inputs->prevState == "search_state"){
             transition_to = "pickup_state";
         } else {

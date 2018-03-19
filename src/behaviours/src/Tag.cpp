@@ -114,6 +114,14 @@ void Tag::setPositionZ(float z) {
 	std::get<2>(position) = z;
 }
 
+double Tag::getGroundDistance( int id )
+{
+    double z = getPositionZ();
+    if( id == 256 )
+        return sqrt( ( z * z ) - ( 0.195 * 0.195 ) );
+    return sqrt( ( z * z ) - ( 0.145 * 0.145 ) );
+}
+
 // The following functions recreate the entire quaternion each time a value is changed
 // becuase you cannot change quaternion components without rebuilding the whole quaternion.
 // This is a limitation of the boost quaternion.

@@ -72,5 +72,6 @@ double Cube::getDistance()
 
 double Cube::getGroundDistance()
 {
-    return getDistance()*sin(1.13446);
+    double z = getPositionZ();
+    return sqrt( ( z * z ) - ( 0.145 * 0.145 ) );
 }

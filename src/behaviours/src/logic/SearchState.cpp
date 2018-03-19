@@ -59,8 +59,18 @@ std::string SearchState::transition()
 {
     std::string transition_to = getIdentifier();
 
-    if( TagUtilities::hasTag( &this->inputs->tags, 0 ) )
+    if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && !TagUtilities::hasTag( &this->inputs->tags, 256 ) )
+    {
         transition_to = "pickup_state";
+    }
+    else if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && TagUtilities::hasTag( &this->inputs->tags, 256 ) )
+    {
+        Tag closest_tag = TagUtilities::getClosestTag( &this->inputs->tags, 256 );
+        Cube closest_cube = TagUtilities::getClosestCube( &this->inputs->cubes );
+
+        if( closest_tag.getGroundDistance( 256 ) > closest_cube.getGroundDistance() )
+            transition_to = "pickup_state";
+    }
     if( this->inputs->us_center < .4 || this->inputs->us_left < .4 ||  this->inputs->us_right < .4 )
         transition_to = "avoid_state";
     if( TagUtilities::hasTag(&this->inputs->tags, 256))
