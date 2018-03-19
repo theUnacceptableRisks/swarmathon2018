@@ -95,20 +95,6 @@ std_msgs::String msg;
 
 string roverName = "";
 
-struct roverInfo {
-    int id;
-    string name;
-    float x;
-    float y;
-    float sonar_left;
-    float sonar_right;
-    float sonar_center;
-    string state;
-    int number_of_cubes;
-    int number_of_base_tags;
-};
-vector<roverInfo> infoVector;
-
 char host[128];
 char prev_state_machine[128];
 // records time for delays in sequanced actions, 1 second resolution.
@@ -403,7 +389,10 @@ void runStateMachines(const ros::TimerEvent&)
         /* some output about manual mode? */
     }
 
-    
+    for( int i = 0; i < inputs.infoVector.size(); i++ )
+    {
+        std::cout << i << ":" << inputs.infoVector.at(i).name << std::endl;
+    }
 
 }
 
@@ -448,15 +437,17 @@ void roverInfoHandler(const swarmie_msgs::InfoMessage& message){
         messageInfo.sonar_center = message.sonar_center;
 
         bool roverExists = false;
-        for(int i = 0; i < infoVector.size(); i++){
-            if(message.name == roverName && roverName == infoVector.at(i).name){
-                infoVector.at(i) = messageInfo;
-                roverExists == true;
+        for(int i = 0; i < inputs.infoVector.size(); i++){
+            if(messageInfo.name == inputs.infoVector.at(i).name){
+                inputs.infoVector.at(i) = messageInfo;
+                roverExists = true;
+                break;
             }
         }
         if(!roverExists){
-            infoVector.push_back(messageInfo);
+            inputs.infoVector.push_back(messageInfo);
         }
+        std::sort( inputs.infoVector.begin(), inputs.infoVector.end() );
 }
 
 void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& message)
@@ -628,26 +619,19 @@ void publishHeartBeatTimerEventHandler(const ros::TimerEvent&)
 }
 void publishRoverInfoTimerEventHandler(const ros::TimerEvent&)
 {
-  std_msgs::String msg;
-  msg.data = "trial";
-  rover_info_timer_publisher.publish(msg);
+    swarmie_msgs::InfoMessage infoMsg;
+    infoMsg.name = roverName;
+    infoMsg.x = inputs.odom_accel_gps.x;
+    infoMsg.y = inputs.odom_accel_gps.y;
+    infoMsg.sonar_left = inputs.us_left;
+    infoMsg.sonar_right = inputs.us_right;
+    infoMsg.sonar_center = inputs.us_center;
+    infoMsg.state = logic_machine.getCurrentIdentifier();
+    infoMsg.number_of_cubes = TagUtilities::numberOfTags(&inputs.tags, 0);
+    infoMsg.number_of_base_tags = TagUtilities::numberOfTags(&inputs.tags, 256);
+    rover_info_publisher.publish(infoMsg);
 
-
-
-
-        swarmie_msgs::InfoMessage infoMsg;
-        infoMsg.name = roverName;
-        infoMsg.x = inputs.odom_accel_gps.x;
-        infoMsg.y = inputs.odom_accel_gps.y;
-        infoMsg.sonar_left = inputs.us_left;
-        infoMsg.sonar_right = inputs.us_right;
-        infoMsg.sonar_center = inputs.us_center;
-        infoMsg.state = logic_machine.getCurrentIdentifier();
-        infoMsg.number_of_cubes = TagUtilities::numberOfTags(&inputs.tags, 0);
-        infoMsg.number_of_base_tags = TagUtilities::numberOfTags(&inputs.tags, 256);
-        rover_info_publisher.publish(infoMsg);
-
-  publish_info = true;
+    publish_info = true;
 }
 
 long int getROSTimeInMilliSecs()
