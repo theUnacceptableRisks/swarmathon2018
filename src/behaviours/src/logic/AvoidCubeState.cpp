@@ -11,6 +11,7 @@ void AvoidCubeState::action()
 
 void AvoidCubeState::onEnter( std::string prev_state )
 {
+    this->waypoints.clear();
     if(prev_state != "avoid_state" && prev_state != "avoidhome_state")
         this->inputs->prevState = prev_state;
     if( waypoints.size() > 0 )
@@ -70,16 +71,24 @@ InternalAvoidCubeState AvoidCubeState::internalTransition()
     {
         default: break;
         case AVOIDCUBE_INIT:
-            if(!TagUtilities::hasTag(&this->inputs->tags , 0 ))
+            if(TagUtilities::hasTag(&this->inputs->tags , 0 )){
+                if(TagUtilities::getDistance(TagUtilities::getClosestTag(&this->inputs->tags , 0 )) > .4)
+                    transition_to = AVOIDCUBE_DRIVE;
+            } else {
                 transition_to = AVOIDCUBE_DRIVE;
+            }
             if(this->inputs->time.toSec() - initialTime > 5){
                 transition_to = AVOIDCUBE_ESCAPE;
                 initialTime = this->inputs->time.toSec();
             }
             break;
         case AVOIDCUBE_DRIVE:
-            if(TagUtilities::hasTag(&this->inputs->tags , 0 ))
-                transition_to = AVOIDCUBE_INIT;
+            if(TagUtilities::hasTag(&this->inputs->tags , 0 )){
+                if(TagUtilities::getDistance(TagUtilities::getClosestTag(&this->inputs->tags , 0 )) < .4)
+                    transition_to = AVOIDCUBE_INIT;
+            } else {
+                
+            }
             break;
 
     }
@@ -91,7 +100,7 @@ void AvoidCubeState::internalAction()
 {
     RawOutputWaypoint *waypoint = 0;
     RawOutputParams params;
-    this->waypoints.clear();
+    //this->waypoints.clear();
     switch( internal_state )
     {
         default: break;
@@ -100,7 +109,7 @@ void AvoidCubeState::internalAction()
             wheelRatio = 1;
             params.left_output = -80;
             params.right_output = 80;
-            params.duration = .7;
+            params.duration = 1.5;
            break;
         }
         case AVOIDCUBE_DRIVE:
@@ -118,9 +127,12 @@ void AvoidCubeState::internalAction()
             cout << "----ESCAPE------" << endl;
         }
     }
+    if(this->waypoints.size() == 0){    
     waypoint = new RawOutputWaypoint( this->inputs, params );
     this->waypoints.push_back( dynamic_cast<Waypoint*>( waypoint ) );
     this->outputs->current_waypoint = waypoints.front();
+    }
+    
             
 }
 

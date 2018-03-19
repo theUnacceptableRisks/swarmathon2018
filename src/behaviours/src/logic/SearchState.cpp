@@ -19,7 +19,6 @@ void SearchState::onEnter( std::string prev_state )
             this->outputs->current_waypoint = 0;
         this->inputs->goalInObst = false;
         this->inputs->rotationFlag = false;
-        cout << "-----------------------------TEST----------------------------" << endl;
     }
     if( waypoints.size() > 0 )
         outputs->current_waypoint = waypoints.front();
@@ -34,8 +33,8 @@ std::string SearchState::transition()
 {
     std::string transition_to = getIdentifier();
 
-    if( TagUtilities::hasTag( &this->inputs->tags, 0 ) )
-        transition_to = "pickup_state";
+    if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && !TagUtilities::hasTag(&this->inputs->tags, 256))
+        transition_to = "avoidcube_state";
     if( this->inputs->us_center < .4 || this->inputs->us_left < .4 ||  this->inputs->us_right < .4 )
         transition_to = "avoid_state";
     if( TagUtilities::hasTag(&this->inputs->tags, 256))

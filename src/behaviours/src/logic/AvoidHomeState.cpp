@@ -26,7 +26,7 @@ void AvoidHomeState::onEnter( std::string prev_state )
 
 void AvoidHomeState::onExit( std::string next_state )
 {
-
+    initialTime = -99;
 }
 
 std::string AvoidHomeState::transition()
