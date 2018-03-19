@@ -247,7 +247,10 @@ void PickUpState::forceTransition( PUState transition_to )
 
                 if( inputs->cubes.size() > 0 )
                 {
-                    l_params.distance = TagUtilities::getClosestCube( &inputs->cubes ).getGroundDistance() - 0.1;
+                    Cube closest_cube = TagUtilities::getClosestCube( &inputs->cubes );
+                    double z = closest_cube.getPositionZ();
+                    l_params.distance = sqrt( ( z * z ) - ( 0.195 * 0.195 ) );
+//TagUtilities::getClosestCube( &inputs->cubes ).getGroundDistance() - 0.05;
                 }
                 else
                 {
