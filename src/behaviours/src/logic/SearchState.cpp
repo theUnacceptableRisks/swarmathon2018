@@ -39,15 +39,15 @@ void SearchState::onExit( std::string next_state )
         params.skid_max = 60;
 
         /* in sim */
-        params.arrived_threshold = 0.05;
-        params.goal_x = inputs->odom_accel.x;
-        params.goal_y = inputs->odom_accel.y;
+//        params.arrived_threshold = 0.05;
+//        params.goal_x = inputs->odom_accel.x;
+//        params.goal_y = inputs->odom_accel.y;
 
 
        /* in irl */
-//        params.arrived_Threshold = 0.25;
-//        params.goal_x = inputs->odom_accel_gps.x;
-//        params.goal_y = inputs->odom_accel_gps.y;
+        params.arrived_Threshold = 0.25;
+        params.goal_x = inputs->odom_accel_gps.x;
+        params.goal_y = inputs->odom_accel_gps.y;
 
         wp = new SimpleWaypoint( inputs, params );
         waypoints.insert( waypoints.begin(), dynamic_cast<Waypoint*>( wp ) );
