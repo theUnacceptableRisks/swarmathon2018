@@ -35,12 +35,8 @@ class PID
         void reset();
     protected:
         int runPID( double error, double dt );
-        void addIntegral( double value );
-        double getErrorIntegral();
 
         PidParams params;
-        std::vector<double> error_derivative;
-        std::vector<double> error_integral;
         double error_inf;
         double prev_goal;
         double prev_error;
