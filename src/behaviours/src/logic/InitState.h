@@ -6,9 +6,9 @@
 #include "../TagUtilities.h"
 #include "LogicTypes.h"
 
-#define GIVE_UP_TIME 10
+#define GIVE_UP_TIME 20
 #define DISTANCE_TO_CENTER .508
-#define PWM_OUTPUT 35
+#define PWM_OUTPUT 45
 
 typedef enum
 {
