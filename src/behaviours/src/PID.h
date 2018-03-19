@@ -22,7 +22,7 @@ typedef struct pid_inputs
     double measured;
     double goal;
     double time;
-    int max_output;
+    double saturation;
 } PidInputs;
 
 class PID

@@ -31,6 +31,7 @@ add_executable(
   src/LinearPID.cpp
   src/RadRotPID.cpp
   src/LinRotPID.cpp
+  src/LinVelPID.cpp
   src/Gripper.cpp
   src/Velocity.cpp
   src/TagUtilities.cpp

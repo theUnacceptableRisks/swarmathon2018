@@ -255,6 +255,7 @@ void setupLogicMachine()
     logic_machine.addState( avoid_state.getIdentifier(), dynamic_cast<State *>(&avoid_state) );
     logic_machine.addState( avoidhome_state.getIdentifier(), dynamic_cast<State *>(&avoidhome_state) );
     logic_machine.addState( avoidcube_state.getIdentifier(), dynamic_cast<State *>(&avoidcube_state) );
+
     return;
 }
 

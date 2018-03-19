@@ -19,8 +19,8 @@ std::tuple<int,int> LinearPID::execute( PidInputs inputs )
     prev_goal = inputs.goal;
 
     /* cap our output at the desired max */
-    if( output > inputs.max_output )
-        output = inputs.max_output;
+    if( output > inputs.saturation )
+        output = inputs.saturation;
 
     return std::make_tuple ( output, output );
 }

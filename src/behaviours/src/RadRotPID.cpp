@@ -15,8 +15,8 @@ std::tuple<int,int> RadRotPID::execute( PidInputs inputs )
     prev_time = inputs.time;
     prev_goal = inputs.goal;
 
-    if( output > inputs.max_output )
-        output = inputs.max_output;
+    if( output > inputs.saturation )
+        output = inputs.saturation;
 
     if( error >= 0 )
     {

@@ -47,7 +47,7 @@ void SimpleWaypoint::internalAction()
             pid_inputs.measured = *driving_params.current_theta;
             pid_inputs.goal = WaypointUtilities::getGoalTheta( driving_params );
             pid_inputs.time = inputs->time.toSec();
-            pid_inputs.max_output = simple_params.rotational_max;
+            pid_inputs.saturation = simple_params.rotational_max;
 
             output = rotational_pid.execute( pid_inputs );
 
@@ -64,13 +64,13 @@ void SimpleWaypoint::internalAction()
             pid_inputs.measured = WaypointUtilities::getDistance( driving_params );
             pid_inputs.goal = 0; //trying to go a distance, why wouldn't you want to zero that distance?
             pid_inputs.time = inputs->time.toSec();
-            pid_inputs.max_output = simple_params.skid_max;
+            pid_inputs.saturation = simple_params.skid_max;
 
             linear_output = linear_pid.execute( pid_inputs );
 
             pid_inputs.measured = *driving_params.current_theta;
             pid_inputs.goal = WaypointUtilities::getGoalTheta( driving_params );
-            pid_inputs.max_output = simple_params.skid_max;
+            pid_inputs.saturation = simple_params.skid_max;
 
             rotational_output = rotational_pid.execute( pid_inputs );
 

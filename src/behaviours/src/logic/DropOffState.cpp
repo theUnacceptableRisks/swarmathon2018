@@ -226,7 +226,7 @@ void DropOffState::forceTransition( DOState transition_to )
             {
                 LinearParams l_params;
 
-                l_params.distance = 0.6;
+                l_params.distance = -0.6;
                 l_params.max_output = 25;
                 l_params.reverse = true;
 

@@ -272,8 +272,8 @@ void PickUpState::forceTransition( PUState transition_to )
 
                 LinearParams l_params;
 
-                l_params.distance = 0.3;
-                l_params.max_output = 25;
+                l_params.distance = -0.3;
+                l_params.max_output = 40;
                 l_params.reverse = true;
 
                 this->linear = new LinearWaypoint( this->inputs, l_params );
@@ -290,8 +290,8 @@ void PickUpState::forceTransition( PUState transition_to )
 
                 LinearParams b_params;
 
-                b_params.distance = 0.3;
-                b_params.max_output = 25;
+                b_params.distance = -0.3;
+                b_params.max_output = 40;
                 b_params.reverse = true;
 
                 this->backup = new LinearWaypoint( this->inputs, b_params );

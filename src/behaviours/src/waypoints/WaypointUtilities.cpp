@@ -133,3 +133,15 @@ PidParams WaypointUtilities::getLinearRotSkidBasedPIDParams()
     return params;
 }
 
+PidParams WaypointUtilities::getLinearVelBasedPIDParams()
+{
+    PidParams params;
+
+    params.Kp = 60.;
+    params.Ki = 1.;
+    params.Kd = 0.;
+    params.integration_point = 0;
+
+    return params;
+}
+

@@ -37,14 +37,14 @@ void ApproachHome::run()
                 pid_inputs.measured = x_measured;
                 pid_inputs.goal = h_params.yaw_goal;
                 pid_inputs.time = inputs->time.toSec();
-                pid_inputs.max_output = h_params.yaw_max_output;
+                pid_inputs.saturation = h_params.yaw_max_output;
 
                 rotational_output = linear_rot_pid.execute( pid_inputs );
 
                 pid_inputs.measured = distance;
                 pid_inputs.goal = h_params.dist_goal;
                 pid_inputs.time = inputs->time.toSec();
-                pid_inputs.max_output = h_params.dist_max_output;
+                pid_inputs.saturation = h_params.dist_max_output;
 
                 linear_output = linear_pid.execute( pid_inputs );
 

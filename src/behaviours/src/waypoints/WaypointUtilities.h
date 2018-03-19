@@ -47,6 +47,9 @@ namespace WaypointUtilities
     PidParams getRadianRotSkidBasedPIDParams();
     PidParams getLinearRotSkidBasedPIDParams();
 
+    /* linear velocity */
+    PidParams getLinearVelBasedPIDParams();
+
 /*
     typedef struct pid_params
     {

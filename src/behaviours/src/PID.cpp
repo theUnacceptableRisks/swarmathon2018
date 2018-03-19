@@ -10,7 +10,7 @@ int PID::runPID( double error, double dt )
     output += error * params.Kp;
 
     /* Integral */
-    if( params.Ki != 0 && ( error <= params.integration_point || params.integration_point == 0 ) && prev_time != 0 )
+    if( params.Ki != 0 && ( fabs( error ) <= params.integration_point || params.integration_point == 0 ) && prev_time != 0 )
     {
         error_inf += (error * dt);
         output += error_inf * params.Ki;
@@ -34,7 +34,6 @@ void PID::setParams( PidParams new_params )
 
 void PID::reset()
 {
-    error_integral.clear();
     error_inf = 0;
     prev_error = 0.;
     prev_time = 0.;
