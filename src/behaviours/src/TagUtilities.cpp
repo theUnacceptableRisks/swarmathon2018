@@ -43,7 +43,7 @@ int TagUtilities::numberOfTags( std::vector<Tag> *tags, int id )
     return tagCount;
 }
 
-bool hasTagInRange( std::vector<Tag> *tags, int id, double min, double max)
+bool TagUtilities::hasTagInRange( std::vector<Tag> *tags, int id, double min, double max)
 {
     Tag closest_tag = tags->at(0);
     double closest_dist = TagUtilities::getDistance( closest_tag );
