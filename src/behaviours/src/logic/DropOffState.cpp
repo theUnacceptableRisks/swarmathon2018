@@ -75,6 +75,10 @@ DOState DropOffState::internalTransition()
                 enter = 0;
                 outputs->current_waypoint = 0;
                 transition_to = DROPOFF_EXIT_BACKUP;
+                /* in irl */
+                outputs->offset_x = inputs->odom_accel_gps.x;
+                outputs->offset_y = inputs->odom_accel_gps.y;
+                /* in sim dont change offset */
             }
             break;
         case DROPOFF_EXIT_BACKUP:
