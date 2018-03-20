@@ -44,7 +44,7 @@ std::string AvoidHomeState::transition()
     if( TagUtilities::hasTag( &this->inputs->tags, 0 ) ){
         if(this->inputs->prevState == "search_state"){
             transition_to = "pickup_state";
-        } else if(this->inputs->prevState != "findhome_state"){
+        } else {
             transition_to = "avoidcube_state";
         }
     } else if(this->inputs->us_center < .4 || this->inputs->us_left < .4 ||  this->inputs->us_right < .4 ){

@@ -42,7 +42,7 @@ std::string AvoidState::transition()
     } else if( TagUtilities::hasTag( &this->inputs->tags, 0 ) ){
         if(this->inputs->prevState == "search_state"){
             transition_to = "pickup_state";
-        } else if(this->inputs->prevState != "findhome_state"){
+        } else {
             transition_to = "avoidcube_state";
         }
     } else if(angleToGoal < 0 && angleToGoal > -1 && internal_state == AVOID_DRIVE){
