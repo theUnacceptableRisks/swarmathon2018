@@ -49,7 +49,7 @@ std::string AvoidHomeState::transition()
         }
     } else if(this->inputs->us_center < .4 || this->inputs->us_left < .4 ||  this->inputs->us_right < .4 ){
         transition_to = "avoid_state";
-    } else if(angleToGoal < 0 && angleToGoal > -1 && internal_state == AVOID_DRIVE){
+    } else if(angleToGoal < 0 && angleToGoal > -1 && internal_state == AVOIDHOME_DRIVE){
         transition_to = this->inputs->prevState;
     }
         

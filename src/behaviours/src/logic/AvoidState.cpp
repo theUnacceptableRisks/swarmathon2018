@@ -48,7 +48,6 @@ std::string AvoidState::transition()
     } else if(angleToGoal < 0 && angleToGoal > -1 && internal_state == AVOID_DRIVE){
         transition_to = this->inputs->prevState;
     }
-)
    
 
         
