@@ -8,7 +8,7 @@
 typedef struct rotation_params
 {
     double arrived_threshold = M_PI/12;
-    double goal_radian;
+    double rotate_to;
 
     int rotational_max = 120;
 } RotationParams;
@@ -18,7 +18,7 @@ class RotationalWaypoint : public Waypoint
     public:
         RotationalWaypoint( LogicInputs *i, RotationParams rp ) : Waypoint( i ), r_params(rp)
         {
-             goal_theta = i->odom_accel_gps.theta + r_params.goal_radian;
+            rot_pid = WaypointUtilities::getRadianRotPIDParams();
         }
         virtual void run();
     private:

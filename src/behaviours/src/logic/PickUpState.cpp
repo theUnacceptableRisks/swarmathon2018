@@ -266,9 +266,9 @@ void PickUpState::forceTransition( PUState transition_to )
                     Cube closest_cube = TagUtilities::getClosestCube( &inputs->cubes );
                     double z = closest_cube.getPositionZ();
                     /* in sim */
-//                    l_params.distance = sqrt( ( z * z ) - ( 0.145 * 0.145 ) ) - 0.05;
+                    l_params.distance = sqrt( ( z * z ) - ( 0.145 * 0.145 ) ) - 0.05;
                     /* in irl */
-                    l_params.distance = sqrt( ( z * z ) - ( 0.145 * 0.145 ) ) - 0.1;
+//                    l_params.distance = sqrt( ( z * z ) - ( 0.145 * 0.145 ) ) - 0.1;
                 }
                 else
                 {
@@ -329,12 +329,12 @@ void PickUpState::forceTransition( PUState transition_to )
 
                 RotationParams r_params;
 
-
-                r_params.goal_radian = atan2( ( 0 - inputs->odom_accel_gps.y ), ( 0 - inputs->odom_accel_gps.x ) );
+                r_params.rotate_to = atan2( ( 0 - inputs->odom_accel_gps.y ), ( 0 - inputs->odom_accel_gps.x ) );
+                std::cout << "RotateTo:" << r_params.rotate_to << std::endl;
                 r_params.arrived_threshold = M_PI/12;
 
-                rotate = new RotationalWaypoint( this->inputs, r_params );
-                this->outputs->current_waypoint = rotate;
+                this->rotate = new RotationalWaypoint( this->inputs, r_params );
+                this->outputs->current_waypoint = this->rotate;
 
                 break;
             }

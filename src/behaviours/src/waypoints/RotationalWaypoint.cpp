@@ -18,16 +18,22 @@ void RotationalWaypoint::run()
         PidInputs pid_inputs;
 
         pid_inputs.measured = inputs->odom_accel_gps.theta;
-        pid_inputs.goal = goal_theta;
+        std::cout << "Measured:" << pid_inputs.measured <<std::endl;
+        pid_inputs.goal = r_params.rotate_to;
+        std::cout << "Goal:" << pid_inputs.goal << std::endl;
         pid_inputs.time = inputs->time.toSec();
         pid_inputs.max_output = r_params.rotational_max;
 
         output = rot_pid.execute( pid_inputs );
 
+        std::cout << "Output(L,R):" << std::get<0>( output ) << "," << std::get<1>( output ) << std::endl;
         setOutputLeftPWM( std::get<0>( output ) );
         setOutputRightPWM( std::get<1>( output ) );
 
     }
-    setOutputLeftPWM( 0 );
-    setOutputRightPWM( 0 );
+    else
+    {
+        setOutputLeftPWM( 0 );
+        setOutputRightPWM( 0 );
+    }
 }

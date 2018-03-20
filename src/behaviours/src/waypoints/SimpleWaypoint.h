@@ -38,13 +38,13 @@ class SimpleWaypoint : public Waypoint
             driving_params.goal_x = simple_params.goal_x;
             driving_params.goal_y = simple_params.goal_y;
             /* in sim */
-//            driving_params.current_x = &inputs->odom_accel.x; // _gps.x;
-//            driving_params.current_y = &inputs->odom_accel.y; // _gps.y;
-//            driving_params.current_theta = &inputs->odom_accel.theta; // _gps.theta;
+            driving_params.current_x = &inputs->odom_accel.x; // _gps.x;
+            driving_params.current_y = &inputs->odom_accel.y; // _gps.y;
+            driving_params.current_theta = &inputs->odom_accel.theta; // _gps.theta;
             /* in irl */
-            driving_params.current_x = &inputs->odom_accel_gps.x;
-            driving_params.current_y = &inputs->odom_accel_gps.y;
-            driving_params.current_theta = &inputs->odom_accel_gps.theta;
+//            driving_params.current_x = &inputs->odom_accel_gps.x;
+  //          driving_params.current_y = &inputs->odom_accel_gps.y;
+    //        driving_params.current_theta = &inputs->odom_accel_gps.theta;
 
             linear_pid = LinearPID( WaypointUtilities::getDistSkidBasedPIDParams() );
             rotational_pid = RadRotPID( WaypointUtilities::getRadianRotSkidBasedPIDParams() );
