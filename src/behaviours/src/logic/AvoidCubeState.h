@@ -22,6 +22,7 @@ class AvoidCubeState : public State
         virtual void onExit( std::string next_state );
         virtual std::string transition();
     private:
+        double waypointTimer = 0;
         double initialTime = 0;
         double angleToGoal = 0;
         double wheelRatio = 1;
