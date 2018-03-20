@@ -41,20 +41,16 @@ std::string AvoidHomeState::transition()
         transition_to = this->inputs->prevState;
 
 
-    if(angleToGoal < 0 && angleToGoal > -1 && internal_state == AVOIDHOME_DRIVE)
-        transition_to = this->inputs->prevState;
-
-
-    if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && !TagUtilities::hasTag( &this->inputs->tags, 256 )){
+    if( TagUtilities::hasTag( &this->inputs->tags, 0 ) ){
         if(this->inputs->prevState == "search_state"){
             transition_to = "pickup_state";
-        } else {
+        } else if(this->inputs->prevState != "findhome_state"){
             transition_to = "avoidcube_state";
         }
-    }
-
-    if( this->inputs->us_center < .4 || this->inputs->us_left < .4 ||  this->inputs->us_right < .4 ){
+    } else if(this->inputs->us_center < .4 || this->inputs->us_left < .4 ||  this->inputs->us_right < .4 ){
         transition_to = "avoid_state";
+    } else if(angleToGoal < 0 && angleToGoal > -1 && internal_state == AVOID_DRIVE){
+        transition_to = this->inputs->prevState;
     }
         
     if( this->inputs->rotationFlag == true && abs(this->inputs->odom_accel_gps.theta) - abs(this->inputs->initialAvoidAngle) < .25 && distFromInitialLocation < .5){
