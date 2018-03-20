@@ -214,6 +214,8 @@ void PickUpState::internalAction()
         case PICKUP_CONFIRM:
             if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && TagUtilities::getDistance( TagUtilities::getClosestTag( &this->inputs->tags, 0 ) ) < 0.15 )
                 cube_secured = true;
+            if( inputs->us_center < 0.15 )
+                cube_secured = true;
             break;
         case PICKUP_BACKUP:
             outputs->gripper_position = Gripper::UP_CLOSED;
@@ -266,9 +268,9 @@ void PickUpState::forceTransition( PUState transition_to )
                     Cube closest_cube = TagUtilities::getClosestCube( &inputs->cubes );
                     double z = closest_cube.getPositionZ();
                     /* in sim */
-                    l_params.distance = sqrt( ( z * z ) - ( 0.145 * 0.145 ) ) - 0.05;
+//                    l_params.distance = sqrt( ( z * z ) - ( 0.145 * 0.145 ) ) - 0.05;
                     /* in irl */
-//                    l_params.distance = sqrt( ( z * z ) - ( 0.145 * 0.145 ) ) - 0.1;
+                    l_params.distance = sqrt( ( z * z ) - ( 0.145 * 0.145 ) ) - 0.1;
                 }
                 else
                 {

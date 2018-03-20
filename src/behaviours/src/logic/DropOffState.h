@@ -11,9 +11,9 @@
 #define DROPOFF_MAX_ATTEMPTS 20
 #define DROPOFF_TIME 15
 /* in sim */
-#define ROTATION_SPEED 30
+//#define ROTATION_SPEED 30
 /* in irl */
-//#define ROTATION_SPEED 65
+#define ROTATION_SPEED 65
 
 typedef enum
 {
