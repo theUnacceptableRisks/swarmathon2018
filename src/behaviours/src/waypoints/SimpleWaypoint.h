@@ -17,7 +17,7 @@ typedef enum
 
 typedef struct simple_params
 {
-    double skid_steer_threshold = M_PI/12;
+    double skid_steer_threshold = M_PI/6;
     double arrived_threshold = 0.05;
 
     double goal_x = 0;
