@@ -59,7 +59,7 @@ std::string SearchState::transition()
     std::string transition_to = getIdentifier();
 
     if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && !TagUtilities::hasTag(&this->inputs->tags, 256))
-        transition_to = "avoidcube_state";
+        transition_to = "pickup_state";
     if( this->inputs->us_center < .4 || this->inputs->us_left < .4 ||  this->inputs->us_right < .4 )
         transition_to = "avoid_state";
     if( TagUtilities::hasTag(&this->inputs->tags, 256))
