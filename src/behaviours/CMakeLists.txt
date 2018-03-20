@@ -38,7 +38,6 @@ add_executable(
   src/waypoints/Waypoint.cpp
   src/waypoints/WaypointUtilities.cpp
   src/waypoints/SimpleWaypoint.cpp
-  src/waypoints/ApproachTagWaypoint.cpp
   src/waypoints/ApproachCube.cpp
   src/waypoints/LinearWaypoint.cpp
   src/waypoints/RawOutputWaypoint.cpp
