@@ -88,7 +88,16 @@ DOState DropOffState::internalTransition()
                 delete exit;
                 exit = 0;
                 outputs->current_waypoint = 0;
-                transition_to = DROPOFF_COMPLETE;
+                transition_to = DROPOFF_ROTATE;
+            }
+            break;
+        case DROPOFF_ROTATE:
+            if( rotate && rotate->hasArrived() )
+            {
+               delete rotate;
+               rotate = 0;
+               transition_to = DROPOFF_COMPLETE;
+               outputs->current_waypoint = 0;
             }
             break;
     }
@@ -173,6 +182,8 @@ void DropOffState::internalAction()
         case DROPOFF_EXIT_BACKUP:
             outputs->gripper_position = Gripper::HOVER_OPEN;
             break;
+        case DROPOFF_ROTATE:
+            break;
     }
 }
 
@@ -243,6 +254,23 @@ void DropOffState::forceTransition( DOState transition_to )
 
                 exit = new LinearWaypoint( inputs, l_params );
                 outputs->current_waypoint = dynamic_cast<Waypoint*>( exit );
+                break;
+            }
+            case DROPOFF_ROTATE:
+            {
+                RotationParams r_params;
+
+                if( this->rotate )
+                {
+                    delete rotate;
+                    rotate = 0;
+                }
+
+                r_params.rotate_to = inputs->odom_accel_gps.theta + M_PI;
+                r_params.arrived_threshold = M_PI/12;
+
+                rotate = new RotationalWaypoint( inputs, r_params );
+                outputs->current_waypoint = dynamic_cast<Waypoint*>( rotate );
                 break;
             }
         }

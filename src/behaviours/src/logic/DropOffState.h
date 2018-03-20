@@ -5,6 +5,7 @@
 #include "../waypoints/ApproachHome.h"
 #include "../waypoints/LinearWaypoint.h"
 #include "../waypoints/RawOutputWaypoint.h"
+#include "../waypoints/RotationalWaypoint.h"
 #include "../TagExaminer.h"
 #include "LogicTypes.h"
 
@@ -24,6 +25,7 @@ typedef enum
     DROPOFF_WIGGLE_RIGHT,
     DROPOFF_ENTER,
     DROPOFF_EXIT_BACKUP,
+    DROPOFF_ROTATE,
     DROPOFF_EXIT,
     DROPOFF_FAIL,
     DROPOFF_COMPLETE
@@ -47,6 +49,7 @@ class DropOffState : public State
         RawOutputWaypoint *alignment;
         LinearWaypoint *enter;
         LinearWaypoint *exit;
+        RotationalWaypoint *rotate;
 
         LogicInputs *inputs;
         LogicOutputs *outputs;
