@@ -17,8 +17,6 @@ void AvoidHomeState::onEnter( std::string prev_state )
         this->inputs->initialAvoidX = this->inputs->odom_accel_gps.x;
         this->inputs->initialAvoidY = this->inputs->odom_accel_gps.y;
         initialTime = this->inputs->time.toSec();
-        for(int i = 0; i < 1000; i ++)
-            cout << "ENTERING AVOIDHOME" << endl;
     }
     if( waypoints.size() > 0 )
         outputs->current_waypoint = waypoints.front();

@@ -34,13 +34,8 @@ std::string AvoidCubeState::transition()
     angleToGoal = this->inputs->odom_accel_gps.theta - angleToGoal;
 
 
-    if(wheelRatio > 2)
-        transition_to = this->inputs->prevState;
 
     if(internal_state == AVOIDCUBE_ESCAPE && this->inputs->time.toSec() - initialTime > 3)
-        transition_to = this->inputs->prevState;
-
-    if(angleToGoal < 0 && angleToGoal > -1 && internal_state == AVOIDCUBE_DRIVE)
         transition_to = this->inputs->prevState;
 
     if( TagUtilities::hasTag(&this->inputs->tags, 256)){
@@ -50,9 +45,12 @@ std::string AvoidCubeState::transition()
             transition_to = "avoidhome_state";
         }
     }
+
     if( this->inputs->us_center < .4 || this->inputs->us_left < .4 ||  this->inputs->us_right < .4 ){
         transition_to = "avoid_state";
     }
+
+    if(this->inputs->time.toSec() - waypointTimer > 1.5 && internal_state == AVOIDCUBE_DRIVE)
     if(transition_to != getIdentifier())
         initialTime = -99;
         
@@ -67,14 +65,14 @@ InternalAvoidCubeState AvoidCubeState::internalTransition()
         internal_state = AVOIDCUBE_INIT;
         initialTime = this->inputs->time.toSec();
     }
+
+
+
     switch( internal_state )
     {
         default: break;
-        case AVOIDCUBE_INIT:
-            if(TagUtilities::hasTag(&this->inputs->tags , 0 )){
-                if(TagUtilities::getDistance(TagUtilities::getClosestTag(&this->inputs->tags , 0 )) > .4)
-                    transition_to = AVOIDCUBE_DRIVE;
-            } else {
+        case AVOIDCUBE_INIT: 
+            if(this->inputs->time.toSec() - waypointTimer > .7){
                 transition_to = AVOIDCUBE_DRIVE;
             }
             if(this->inputs->time.toSec() - initialTime > 5){
@@ -83,12 +81,8 @@ InternalAvoidCubeState AvoidCubeState::internalTransition()
             }
             break;
         case AVOIDCUBE_DRIVE:
-            if(TagUtilities::hasTag(&this->inputs->tags , 0 )){
-                if(TagUtilities::getDistance(TagUtilities::getClosestTag(&this->inputs->tags , 0 )) < .4)
-                    transition_to = AVOIDCUBE_INIT;
-            } else {
-                
-            }
+            if(TagUtilities::hasTagInRange(&this->inputs->tags, 0, .15,.3))
+                internal_state = AVOIDCUBE_INIT;
             break;
 
     }
@@ -110,13 +104,17 @@ void AvoidCubeState::internalAction()
             params.left_output = -80;
             params.right_output = 80;
             params.duration = 1.5;
+            if(TagUtilities::hasTagInRange(&this->inputs->tags, 0, .15, .4)){
+                waypointTimer = this->inputs->time.toSec();
+            }
            break;
         }
         case AVOIDCUBE_DRIVE:
         {
-            params.left_output = 60 * wheelRatio;
-            params.right_output = 60 * (1/wheelRatio);
-            wheelRatio += 0.04;
+            params.left_output = 80;
+            params.right_output = 80;
+            params.duration = 1.5;
+            waypointTimer = this->inputs->time.toSec();
             break;
         }
         case AVOIDCUBE_ESCAPE:
