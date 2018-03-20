@@ -53,6 +53,7 @@ std::string AvoidState::transition()
         
     if( this->inputs->rotationFlag == true && abs(this->inputs->odom_accel_gps.theta) - abs(this->inputs->initialAvoidAngle) < .25 && distFromInitialLocation < .5){
         this->inputs->goalInObst = true;
+        this->inputs->rotationFlag = false;
         transition_to = this->inputs->prevState;
     }
 
