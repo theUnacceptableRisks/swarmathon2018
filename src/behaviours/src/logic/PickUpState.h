@@ -1,9 +1,11 @@
 #ifndef pickupstate_h
 #define pickupstate_h
 
+#include <angles/angles.h>
 #include "../state_machine/State.h"
 #include "../waypoints/ApproachCube.h"
 #include "../waypoints/LinearWaypoint.h"
+#include "../waypoints/RotationalWaypoint.h"
 #include "LogicTypes.h"
 
 #define MAX_ATTEMPTS 20
@@ -24,6 +26,7 @@ typedef enum
     PICKUP_CLAW_UP,
     PICKUP_CONFIRM,
     PICKUP_BACKUP,
+    PICKUP_ROTATE,
     PICKUP_COMPLETE,
     PICKUP_FAIL
 } PUState;
@@ -45,6 +48,7 @@ class PickUpState : public State
         ApproachCube *approach;
         LinearWaypoint *linear;
         LinearWaypoint *backup;
+        RotationalWaypoint *rotate;
 
         double timer;
 

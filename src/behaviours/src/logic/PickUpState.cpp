@@ -140,10 +140,19 @@ PUState PickUpState::internalTransition()
         case PICKUP_BACKUP:
             if( backup && backup->hasArrived() )
             {
-                transition_to = PICKUP_COMPLETE;
+                transition_to = PICKUP_ROTATE;
                 outputs->current_waypoint = 0;
                 delete this->backup;
                 this->backup = 0;
+            }
+            break;
+        case PICKUP_ROTATE:
+            if( rotate && rotate->hasArrived() )
+            {
+                transition_to = PICKUP_COMPLETE;
+                outputs->current_waypoint = 0;
+                delete this->rotate;
+                this->rotate = 0;
             }
             break;
         case PICKUP_COMPLETE:
@@ -207,6 +216,9 @@ void PickUpState::internalAction()
                 cube_secured = true;
             break;
         case PICKUP_BACKUP:
+            outputs->gripper_position = Gripper::UP_CLOSED;
+            break;
+        case PICKUP_ROTATE:
             outputs->gripper_position = Gripper::UP_CLOSED;
             break;
         case PICKUP_COMPLETE:
@@ -299,12 +311,32 @@ void PickUpState::forceTransition( PUState transition_to )
 
                 LinearParams b_params;
 
-                b_params.distance = 0.4;
+                b_params.distance = 0.3;
                 b_params.max_output = 45;
                 b_params.reverse = true;
 
                 this->backup = new LinearWaypoint( this->inputs, b_params );
                 this->outputs->current_waypoint = this->backup;
+                break;
+            }
+            case PICKUP_ROTATE:
+            {
+                if( this->rotate )
+                {
+                    delete this->rotate;
+                    this->rotate = 0;
+                }
+
+                RotationParams r_params;
+
+
+                r_params.goal_radian = atan2( ( 0 - inputs->odom_accel_gps.y ), ( 0 - inputs->odom_accel_gps.x ) );
+                r_params.arrived_threshold = M_PI/12;
+
+                rotate = new RotationalWaypoint( this->inputs, r_params );
+                this->outputs->current_waypoint = rotate;
+
+                break;
             }
         }
     }
