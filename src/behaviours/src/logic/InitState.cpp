@@ -91,8 +91,12 @@ void InitState::internalAction()
             if( inputs->tags.size() > 0 )
             {
                 Tag closest_tag = TagUtilities::getClosestTag( &inputs->tags, 256 );
-                double dist = sqrt( ( closest_tag.getPositionZ() * closest_tag.getPositionZ() ) - ( 0.195 * 0.195 ) ) + DISTANCE_TO_CENTER;
-//sin(1.13466)*TagUtilities::getDistance( closest_tag ) + DISTANCE_TO_CENTER;
+                double z = closest_tag.getPositionZ();
+                double dist = 0;
+                if( z == 0 )
+                    dist = DISTANCE_TO_CENTER + 0.1;
+                else
+                    dist = sqrt( ( z * z ) - ( 0.195 * 0.195 ) ) + DISTANCE_TO_CENTER;
 
                 /* in sim */
                 outputs->offset_x = dist * cos( inputs->odom_accel.theta ) + inputs->odom_accel.x;

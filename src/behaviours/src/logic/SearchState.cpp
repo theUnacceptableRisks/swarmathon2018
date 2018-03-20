@@ -14,6 +14,7 @@ void SearchState::action()
 void SearchState::onEnter( std::string prev_state )
 {
     if(this->inputs->goalInObst){
+        delete waypoints.front();
         waypoints.erase( waypoints.begin() );
         if( waypoints.size() != 0 )
             this->outputs->current_waypoint = waypoints.front();
@@ -41,9 +42,8 @@ void SearchState::onExit( std::string next_state )
 
         /* in sim */
         params.arrived_threshold = 0.05;
-        params.goal_x = inputs->odom_accel.x;
-        params.goal_y = inputs->odom_accel.y;
-
+        params.goal_x = inputs->odom_accel.x == NAN ? 1 : inputs->odom_accel.x;
+        params.goal_y = inputs->odom_accel.y == NAN ? 1 : inputs->odom_accel.y;
 
        /* in irl */
 //        params.arrived_threshold = 0.25;

@@ -50,11 +50,14 @@ Tag TagUtilities::getClosestTag( std::vector<Tag> *tags, int id )
 
     for( int i = 1; i < tags->size(); i++ )
     {
-        double new_dist = TagUtilities::getDistance( tags->at(i) );
-        if( new_dist < closest_dist )
+        if( tags->at(i).getID() == id )
         {
-            closest_dist = new_dist;
-            closest_tag = tags->at(i);
+            double new_dist = TagUtilities::getDistance( tags->at(i) );
+            if( new_dist < closest_dist )
+            {
+                closest_dist = new_dist;
+                closest_tag = tags->at(i);
+            }
         }
     }
     return closest_tag;

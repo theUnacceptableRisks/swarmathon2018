@@ -17,7 +17,6 @@ void ApproachCube::run()
 
             if( distance >= OPTIMAL_LOCK_DISTANCE )
             {
-                std::cout << "NonOptimal Lock" << std::endl;
                 PidInputs pid_inputs;
 
                 /* average */
@@ -47,7 +46,6 @@ void ApproachCube::run()
             }
             else if( distance >= c_params.dist_goal )
             {
-                std::cout << "Optimal Lock" << std::endl;
                 PidInputs pid_inputs;
 
                 x_position = closest.getPositionX();

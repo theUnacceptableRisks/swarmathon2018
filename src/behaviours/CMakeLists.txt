@@ -52,8 +52,6 @@ add_executable(
   src/logic/AvoidState.cpp
   src/logic/AvoidHomeState.cpp
   src/logic/AvoidCubeState.cpp
-  src/logic/MotorCalibState.cpp
-  src/logic/RotationalCalibState.cpp
   src/logic/DropOffState.cpp
   src/TagExaminer.cpp
 )

@@ -62,7 +62,6 @@ std::string PickUpState::transition()
 PUState PickUpState::internalTransition()
 {
     PUState transition_to = internal_state;
-    std::cout << "Current State: " << transition_to << std::endl;
     switch( internal_state )
     {
         case PICKUP_INIT:
@@ -214,7 +213,6 @@ void PickUpState::internalAction()
             outputs->gripper_position = Gripper::HOVER_CLOSED;
             break;
         case PICKUP_FAIL:
-            std::cout << "In Pickup Fail" << std::endl;
             outputs->gripper_position = Gripper::UP_OPEN;
             break;
 

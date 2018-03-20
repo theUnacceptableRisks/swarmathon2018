@@ -19,16 +19,15 @@ void FindHomeState::onEnter( std::string prev_state )
         this->inputs->goalInObst = false;
         this->inputs->rotationFlag = false;
     }
+
     if( this->internal_state == FINDHOME_COMPLETE )
     {
         if( waypoints.size() > 0 )
         {
             while( this->waypoints.front() )
             {
-                Waypoint *wp = this->waypoints.front();
-                this->waypoints.erase( waypoints.begin() );
-                if( wp )
-                    delete wp;
+                delete waypoints.front();
+                waypoints.erase( waypoints.begin() );
             }
         }
         forceTransition( FINDHOME_INIT );
@@ -37,15 +36,18 @@ void FindHomeState::onEnter( std::string prev_state )
     {
         outputs->current_waypoint = waypoints.front();
     }
-    else
-    {
-        forceTransition( FINDHOME_INIT );
-    }
 }
 
 void FindHomeState::onExit( std::string next_state )
 {
-
+    if( internal_state == FINDHOME_COMPLETE )
+    {
+        if( waypoints.size() > 0 )
+        {
+            delete waypoints.front();
+            waypoints.erase( waypoints.begin() );
+        }
+    }
 }
 
 std::string FindHomeState::transition()
