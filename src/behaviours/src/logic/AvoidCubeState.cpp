@@ -83,7 +83,7 @@ InternalAvoidCubeState AvoidCubeState::internalTransition()
             }
             break;
         case AVOIDCUBE_DRIVE:
-            if(TagUtilities::hasTagInRange(&this->inputs->tags, 0, .15,.3)){
+            if(TagUtilities::hasTagInRange(&this->inputs->tags, 0, .21,.4)){
                 internal_state = AVOIDCUBE_INIT;
                 initialTime = this->inputs->time.toSec();
             }
@@ -108,7 +108,7 @@ void AvoidCubeState::internalAction()
             params.left_output = -80;
             params.right_output = 80;
             params.duration = 1.5;
-            if(TagUtilities::hasTagInRange(&this->inputs->tags, 0, .15, .3)){
+            if(TagUtilities::hasTagInRange(&this->inputs->tags, 0, .21, .4)){
                 waypointTimer = this->inputs->time.toSec();
             }
            break;
