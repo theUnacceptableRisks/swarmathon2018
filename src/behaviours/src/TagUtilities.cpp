@@ -43,6 +43,28 @@ int TagUtilities::numberOfTags( std::vector<Tag> *tags, int id )
     return tagCount;
 }
 
+bool TagUtilities::hasTagInRange( std::vector<Tag> *tags, int id, double min, double max)
+{
+    if(tags->size() > 0){
+        Tag closest_tag = tags->at(0);
+        double closest_dist = TagUtilities::getDistance( closest_tag );
+
+        for( int i = 1; i < tags->size(); i++ )
+        {
+            double new_dist = TagUtilities::getDistance( tags->at(i) );
+            if( new_dist < closest_dist && new_dist <= max && new_dist >= min)
+            {
+                closest_dist = new_dist;
+                closest_tag = tags->at(i);
+            }
+        }
+        if(closest_dist >= min && closest_dist <= max)
+            return true;
+    }
+   
+    return false;
+}
+
 Tag TagUtilities::getClosestTag( std::vector<Tag> *tags, int id )
 {
     Tag closest_tag = tags->at(0);

@@ -41,14 +41,14 @@ void SearchState::onExit( std::string next_state )
         params.skid_max = 60;
 
         /* in sim */
-//        params.arrived_threshold = 0.05;
-//        params.goal_x = inputs->odom_accel.x == NAN ? 1 : inputs->odom_accel.x;
-//        params.goal_y = inputs->odom_accel.y == NAN ? 1 : inputs->odom_accel.y;
+        params.arrived_threshold = 0.05;
+        params.goal_x = inputs->odom_accel.x == NAN ? 1 : inputs->odom_accel.x;
+        params.goal_y = inputs->odom_accel.y == NAN ? 1 : inputs->odom_accel.y;
 
        /* in irl */
-        params.arrived_threshold = 0.25;
-        params.goal_x = inputs->odom_accel_gps.x;
-        params.goal_y = inputs->odom_accel_gps.y;
+//        params.arrived_threshold = 0.25;
+//        params.goal_x = inputs->odom_accel_gps.x;
+//        params.goal_y = inputs->odom_accel_gps.y;
 
         wp = new SimpleWaypoint( inputs, params );
         waypoints.insert( waypoints.begin(), dynamic_cast<Waypoint*>( wp ) );
@@ -71,11 +71,11 @@ std::string SearchState::transition()
 
         if( closest_tag.getGroundDistance( 256 ) > closest_cube.getGroundDistance() )
             transition_to = "pickup_state";
-    }
-    if( this->inputs->us_center < .35 || this->inputs->us_left < .35 ||  this->inputs->us_right < .35 )
+    } else if( this->inputs->us_center < .35 || this->inputs->us_left < .35 ||  this->inputs->us_right < .35 ) {
         transition_to = "avoid_state";
-    if( TagUtilities::hasTag(&this->inputs->tags, 256))
+    } else if ( TagUtilities::hasTag(&this->inputs->tags, 256)){
         transition_to = "avoidhome_state";
+    }
 
     return transition_to;
 }
