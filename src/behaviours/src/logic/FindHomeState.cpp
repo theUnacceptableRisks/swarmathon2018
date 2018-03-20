@@ -108,7 +108,7 @@ void FindHomeState::internalAction()
             SimpleWaypoint *waypoint;
             SimpleParams params;
 
-            params.skid_steer_threshold = M_PI/12;
+            params.skid_steer_threshold = M_PI/6;
             params.arrived_threshold = 0.05;
 
             params.goal_x = 0.0;
@@ -176,7 +176,7 @@ void FindHomeState::forceTransition( FHState transition_to )
 
                 /* param basics */
                 params.arrived_threshold = 0.5;
-                params.skid_steer_threshold = M_PI/12;
+                params.skid_steer_threshold = M_PI/6;
 
                 compX /= distanceFromHome;
                 compY /= distanceFromHome;
