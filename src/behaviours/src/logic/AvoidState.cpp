@@ -58,6 +58,16 @@ std::string AvoidState::transition()
     }
 
 
+
+    if(transition_to == "avoidhome_state" || transition_to == "avoidcube_state"){
+        this->inputs->avoidCounter++;
+    } else if (transition_to != getIdentifier()){
+        this->inputs->avoidCounter = 0;
+    }
+    
+    if(transition_to == "avoidcube_state" && this->inputs->avoidCounter >= 4)
+        transition_to = getIdentifier();
+
     return transition_to;
 }
 
