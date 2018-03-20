@@ -10,6 +10,15 @@ void FindHomeState::action()
 
 void FindHomeState::onEnter( std::string prev_state )
 {
+    if(this->inputs->goalInObst){
+        waypoints.erase( waypoints.begin() );
+        if( waypoints.size() != 0 )
+            this->outputs->current_waypoint = waypoints.front();
+        else
+            this->outputs->current_waypoint = 0;
+        this->inputs->goalInObst = false;
+        this->inputs->rotationFlag = false;
+    }
     if( this->internal_state == FINDHOME_COMPLETE )
     {
         if( waypoints.size() > 0 )
