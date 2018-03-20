@@ -38,19 +38,19 @@ std::string AvoidCubeState::transition()
 
     if(internal_state == AVOIDCUBE_ESCAPE && this->inputs->time.toSec() - initialTime > 3)
         transition_to = this->inputs->prevState;
+    
     if( TagUtilities::hasTag(&this->inputs->tags, 256)){
         if(this->inputs->prevState == "findhome_state"){
             transition_to = "dropoff_state";
         } else {
             transition_to = "avoidhome_state";
         }
-    }
-
-    if( this->inputs->us_center < .4 || this->inputs->us_left < .4 ||  this->inputs->us_right < .4 ){
-        transition_to = "avoid_state";
-    }
-
-    if(this->inputs->time.toSec() - waypointTimer > 1.5 && internal_state == AVOIDCUBE_DRIVE)
+    } else if(this->inputs->us_center < .4 || this->inputs->us_left < .4 ||  this->inputs->us_right < .4 ){
+        transition_to = "avoid_state"; 
+        
+    } else if(angleToGoal < 0 && angleToGoal > -1 && internal_state == AVOIDCUBE_DRIVE){
+        transition_to = this->inputs->prevState;
+    } else if(this->inputs->time.toSec() - waypointTimer > 1.5 && internal_state == AVOIDCUBE_DRIVE)
         transition_to = this->inputs->prevState;
     if(transition_to != getIdentifier())
         initialTime = -99;
@@ -83,7 +83,7 @@ InternalAvoidCubeState AvoidCubeState::internalTransition()
             }
             break;
         case AVOIDCUBE_DRIVE:
-            if(TagUtilities::hasTagInRange(&this->inputs->tags, 0, .15,.3)){
+            if(TagUtilities::hasTagInRange(&this->inputs->tags, 0, .21,.4)){
                 internal_state = AVOIDCUBE_INIT;
                 initialTime = this->inputs->time.toSec();
             }
@@ -108,7 +108,7 @@ void AvoidCubeState::internalAction()
             params.left_output = -80;
             params.right_output = 80;
             params.duration = 1.5;
-            if(TagUtilities::hasTagInRange(&this->inputs->tags, 0, .15, .3)){
+            if(TagUtilities::hasTagInRange(&this->inputs->tags, 0, .21, .4)){
                 waypointTimer = this->inputs->time.toSec();
             }
            break;

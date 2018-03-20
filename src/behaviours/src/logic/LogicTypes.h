@@ -46,6 +46,7 @@ typedef struct logic_inputs
     double          goal_y;
     bool            goalInObst = false;
     bool            rotationFlag = false;
+    int             avoidCounter = 0;
     double          initialAvoidAngle;
     double          initialAvoidX;
     double          initialAvoidY;

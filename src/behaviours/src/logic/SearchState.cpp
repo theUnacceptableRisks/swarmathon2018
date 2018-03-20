@@ -34,7 +34,7 @@ void SearchState::onExit( std::string next_state )
         SimpleWaypoint *wp;
         SimpleParams params;
 
-        params.skid_steer_threshold = M_PI/12;
+        params.skid_steer_threshold = M_PI/6;
 
         params.linear_max = 40;
         params.rotational_max = 80;
@@ -114,7 +114,7 @@ void SearchState::internalAction()
             params.skid_steer_threshold = M_PI/6;
             params.arrived_threshold = 0.15;
             /* in sim */
-//            params.skid_steer_threshold = M_PI/12;
+//            params.skid_steer_threshold = M_PI/6;
 //            params.arrived_threshold = 0.05;
 
             int num_rovers = inputs->infoVector.size();
@@ -140,7 +140,7 @@ void SearchState::internalAction()
                 /* in sim */
 //                double curr_distance = hypot( x - inputs->odom_accel.x, y - inputs->odom_accel.y );
                 /* in irl */
-                double hypot( x - inputs->odom_accel_gps.x, y - inputs->odom_accel_gps.y );
+                double curr_distance = hypot( x - inputs->odom_accel_gps.x, y - inputs->odom_accel_gps.y );
 
                 if( curr_distance <= closest_distance )
                 {
@@ -175,29 +175,6 @@ void SearchState::internalAction()
                         i = 0;
                 }
             }
-/*
-            double x = 0.0;
-            double y = 0.0;
-
-            /* the constant bits of the params, tuning parts *
-            params.skid_steer_threshold = M_PI/6;
-            params.arrived_threshold = 0.15;
-
-            for( double n = 1.0; n < SEARCH_SIZE; n += 1.0 )
-            {
-                y += n * pow( (-1.0), ( n + 1.0 ) );
-                params.goal_x = x;
-                params.goal_y = y;
-                waypoint = new SimpleWaypoint( this->inputs, params );
-                this->waypoints.push_back( dynamic_cast<Waypoint*>( waypoint ) );
-
-                x += ( n + 1.0 ) * pow( (-1.0), ( n + 1.0 ) );
-                params.goal_x = x;
-                params.goal_y = y;
-                waypoint = new SimpleWaypoint( this->inputs, params );
-                this->waypoints.push_back( dynamic_cast<Waypoint*>( waypoint ) );
-            }
-*/
             this->outputs->current_waypoint = waypoints.front();
 
             break;
