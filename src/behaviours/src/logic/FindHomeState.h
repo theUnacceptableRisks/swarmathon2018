@@ -4,7 +4,7 @@
 #include "../state_machine/State.h"
 #include "LogicMachine.h"
 
-#define GROWTH_CONSTANT 0.5
+#define GROWTH_CONSTANT 0.3
 
 typedef enum
 {
