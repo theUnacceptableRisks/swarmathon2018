@@ -12,6 +12,7 @@ void DropOffState::onEnter( std::string prev_state )
     forceTransition( DROPOFF_INIT );
     adjusted = false;
     orientation = TagExaminer::INIT;
+    attempts = 0;
 }
 
 void DropOffState::onExit( std::string nexst_state )
@@ -145,7 +146,7 @@ void DropOffState::internalAction()
                 if( orientation == TagExaminer::INIT )
                     orientation = desired;
 
-                if( desired == TagExminer::STRAIGHT || orientation != desired )
+                if( desired == TagExaminer::STRAIGHT || orientation != desired )
                 {
                     adjusted = true;
                 }
