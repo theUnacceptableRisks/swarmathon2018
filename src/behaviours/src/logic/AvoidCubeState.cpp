@@ -18,6 +18,7 @@ void AvoidCubeState::onEnter( std::string prev_state )
         outputs->current_waypoint = waypoints.front();
     initialTheta = this->inputs->odom_accel_gps.theta;
     initialTime = this->inputs->time.toSec();
+    waypointTimer = this->inputs->time.toSec();
     internal_state = AVOIDCUBE_INIT;
 }
 
@@ -37,7 +38,6 @@ std::string AvoidCubeState::transition()
 
     if(internal_state == AVOIDCUBE_ESCAPE && this->inputs->time.toSec() - initialTime > 3)
         transition_to = this->inputs->prevState;
-
     if( TagUtilities::hasTag(&this->inputs->tags, 256)){
         if(this->inputs->prevState == "findhome_state"){
             transition_to = "dropoff_state";
@@ -51,6 +51,7 @@ std::string AvoidCubeState::transition()
     }
 
     if(this->inputs->time.toSec() - waypointTimer > 1.5 && internal_state == AVOIDCUBE_DRIVE)
+        transition_to = this->inputs->prevState;
     if(transition_to != getIdentifier())
         initialTime = -99;
         
@@ -72,7 +73,7 @@ InternalAvoidCubeState AvoidCubeState::internalTransition()
     {
         default: break;
         case AVOIDCUBE_INIT: 
-            if(this->inputs->time.toSec() - waypointTimer > .7){
+            if(this->inputs->time.toSec() - waypointTimer > 1.5){
                 transition_to = AVOIDCUBE_DRIVE;
                 waypointTimer = this->inputs->time.toSec();
             }
@@ -82,8 +83,10 @@ InternalAvoidCubeState AvoidCubeState::internalTransition()
             }
             break;
         case AVOIDCUBE_DRIVE:
-            if(TagUtilities::hasTagInRange(&this->inputs->tags, 0, .15,.3))
+            if(TagUtilities::hasTagInRange(&this->inputs->tags, 0, .15,.3)){
                 internal_state = AVOIDCUBE_INIT;
+                initialTime = this->inputs->time.toSec();
+            }
             break;
 
     }
@@ -95,7 +98,7 @@ void AvoidCubeState::internalAction()
 {
     RawOutputWaypoint *waypoint = 0;
     RawOutputParams params;
-    //this->waypoints.clear();
+    this->waypoints.clear();
     switch( internal_state )
     {
         default: break;
@@ -105,7 +108,7 @@ void AvoidCubeState::internalAction()
             params.left_output = -80;
             params.right_output = 80;
             params.duration = 1.5;
-            if(TagUtilities::hasTagInRange(&this->inputs->tags, 0, .15, .4)){
+            if(TagUtilities::hasTagInRange(&this->inputs->tags, 0, .15, .3)){
                 waypointTimer = this->inputs->time.toSec();
             }
            break;
@@ -124,13 +127,13 @@ void AvoidCubeState::internalAction()
             params.duration = 3;
             cout << "----ESCAPE------" << endl;
         }
-    }
-    if(this->waypoints.size() == 0){    
+    }  
     waypoint = new RawOutputWaypoint( this->inputs, params );
     this->waypoints.push_back( dynamic_cast<Waypoint*>( waypoint ) );
     this->outputs->current_waypoint = waypoints.front();
-    }
-    
+    cout << "AVOIDCUBE INTERNAL STATE: " << internal_state << endl;
+    if(TagUtilities::hasTag(&this->inputs->tags, 0))
+        cout << "NEAREST TAG: " << TagUtilities::getDistance(TagUtilities::getClosestTag(&this->inputs->tags, 0)) << endl;
             
 }
 
