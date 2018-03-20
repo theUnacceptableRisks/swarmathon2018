@@ -17,9 +17,9 @@ export GAZEBO_PLUGIN_PATH="../build/gazebo_plugins"
 
 #Point to ROS master on the network
 echo "point to ROS master on the network"
-if [ -z "$1" ]
+if [ -z "$2" ]
 then
-    echo "Error: ROS_MASTER_URI hostname was not provided"
+    echo "Usage: ./rover_onboard_node_launch.sh master_hostname calibration_location"
     exit 1
 else
     export ROS_MASTER_URI=http://$1:11311
@@ -52,19 +52,21 @@ findDevicePath() {
 
 
 #Startup ROS packages/processes
+echo "Loading calibration data and swarmie_control sketch"
+./load_swarmie_control_sketch.sh $2
+
 echo "rosrun tf static_transform_publisher"
 nohup > logs/$HOSTNAME"_transform_log.txt" rosrun tf static_transform_publisher __name:=$HOSTNAME\_BASE2CAM 0.12 -0.03 0.195 -1.57 0 -2.22 /$HOSTNAME/base_link /$HOSTNAME/camera_link 100 &
 echo "rosrun video_stream_opencv"
 
 #nohup rosrun video_stream_opencv video_stream __name:=$HOSTNAME\_CAMERA _video_stream_provider:=/dev/video0 /camera:=/$HOSTNAME/camera/image _camera_info_url:=file://${HOME}/SwarmBaseCode-ROS/camera_info head_camera.yaml _width:=320 _height:=240 &
-nohup > logs/$HOSTNAME"_USBCAM_log.txt" rosrun usb_cam usb_cam_node __name:=$HOSTNAME\_CAMERA /$HOSTNAME\_CAMERA/image_raw:=/$HOSTNAME/camera/image _camera_info_url:=file://$(realpath ..)/camera_info/head_camera.yaml _brightness:=50 _image_width:=320 _image_height:=240 &
+nohup > logs/$HOSTNAME"_USBCAM_log.txt" rosrun usb_cam usb_cam_node __name:=$HOSTNAME\_CAMERA /$HOSTNAME\_CAMERA/image_raw:=/$HOSTNAME/camera/image _camera_info_url:=file://$(realpath ..)/camera_info/head_camera.yaml _image_width:=320 _image_height:=240 &
 echo $(realpath ..)/camera_info/head_camera.yaml
 # deprecated; we are replacing the usb cam with opencv cam
 # mage_raw:=/$HOSTNAME/camera/image _camera_info_url:=file://${HOME}/rover_workspace/camera_info/head_camera.yaml _image_width:=320 _image_height:=240 &
 
 echo "rosrun behaviours"
-# nohup > logs/$HOSTNAME"_behaviours_log.txt" 
-rosrun behaviours behaviours &
+nohup > logs/$HOSTNAME"_behaviours_log.txt" rosrun behaviours behaviours &
 echo "rosrun obstacle_detection"
 nohup rosrun obstacle_detection obstacle &
 echo "rosrun diagnostics"

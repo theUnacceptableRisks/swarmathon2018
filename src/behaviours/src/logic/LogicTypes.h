@@ -6,7 +6,6 @@
 #include "../Tag.h"
 #include "../TagUtilities.h"
 #include "../Gripper.h"
-#include "../MotorController.h"
 #include "../TagExaminer.h"
 #include "../Cube.h"
 
@@ -59,7 +58,6 @@ typedef struct logic_inputs
     double			angular_vel_odom_accel = 0.0;
     double			angular_vel_odom_accel_gps = 0.0;
     ros::Time			time;
-    MotorController		controller;
     CalibNums			calibration;
     TagExaminer                 examiner;
     std::vector<roverInfo>	infoVector;

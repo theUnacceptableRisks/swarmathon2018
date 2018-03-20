@@ -254,9 +254,9 @@ void PickUpState::forceTransition( PUState transition_to )
                     Cube closest_cube = TagUtilities::getClosestCube( &inputs->cubes );
                     double z = closest_cube.getPositionZ();
                     /* in sim */
-                    l_params.distance = sqrt( ( z * z ) - ( 0.145 * 0.145 ) ) - 0.05;
+//                    l_params.distance = sqrt( ( z * z ) - ( 0.145 * 0.145 ) ) - 0.05;
                     /* in irl */
-//                    l_params.distance = sqrt( ( z * z ) - ( 0.145 * 0.145 ) ) - 0.1;
+                    l_params.distance = sqrt( ( z * z ) - ( 0.145 * 0.145 ) ) - 0.1;
                 }
                 else
                 {

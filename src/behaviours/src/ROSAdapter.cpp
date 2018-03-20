@@ -42,8 +42,6 @@
 #include "logic/AvoidState.h"
 #include "logic/AvoidHomeState.h"
 #include "logic/AvoidCubeState.h"
-#include "logic/MotorCalibState.h"
-#include "logic/RotationalCalibState.h"
 #include "logic/DropOffState.h"
 #include "logic/InitState.h"
 #include "Gripper.h"

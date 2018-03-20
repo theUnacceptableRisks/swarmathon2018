@@ -56,26 +56,38 @@ std::tuple<int,int> WaypointUtilities::executePid( PidParams &params, PidPackage
 PidParams WaypointUtilities::getDistPIDParams()
 {
     PidParams params;
+    /* in sim */
+//    params.Kp = 60.;
+//   params.Ki = 0.;
+//    params.Kd = 0.;
+//    params.integration_point = 0.15;
 
-    params.Kp = 60.;
-    params.Ki = 0.;
-    params.Kd = 0.;
+    /* in irl */
+    params.Kp = 55.;
+    params.Ki = 15.;
+    params.Kd = 1.;
     params.integration_point = 0.15;
-
     return params;
 }
 
 /* rotation */
 
-/* generate a rotational output based on radian measurements from a target */
+/* generate a rotational output ba+sed on radian measurements from a target */
 PidParams WaypointUtilities::getRadianRotPIDParams()
 {
     PidParams params;
 
-    params.Kp = 60.;
-    params.Ki = 0.;
-    params.Kd = 0.;
+    /* in sim */
+//    params.Kp = 60.;
+//    params.Ki = 0.;
+//    params.Kd = 0.;
+//    params.integration_point = 0.15;
+    /* in irl */
+    params.Kp = 120.;
+    params.Ki = 15.;
+    params.Kd = 5.;
     params.integration_point = 0.15;
+
     return params;
 }
 
@@ -85,9 +97,15 @@ PidParams WaypointUtilities::getLinearRotPIDParams()
 {
     PidParams params;
 
-    params.Kp = 60.;
-    params.Ki = 0.;
-    params.Kd = 0.;
+    /* in sim */
+//    params.Kp = 60.;
+//    params.Ki = 0.;
+//    params.Kd = 0.;
+//    params.integration_point = 0.1;
+    /* in irl */
+    params.Kp = 180.;
+    params.Ki = 40.;
+    params.Kd = 20.;
     params.integration_point = 0.1;
 
     return params;
@@ -99,9 +117,15 @@ PidParams WaypointUtilities::getDistSkidBasedPIDParams()
 {
     PidParams params;
 
-    params.Kp = 60.;
-    params.Ki = 0.;
-    params.Kd = 0.;
+    /* in sim */
+//    params.Kp = 60.;
+//    params.Ki = 0.;
+//    params.Kd = 0.;
+//    params.integration_point = 0.15;
+    /* in irl */
+    params.Kp = 50.;
+    params.Ki = 5.;
+    params.Kd = 5.;
     params.integration_point = 0.15;
 
     return params;
@@ -114,10 +138,17 @@ PidParams WaypointUtilities::getRadianRotSkidBasedPIDParams()
 {
     PidParams params;
 
-    params.Kp = 60.;
-    params.Ki = 0.;
-    params.Kd = 0.;
+    /* in sim */
+//    params.Kp = 60.;
+//    params.Ki = 0.;
+//    params.Kd = 0.;
+//    params.integration_point = 0.15;
+    /* in irl */
+    params.Kp = 130.;
+    params.Ki = 15.;
+    params.Kd = 5.;
     params.integration_point = 0.15;
+
     return params;
 }
 
@@ -125,9 +156,15 @@ PidParams WaypointUtilities::getLinearRotSkidBasedPIDParams()
 {
     PidParams params;
 
-    params.Kp = 60.;
-    params.Ki = 0.;
-    params.Kd = 0.;
+    /* in sim */
+//    params.Kp = 60.;
+//    params.Ki = 0.;
+//    params.Kd = 0.;
+//    params.integration_point = 0.1;
+    /* in irl */
+    params.Kp = 140.;
+    params.Ki = 10.;
+    params.Kd = 5.;
     params.integration_point = 0.1;
 
     return params;
