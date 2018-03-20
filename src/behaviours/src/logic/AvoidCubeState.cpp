@@ -74,6 +74,7 @@ InternalAvoidCubeState AvoidCubeState::internalTransition()
         case AVOIDCUBE_INIT: 
             if(this->inputs->time.toSec() - waypointTimer > .7){
                 transition_to = AVOIDCUBE_DRIVE;
+                waypointTimer = this->inputs->time.toSec();
             }
             if(this->inputs->time.toSec() - initialTime > 5){
                 transition_to = AVOIDCUBE_ESCAPE;
@@ -114,7 +115,6 @@ void AvoidCubeState::internalAction()
             params.left_output = 80;
             params.right_output = 80;
             params.duration = 1.5;
-            waypointTimer = this->inputs->time.toSec();
             break;
         }
         case AVOIDCUBE_ESCAPE:
