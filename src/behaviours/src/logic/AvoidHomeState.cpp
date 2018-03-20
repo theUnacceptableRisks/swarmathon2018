@@ -82,7 +82,7 @@ InternalAvoidHomeState AvoidHomeState::internalTransition()
         {
             if(!TagUtilities::hasTag(&this->inputs->tags , 256 ) && this->inputs->time.toSec() - waypointTimer > 1.3) 
                 transition_to = AVOIDHOME_DRIVE;
-            if(this->inputs->time.toSec() - initialTime > 5){
+            if(this->inputs->time.toSec() - initialTime > 5 && TagUtilities::hasTag(&this->inputs->tags, 256)){
                 transition_to = AVOIDHOME_ESCAPE;
                 initialTime = this->inputs->time.toSec();
             }
@@ -100,9 +100,10 @@ InternalAvoidHomeState AvoidHomeState::internalTransition()
         }
         case AVOIDHOME_ESCAPE:
         {
-            if(this->inputs->time.toSec() - initialTime < 5 && this->inputs->time.toSec() waypointTimer > 3){
+            if(this->inputs->time.toSec() - initialTime < 5 && this->inputs->time.toSec() - waypointTimer > 3){
                 transition_to = AVOIDHOME_DRIVE;
             }
+            break;
         }
 
     }
@@ -124,7 +125,8 @@ void AvoidHomeState::internalAction()
             params.left_output = -65;
             params.right_output = 65;
             params.duration = 1.5;
-            waypointTimer = this->inputs->time.toSec();
+            if(TagUtilities::hasTag(&this->inputs->tags, 256))
+                waypointTimer = this->inputs->time.toSec();
            break;
         }
         case AVOIDHOME_DRIVE:
@@ -134,6 +136,7 @@ void AvoidHomeState::internalAction()
             wheelRatio += 0.04;
             wheelRatio = min(wheelRatio, 4.3);
             waypointTimer = this->inputs->time.toSec();
+            cout << "WHEEL RATIO: " << wheelRatio << endl;
             break;
         }
         case AVOIDHOME_ESCAPE:
