@@ -33,22 +33,22 @@ std::string AvoidState::transition()
     angleToGoal = this->inputs->odom_accel_gps.theta - angleToGoal;
     double distFromInitialLocation = hypot(this->inputs->odom_accel_gps.x - this->inputs->initialAvoidX, this->inputs->odom_accel_gps.y - this->inputs->initialAvoidY);
 
-    if(angleToGoal < 0 && angleToGoal > -1 && internal_state == AVOID_DRIVE)
-        transition_to = this->inputs->prevState;
-    if( TagUtilities::hasTag( &this->inputs->tags, 0 ) ){
-        if(this->inputs->prevState == "search_state"){
-            transition_to = "pickup_state";
-        } else if(this->inputs->prevState != "findhome_state"){
-            transition_to = "avoidcube_state";
-        }
-    }
     if( TagUtilities::hasTag(&this->inputs->tags, 256)){
         if(this->inputs->prevState == "findhome_state"){
             transition_to = "dropoff_state";
         } else {
             transition_to = "avoidhome_state";
         }
+    } else if( TagUtilities::hasTag( &this->inputs->tags, 0 ) ){
+        if(this->inputs->prevState == "search_state"){
+            transition_to = "pickup_state";
+        } else {
+            transition_to = "avoidcube_state";
+        }
+    } else if(angleToGoal < 0 && angleToGoal > -1 && internal_state == AVOID_DRIVE){
+        transition_to = this->inputs->prevState;
     }
+   
 
         
     if( this->inputs->rotationFlag == true && abs(this->inputs->odom_accel_gps.theta) - abs(this->inputs->initialAvoidAngle) < .25 && distFromInitialLocation < .5){
@@ -57,6 +57,16 @@ std::string AvoidState::transition()
         transition_to = this->inputs->prevState;
     }
 
+
+
+    if(transition_to == "avoidhome_state" || transition_to == "avoidcube_state"){
+        this->inputs->avoidCounter++;
+    } else if (transition_to != getIdentifier()){
+        this->inputs->avoidCounter = 0;
+    }
+    
+    if(transition_to == "avoidcube_state" && this->inputs->avoidCounter >= 4)
+        transition_to = getIdentifier();
 
     return transition_to;
 }

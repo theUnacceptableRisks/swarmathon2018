@@ -4,7 +4,7 @@ void RotationalWaypoint::run()
 {
     std::tuple<int,int> output;
 
-    double correction_radian = angles::shortest_angular_distance( goal_theta, inputs->odom_accel_gps.theta );
+    double correction_radian = angles::shortest_angular_distance( r_params.rotate_to, inputs->odom_accel_gps.theta );
 
     if( fabs( correction_radian ) < r_params.arrived_threshold )
     {
