@@ -113,3 +113,14 @@ Cube TagUtilities::getClosestCube( std::vector<Cube> *cubes )
     }
     return closest_cube;
 }
+
+Cube TagUtilities::getSecondClosestCube( std::vector<Cube> *cubes )
+{
+    if( cubes->size() <= 1 )
+    {
+        return Cube();
+    }
+
+    std::sort( cubes->begin(), cubes->end() );
+    return cubes->at(1);
+}

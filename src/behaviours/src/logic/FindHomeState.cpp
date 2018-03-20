@@ -37,6 +37,10 @@ void FindHomeState::onEnter( std::string prev_state )
     {
         outputs->current_waypoint = waypoints.front();
     }
+    else
+    {
+        forceTransition( FINDHOME_INIT );
+    }
 }
 
 void FindHomeState::onExit( std::string next_state )
@@ -53,7 +57,7 @@ std::string FindHomeState::transition()
         forceTransition( FINDHOME_COMPLETE );
         transition_to = "dropoff_state";
     }
-    else if( TagUtilities::hasTag( &this->inputs->tags, 0 ) && !TagUtilities::hasTag(&this->inputs->tags, 256))
+    else if( shouldAvoidCube( inputs ) )
         transition_to = "avoidcube_state";
     else if( this->inputs->us_center < .4 || this->inputs->us_left < .4 ||  this->inputs->us_right < .4 )
         transition_to = "avoid_state";

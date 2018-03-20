@@ -3,6 +3,8 @@
 #include "../TagUtilities.h"
 #include "../waypoints/SimpleWaypoint.h"
 
+std::tuple<int,int> coord_key[4] = { std::make_tuple( -1, 1 ), std::make_tuple( 1, 1 ), std::make_tuple( 1, -1 ), std::make_tuple( -1, -1 ) };
+
 void SearchState::action()
 {
     forceTransition( internalTransition() );
@@ -70,7 +72,7 @@ std::string SearchState::transition()
         if( closest_tag.getGroundDistance( 256 ) > closest_cube.getGroundDistance() )
             transition_to = "pickup_state";
     }
-    if( this->inputs->us_center < .4 || this->inputs->us_left < .4 ||  this->inputs->us_right < .4 )
+    if( this->inputs->us_center < .35 || this->inputs->us_left < .35 ||  this->inputs->us_right < .35 )
         transition_to = "avoid_state";
     if( TagUtilities::hasTag(&this->inputs->tags, 256))
         transition_to = "avoidhome_state";
@@ -91,7 +93,7 @@ SSState SearchState::internalTransition()
             break;
         case SEARCHSTATE_DRIVE:
             if( waypoints.size() == 0 )
-                transition_to = SEARCHSTATE_INIT;
+                transition_to = SEARCHSTATE_RESET;
             break;
     }
 
@@ -107,9 +109,77 @@ void SearchState::internalAction()
         {
             SimpleWaypoint *waypoint = 0;
             SimpleParams params;
+
+            /* in irl */
+//            params.skid_steer_threshold = M_PI/6;
+//            params.arrived_threshold = 0.15;
+            /* in sim */
+            params.skid_steer_threshold = M_PI/12;
+            params.arrived_threshold = 0.05;
+
+            int num_rovers = inputs->infoVector.size();
+            /* get your "spot" */
+            int spot = 0;
+            for( int i = 0; i < num_rovers; i++ )
+            {
+                if( inputs->rover_name == inputs->infoVector[i].name )
+                {
+                    spot = i + 1;
+                    break;
+                }
+            }
+
+
+            /* figure out what you're closest to */
+            int closest_starting_point = 0;
+            double closest_distance = 1000; //a dumby number, you'll never be that far away
+            for( int i = 0; i < 4; i++ )
+            {
+                double x = std::get<0>( coord_key[i] );
+                double y = std::get<1>( coord_key[i] );
+                /* in sim */
+                double curr_distance = hypot( x - inputs->odom_accel.x, y - inputs->odom_accel.y );
+                /* in irl */
+//                double hypot( x - inputs->odom_accel_gps.x, y - inputs->odom_accel_gps.y );
+
+                if( curr_distance <= closest_distance )
+                {
+                     closest_starting_point = i;
+                     closest_distance = curr_distance;
+                }
+            }
+            /* generate the waypoints, 5 at a time */
+            int ring_multiplier = 0;
+            if( num_rovers <= 3 )
+            {
+                ring_multiplier = 1;
+            }
+            else
+            {
+                ring_multiplier = 1.5;
+            }
+            for( int ring = 0 + spot; ring < ( MAX_RINGS + 1 ); ring++ )
+            {
+                int count = 0;
+                int i = closest_starting_point;
+                while( count < 5 )
+                {
+                     params.goal_x = std::get<0>( coord_key[i] ) * ring * ring_multiplier;
+                     params.goal_y = std::get<1>( coord_key[i] ) * ring * ring_multiplier;
+
+                     waypoint = new SimpleWaypoint( inputs, params );
+                     waypoints.push_back( dynamic_cast<Waypoint *>( waypoint ) );
+
+                     count++;
+                     if( ++i == 4 )
+                        i = 0;
+                }
+            }
+/*
             double x = 0.0;
             double y = 0.0;
-            /* the constant bits of the params, tuning parts */
+
+            /* the constant bits of the params, tuning parts *
             params.skid_steer_threshold = M_PI/6;
             params.arrived_threshold = 0.15;
 
@@ -127,7 +197,9 @@ void SearchState::internalAction()
                 waypoint = new SimpleWaypoint( this->inputs, params );
                 this->waypoints.push_back( dynamic_cast<Waypoint*>( waypoint ) );
             }
+*/
             this->outputs->current_waypoint = waypoints.front();
+
             break;
         }
         case SEARCHSTATE_DRIVE:

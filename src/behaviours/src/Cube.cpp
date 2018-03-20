@@ -18,6 +18,7 @@ bool Cube::checkTag( Tag tag )
         {
             same_cube = true;
             this->tags.push_back( tag );
+            distance = getDistance();
         }
         if( same_cube )
             break;
@@ -67,7 +68,7 @@ double Cube::getPositionZ()
 
 double Cube::getDistance()
 {
-    return hypot( hypot( getPositionX(), getPositionY() ), getPositionZ() );
+    return hypot( hypot( this->getPositionX(), this->getPositionY() ), this->getPositionZ() );
 }
 
 double Cube::getGroundDistance()

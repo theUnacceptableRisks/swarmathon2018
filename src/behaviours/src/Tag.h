@@ -53,8 +53,6 @@ public:
 	friend std::ostream& operator<<(std::ostream&, const Tag&);
 
         double getGroundDistance( int id );
-
-
 private:
 
 	// Tag ID

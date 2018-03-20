@@ -5,11 +5,12 @@
 #include "LogicMachine.h"
 
 #define SEARCH_SIZE 20.0
-
+#define MAX_RINGS 7
 typedef enum
 {
     SEARCHSTATE_INIT,
-    SEARCHSTATE_DRIVE
+    SEARCHSTATE_DRIVE,
+    SEARCHSTATE_RESET
 } SSState;
 
 class SearchState : public State

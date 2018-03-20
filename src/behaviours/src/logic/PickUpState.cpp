@@ -49,8 +49,10 @@ std::string PickUpState::transition()
             break;
     }
 
-    if(TagUtilities::hasTag(&this->inputs->tags, 256))
-        transition_to = "search_state";
+// this bad
+//    if(TagUtilities::hasTag(&this->inputs->tags, 256))
+//        transition_to = "search_state";
+
     return transition_to;
 }
 

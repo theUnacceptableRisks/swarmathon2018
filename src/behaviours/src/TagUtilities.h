@@ -14,6 +14,7 @@ namespace TagUtilities
     Tag getClosestTag( std::vector<Tag> *tags, int id );
     Tag getClosestTagSane( std::vector<Tag> *tags, int id, double tolerance );
     Cube getClosestCube( std::vector<Cube> *cubes );
+    Cube getSecondClosestCube( std::vector<Cube> *cubes );
 };
 
 #endif

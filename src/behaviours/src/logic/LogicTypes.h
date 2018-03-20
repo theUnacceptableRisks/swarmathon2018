@@ -4,6 +4,7 @@
 #include <vector>
 #include <geometry_msgs/Pose2D.h>
 #include "../Tag.h"
+#include "../TagUtilities.h"
 #include "../Gripper.h"
 #include "../MotorController.h"
 #include "../TagExaminer.h"
@@ -62,6 +63,7 @@ typedef struct logic_inputs
     CalibNums			calibration;
     TagExaminer                 examiner;
     std::vector<roverInfo>	infoVector;
+    std::string			rover_name;
 } LogicInputs;
 
 typedef struct logic_outputs
@@ -77,5 +79,7 @@ typedef struct io_table
     LogicInputs *inputs;
     LogicOutputs *outputs;
 } IOTable;
+
+bool shouldAvoidCube( LogicInputs *inputs );
 
 #endif

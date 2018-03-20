@@ -317,6 +317,7 @@ int main(int argc, char **argv)
     infoMsg.number_of_base_tags = TagUtilities::numberOfTags(&inputs.tags, 256);
     rover_info_publisher.publish(infoMsg);
 
+    inputs.rover_name = published_name;
 
     ros::spin();
 
@@ -367,15 +368,15 @@ void runStateMachines(const ros::TimerEvent&)
             left = std::get<0>( output );
             right = std::get<1>( output );
 
-            //std::cout << "Left is " << left << std::endl;
-            //std::cout << "Right is " << right << std::endl;
-            //std::cout << "Goal X, Y: " << inputs.goal_x << ", " << inputs.goal_y << std::endl;
+            std::cout << "Left is " << left << std::endl;
+            std::cout << "Right is " << right << std::endl;
+            std::cout << "Goal X, Y: " << inputs.goal_x << ", " << inputs.goal_y << std::endl;
             /* TODO: add else messaging */
             sendDriveCommand( left, right );
         }
         else
         {
-            //std::cout << "Current Waypoint is null" << std::endl;
+            std::cout << "Current Waypoint is null" << std::endl;
             sendDriveCommand( 0, 0 );
         }
         /*******************

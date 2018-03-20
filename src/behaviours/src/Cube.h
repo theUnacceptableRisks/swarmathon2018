@@ -10,6 +10,7 @@
 class Cube
 {
     public:
+        Cube() {}
         Cube( Tag init_tag );
         bool checkTag( Tag tag );
         double getPositionX();
@@ -17,6 +18,12 @@ class Cube
         double getPositionZ();
         double getDistance();
         double getGroundDistance();
+        double distance;
+
+        bool operator < ( const Cube& cube ) const
+        {
+             return( distance < cube.distance );
+        }
     private:
         std::vector<Tag> tags;
 
