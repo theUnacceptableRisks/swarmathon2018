@@ -233,7 +233,7 @@ LogicMachine logic_machine( &iotable );
 void setupLogicMachine()
 {
     /* add States */
-//    logic_machine.addState( init_state.getIdentifier(), dynamic_cast<State *>(&init_state) );
+    logic_machine.addState( init_state.getIdentifier(), dynamic_cast<State *>(&init_state) );
     logic_machine.addState( search_state.getIdentifier(), dynamic_cast<State *>(&search_state) );
     logic_machine.addState( pickup_state.getIdentifier(), dynamic_cast<State *>(&pickup_state) );
     logic_machine.addState( findhome_state.getIdentifier(), dynamic_cast<State *>(&findhome_state) );
