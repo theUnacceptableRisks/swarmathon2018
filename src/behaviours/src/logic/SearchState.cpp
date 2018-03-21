@@ -138,7 +138,8 @@ void SearchState::internalAction()
                 double x = std::get<0>( coord_key[i] );
                 double y = std::get<1>( coord_key[i] );
                 /* in sim */
-                double curr_distance = hypot( x - inputs->odom_accel.x, y - inputs->odom_accel.y );
+                double curr_distance = hypot( x - inputs->odom_accel.x,
+                 y - inputs->odom_accel.y );
                 /* in irl */
 //                double hypot( x - inputs->odom_accel_gps.x, y - inputs->odom_accel_gps.y );
 

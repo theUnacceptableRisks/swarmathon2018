@@ -4,7 +4,7 @@
 #include "../state_machine/State.h"
 #include "LogicMachine.h"
 
-#define GROWTH_CONSTANT 0.3
+#define MAX_RINGS 7
 
 typedef enum
 {

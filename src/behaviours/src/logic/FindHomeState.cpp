@@ -2,6 +2,9 @@
 #include "../TagUtilities.h"
 #include "../waypoints/SimpleWaypoint.h"
 
+std::tuple<int,int> key[4] = { std::make_tuple( 1, 1 ), std::make_tuple( 1, -1 ), std::make_tuple( -1, -1 ), std::make_tuple( -1, 1 ) };
+
+
 void FindHomeState::action()
 {
     forceTransition( internalTransition() );
@@ -166,23 +169,33 @@ void FindHomeState::forceTransition( FHState transition_to )
             {
                 SimpleWaypoint *waypoint = 0;
                 SimpleParams params;
-                double k = GROWTH_CONSTANT;
-                double compX = this->inputs->odom_accel_gps.x;
-                double compY = this->inputs->odom_accel_gps.y;
-                double dot = 0;
-                double x = 0;
-                double y = 0;
-                double distanceFromHome = hypot(compX, compY);
+                double currX = this->inputs->odom_accel_gps.x;
+                double currY = this->inputs->odom_accel_gps.y;
+
 
                 /* param basics */
                 params.arrived_threshold = 0.5;
                 params.skid_steer_threshold = M_PI/12;
 
-                compX /= distanceFromHome;
-                compY /= distanceFromHome;
-
-                for( double i = 0; i < 30; i += 0.5 )
+                std::cout << "HELLO SOHAM" << std::endl;
+                for( int i = 0; i < 4; i += 1 )
                 {
+                    int count = 0;
+                    //Genrated growing ring here.
+                    while(count < 5) {
+                     params.goal_x = std::get<0>( key[i] );
+                     params.goal_y = std::get<1>( key[i] );
+                     std::cout << "TESTING X: " << params.goal_x << std::endl;
+                     std::cout << "TESTING Y: " << params.goal_y << std::endl;
+                    }
+
+                    waypoint = new SimpleWaypoint( this->inputs, params );
+                    this->waypoints.push_back( (Waypoint *)waypoint );
+                    count++;
+                }
+
+                /*
+
                     x = i * cos(i);
                     y = i * sin(i);
 
@@ -190,12 +203,7 @@ void FindHomeState::forceTransition( FHState transition_to )
                     dot += 1.3;
                     dot /= 2;
 
-                    params.goal_x = x * dot * k;
-                    params.goal_y = y * dot * k;
-
-                    waypoint = new SimpleWaypoint( this->inputs, params );
-                    this->waypoints.push_back( (Waypoint *)waypoint );
-                }
+                */
                 this->outputs->current_waypoint = waypoints.front();
                 break;
             }
