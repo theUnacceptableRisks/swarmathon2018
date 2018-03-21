@@ -103,7 +103,7 @@ ASState Avoid::internalTransition()
             break;
     }
 
-    return internal_state;
+    return transition_to;
 }
 
 void Avoid::internalAction()
