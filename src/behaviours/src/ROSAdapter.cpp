@@ -342,6 +342,8 @@ void runStateMachines(const ros::TimerEvent&)
     // time since timerStartTime was set to current time
     //timerTimeElapsed = time(0) - timerStartTime;
     // Robot is in automode
+    std::cout << "OffsetX:" << outputs.offset_x << std::endl;
+    std::cout << "OffsetY:" << outputs.offset_y << std::endl;
     inputs.time = ros::Time::now();
     if (currentMode == 2 || currentMode == 3)
     {
