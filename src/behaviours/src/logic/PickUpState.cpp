@@ -332,7 +332,6 @@ void PickUpState::forceTransition( PUState transition_to )
                 RotationParams r_params;
 
                 r_params.rotate_to = atan2( ( 0 - inputs->odom_accel_gps.y ), ( 0 - inputs->odom_accel_gps.x ) );
-                std::cout << "RotateTo:" << r_params.rotate_to << std::endl;
                 r_params.arrived_threshold = M_PI/12;
 
                 this->rotate = new RotationalWaypoint( this->inputs, r_params );
