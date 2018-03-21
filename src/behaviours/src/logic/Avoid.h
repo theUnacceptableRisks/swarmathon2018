@@ -8,7 +8,7 @@
 #include "../waypoints/SimpleWaypoint.h"
 #include "../TagUtilities.h"
 
-#define MAX_EXIT_ATTEMPTS 5
+#define MAX_EXIT_ATTEMPTS 7
 
 #define ROTATION_SPEED 65
 
