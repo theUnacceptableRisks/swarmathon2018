@@ -14,17 +14,36 @@ void SearchState::action()
 void SearchState::onEnter( std::string prev_state )
 {
     if(this->inputs->goalInObst){
-        delete waypoints.front();
-        waypoints.erase( waypoints.begin() );
+        if( waypoints.size() > 0 )
+        {
+            delete waypoints.front();
+            waypoints.erase( waypoints.begin() );
+        }
+
         if( waypoints.size() != 0 )
+        {
+            SimpleWaypoint *wp = dynamic_cast<SimpleWaypoint*>( waypoints.front() );
+            if( wp )
+            {
+                inputs->goal_x = wp->simple_params.goal_x;
+                inputs->goal_y = wp->simple_params.goal_y;
+            }
+            else
+            {
+                inputs->goal_x = 0;
+                inputs->goal_y = 0;
+            }
+
             this->outputs->current_waypoint = waypoints.front();
+        }
         else
             this->outputs->current_waypoint = 0;
         this->inputs->goalInObst = false;
-        this->inputs->rotationFlag = false;
     }
     if( waypoints.size() > 0 )
         outputs->current_waypoint = waypoints.front();
+    else
+        forceTransition( SEARCHSTATE_INIT );
 }
 
 void SearchState::onExit( std::string next_state )
@@ -74,7 +93,7 @@ std::string SearchState::transition()
     } else if( this->inputs->us_center < .35 || this->inputs->us_left < .35 ||  this->inputs->us_right < .35 ) {
         transition_to = "avoid_state";
     } else if ( TagUtilities::hasTag(&this->inputs->tags, 256)){
-        transition_to = "avoidhome_state";
+        transition_to = "avoid_state";
     }
 
     return transition_to;

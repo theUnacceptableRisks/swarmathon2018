@@ -53,6 +53,7 @@ add_executable(
   src/logic/AvoidHomeState.cpp
   src/logic/AvoidCubeState.cpp
   src/logic/DropOffState.cpp
+  src/logic/Avoid.cpp
   src/TagExaminer.cpp
 )
 

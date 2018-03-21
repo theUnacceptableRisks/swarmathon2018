@@ -39,7 +39,7 @@
 #include "logic/SearchState.h"
 #include "logic/PickUpState.h"
 #include "logic/FindHomeState.h"
-#include "logic/AvoidState.h"
+//#include "logic/AvoidState.h"
 #include "logic/AvoidHomeState.h"
 #include "logic/AvoidCubeState.h"
 #include "logic/DropOffState.h"
@@ -47,7 +47,7 @@
 #include "Gripper.h"
 #include "MotorController.h"
 #include "TagUtilities.h"
-
+#include "logic/Avoid.h"
 // To handle shutdown signals so the node quits
 // properly in response to "rosnode kill"
 #include <ros/ros.h>
@@ -220,7 +220,7 @@ LogicMachine logic_machine( &iotable );
     SearchState search_state( &iotable );
     PickUpState pickup_state( &iotable );
     FindHomeState findhome_state( &iotable );
-    AvoidState avoid_state( &iotable );
+    Avoid avoid_state( &iotable );
     AvoidHomeState avoidhome_state( &iotable );
     AvoidCubeState avoidcube_state( &iotable );
 //    MotorCalibState motorcalib_state( &iotable );

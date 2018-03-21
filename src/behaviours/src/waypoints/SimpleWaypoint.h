@@ -51,13 +51,13 @@ class SimpleWaypoint : public Waypoint
 
         }
         virtual void run();
+        SimpleParams simple_params;
     private:
         SWState internalTransition();
         void internalAction();
         void forceTransition( SWState transition_to );
 
         WaypointUtilities::DrivingParams driving_params;
-        SimpleParams simple_params;
         SWState internal_state;
 
         LinearPID linear_pid;

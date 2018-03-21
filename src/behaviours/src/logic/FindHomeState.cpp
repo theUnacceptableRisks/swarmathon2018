@@ -11,13 +11,31 @@ void FindHomeState::action()
 void FindHomeState::onEnter( std::string prev_state )
 {
     if(this->inputs->goalInObst){
-        waypoints.erase( waypoints.begin() );
+        if( waypoints.size() > 0 )
+        {
+            delete waypoints.front();
+            waypoints.erase( waypoints.begin() );
+        }
+
         if( waypoints.size() != 0 )
+        {
+            SimpleWaypoint *wp = dynamic_cast<SimpleWaypoint*>( waypoints.front() );
+            if( wp )
+            {
+                inputs->goal_x = wp->simple_params.goal_x;
+                inputs->goal_y = wp->simple_params.goal_y;
+            }
+            else
+            {
+                inputs->goal_x = 0;
+                inputs->goal_y = 0;
+            }
+
             this->outputs->current_waypoint = waypoints.front();
+        }
         else
             this->outputs->current_waypoint = 0;
         this->inputs->goalInObst = false;
-        this->inputs->rotationFlag = false;
     }
 
     if( this->internal_state == FINDHOME_COMPLETE )
@@ -36,6 +54,8 @@ void FindHomeState::onEnter( std::string prev_state )
     {
         outputs->current_waypoint = waypoints.front();
     }
+    else if( waypoints.size() == 0 )
+        forceTransition( FINDHOME_INIT );
 }
 
 void FindHomeState::onExit( std::string next_state )
@@ -60,7 +80,7 @@ std::string FindHomeState::transition()
         transition_to = "dropoff_state";
     }
     else if( TagUtilities::hasTagInRange(&this->inputs->tags, 0, .21, .4))
-        transition_to = "avoidcube_state";
+        transition_to = "avoid_state";
     else if( this->inputs->us_center < .4 || this->inputs->us_left < .4 ||  this->inputs->us_right < .4 )
         transition_to = "avoid_state";
 
