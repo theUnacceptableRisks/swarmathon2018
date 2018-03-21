@@ -110,7 +110,11 @@ void AvoidHomeState::internalAction()
 {
     RawOutputWaypoint *waypoint = 0;
     RawOutputParams params;
-    this->waypoints.clear();
+    while( waypoints.size() > 0 )
+    {
+        delete waypoints.front();
+        waypoints.erase( waypoints.begin() );
+    }
     switch( internal_state )
     {
         default: break;
