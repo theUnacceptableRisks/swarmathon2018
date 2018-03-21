@@ -116,7 +116,7 @@ void AvoidState::internalAction()
             }
             params.left_output = 60 * wheelRatio;
             params.right_output = 60 * (1/wheelRatio);
-            wheelRatio += 0.05;
+            wheelRatio += 0.07;
             wheelRatio = min(wheelRatio, 4.0);
             break;
         }

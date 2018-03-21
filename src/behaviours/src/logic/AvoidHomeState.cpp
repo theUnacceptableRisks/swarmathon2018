@@ -128,7 +128,7 @@ void AvoidHomeState::internalAction()
         {
             params.left_output = 60 * wheelRatio;
             params.right_output = 60 * (1/wheelRatio);
-            wheelRatio += 0.04;
+            wheelRatio += 0.06;
             wheelRatio = min(wheelRatio, 4.3);
             waypointTimer = this->inputs->time.toSec();
             cout << "WHEEL RATIO: " << wheelRatio << endl;
