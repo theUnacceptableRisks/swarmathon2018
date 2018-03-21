@@ -37,7 +37,11 @@ std::string Avoid::transition()
 {
     std::string transition_to = getIdentifier();
 
-    if( internal_state == AVOID_EXIT_SUCCESS )
+    if( TagUtilities::hasTag( &inputs->tags, 0 ) && previous_state == "search_state" )
+    {
+        transition_to = "pickup_state";
+    }
+    else if( internal_state == AVOID_EXIT_SUCCESS )
         transition_to = previous_state;
     else if( internal_state == AVOID_EXIT_FAILURE )
     {
@@ -59,8 +63,7 @@ ASState Avoid::internalTransition()
                 transition_to = AVOID_ROTATE;
             break;
         case AVOID_ROTATE:
-            std::cout << inputs->us_left << "," << inputs->us_center << "," << inputs->us_right << "," << !TagUtilities::hasTag( &inputs->tags, 256 ) << "," << !TagUtilities::hasTagInRange( &inputs->tags, 0, .21, .4 ) << std::endl;
-            if( inputs->us_left > 1.0 && inputs->us_center > 1.0 && inputs->us_right > 1.0 && !TagUtilities::hasTag( &inputs->tags, 256 ) && !TagUtilities::hasTagInRange( &inputs->tags, 0, .21, .4 ) )
+            if( inputs->us_left > .75 && inputs->us_center > .75 && inputs->us_right > .75 && !TagUtilities::hasTag( &inputs->tags, 256 ) && !TagUtilities::hasTagInRange( &inputs->tags, 0, .21, .4 ) )
             {
                 transition_to = AVOID_DRIVE;
             }
@@ -81,7 +84,6 @@ ASState Avoid::internalTransition()
                 drive = 0;
 
                 transition_to = AVOID_ATTEMPT_EXIT;
-                timer = inputs->time.toSec();
             }
             break;
         case AVOID_ATTEMPT_EXIT:
@@ -92,7 +94,7 @@ ASState Avoid::internalTransition()
                 else
                     transition_to = AVOID_ROTATE;
             }
-            else if( ( inputs->time.toSec() - timer ) > 2.0 )
+            else if( entrance_goal && entrance_goal->hasArrived() )
             {
                 transition_to = AVOID_EXIT_SUCCESS;
             }
@@ -166,6 +168,9 @@ void Avoid::forceTransition( ASState transition_to )
                 outputs->current_waypoint = drive;
                 break;
             }
+            case AVOID_ATTEMPT_EXIT:
+                outputs->current_waypoint = entrance_goal;
+                break;
         }
     }
 }
